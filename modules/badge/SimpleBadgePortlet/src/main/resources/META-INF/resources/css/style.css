@@ -33,15 +33,15 @@ input.flexselect {
 	padding-left: 14px;
 	width: 100%;
 }
-.row {
+.row .custom {
 	height: 48px;
 }
-.col-sm-3 {
-	position: absolute;
-	right: 200px;
+
+.modal-dialog {
+	position: unset;
+	max-width: 50% !important;
 }
 
-.col-sm-2 {
-	position: absolute;
-	right: 0px;
+div.flex {
+	display: flex;
 }

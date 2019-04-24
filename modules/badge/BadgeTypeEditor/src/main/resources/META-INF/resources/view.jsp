@@ -77,43 +77,45 @@ page import="com.liferay.portal.kernel.util.DateUtil" %>
 
 <c:if test="${themeDisplay.isSignedIn() == true}">
 	<div aria-hidden="true" class="modal" id="badgeTypeModal" role="dialog" style="display:none; z-index" tabindex="-1">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<aui:form action="<%= addBadgeTypeURL %>" enctype="multipart/form-data" id="badgeForm" method="post" name="badgeForm">
-				<aui:input id="userId" name="userId" type="hidden" value="" />
-
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title">Add Badge Type</h5>
-						<button aria-label="Close" class="close" data-dismiss="modal" type="button">
-							<span aria-hidden="true">&times;</span>
-						</button>
+		<div class="flex">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<aui:form action="<%= addBadgeTypeURL %>" enctype="multipart/form-data" id="badgeForm" method="post" name="badgeForm">
+					<aui:input id="userId" name="userId" type="hidden" value="" />
+	
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Add Badge Type</h5>
+							<button aria-label="Close" class="close" data-dismiss="modal" type="button">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+	
+						<div class="modal-body">
+							<div class="form-group">
+								<input class="form-control" id="_badgetypeeditor_type" name="_badgetypeeditor_type" required="required" type="input" value="" />
+							</div>
+	
+							<div class="form-group">
+								<aui:input class="form-control" name="availableFrom" type="date" value="" />
+							</div>
+	
+							<div class="form-group">
+								<aui:input class="form-control" name="availableTo" type="date" value="" />
+							</div>
+	
+							<div class="form-group">
+								<label for="fileEntry">Upload a transparent PNG file with 200x200 pixel size.</label>
+								<input class="form-control" name="fileEntry" required="required" type="file" value="" />
+							</div>
+						</div>
+	
+						<div class="modal-footer">
+							<button class="btn btn-secondary" data-dismiss="modal" type="button">Cancel</button>
+							<button class="btn btn-primary" onclick="addBadgeType()" type="submit">Add Badge Type</button>
+						</div>
 					</div>
-
-					<div class="modal-body">
-						<div class="form-group">
-							<input class="form-control" id="_badgetypeeditor_type" name="_badgetypeeditor_type" required="required" type="input" value="" />
-						</div>
-
-						<div class="form-group">
-							<aui:input class="form-control" name="availableFrom" type="date" value="" />
-						</div>
-
-						<div class="form-group">
-							<aui:input class="form-control" name="availableTo" type="date" value="" />
-						</div>
-
-						<div class="form-group">
-							<label for="fileEntry">Upload a transparent PNG file with 200x200 pixel size.</label>
-							<input class="form-control" name="fileEntry" required="required" type="file" value="" />
-						</div>
-					</div>
-
-					<div class="modal-footer">
-						<button class="btn btn-secondary" data-dismiss="modal" type="button">Cancel</button>
-						<button class="btn btn-primary" onclick="addBadgeType()" type="submit">Add Badge Type</button>
-					</div>
-				</div>
-			</aui:form>
+				</aui:form>
+			</div>
 		</div>
 	</div>
 </c:if>

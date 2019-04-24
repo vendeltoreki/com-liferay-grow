@@ -23,3 +23,11 @@ img.badge-image {
 .row {
 	display: block;
 }
+.modal-dialog {
+	position: unset;
+	max-width: 50% !important;
+}
+
+div.flex {
+	display: flex;
+}

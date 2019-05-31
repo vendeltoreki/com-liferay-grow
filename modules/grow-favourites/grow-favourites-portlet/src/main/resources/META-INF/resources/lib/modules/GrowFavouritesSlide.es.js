@@ -9,6 +9,8 @@ class GrowFavouritesSlide extends React.Component {
 	
 	this.state = 
 	{
+		data: this.props.data,
+		slideIndex: this.props.slideIndex,
 		spritemap: this.props.spritemap
 	};
   }
@@ -18,11 +20,11 @@ class GrowFavouritesSlide extends React.Component {
     return (
 		<div className="grow-favourites-slide">
 			
-			{this.props.data.map((cardData, key) => 
-				<div className="row" key={"row-"+key}>
-					<div className="col-sm" key={"col-"+key}>
-						<GrowFavouritesSlide
-							key={key}
+			{this.state.data.map((cardData, key) => 
+				<div className="row" key={"row-"+this.state.slideIndex+"-"+key}>
+					<div className="col-sm" key={"col-"+this.state.slideIndex+"-"+key}>
+						<GrowFavouritesCard
+							key={"growfavouritescard-"+this.state.slideIndex+"-"+key}
 							spritemap={this.state.spritemap}
 							articleAuthor={cardData.articleAuthor}
 							articleAuthorAvatar={cardData.authorAvatar}

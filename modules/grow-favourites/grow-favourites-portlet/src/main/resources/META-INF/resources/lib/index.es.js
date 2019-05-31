@@ -109,6 +109,7 @@ class App extends React.Component {
 	componentDidMount() {
 		this.setState({ isLoading: true });
 		
+		setTimeout(() => {
 		fetch(favoruitesUrl)
 			.then(
 				/*response => response.json()*/
@@ -118,6 +119,8 @@ class App extends React.Component {
 				data => this.setState({ data: data, isLoading: false })
 			)
 			.catch(error => this.setState({ error, isLoading: false }));
+			
+		}, 2000);
 	}
 	
 	render() {

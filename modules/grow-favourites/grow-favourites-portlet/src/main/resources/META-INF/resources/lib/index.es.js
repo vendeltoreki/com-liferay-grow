@@ -160,7 +160,7 @@ class App extends React.Component {
 						<CarouselProvider
 							naturalSlideWidth={400}
 							naturalSlideHeight={520}
-							totalSlides={3}
+							totalSlides={index}
 							visibleSlides={2}
 						>
 							<ButtonBack

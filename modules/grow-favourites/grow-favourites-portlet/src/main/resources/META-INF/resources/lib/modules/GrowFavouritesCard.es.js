@@ -5,7 +5,11 @@ class GrowFavouritesCard extends React.Component {
 	
   constructor(props) {
 	super(props);
-    this.state = {star: true};
+	
+    this.state = {
+		star: this.props.star
+	};
+	
     this.handleClick = this.handleClick.bind(this);
   }
 
@@ -41,14 +45,14 @@ class GrowFavouritesCard extends React.Component {
                     <GrowIcon
                       spritemap={this.props.spritemap}
                       classes="lexicon-icon inline-item"
-                      iconName="star-o"
+                      iconName="star"
                     />
                   )}
                   {this.state.star == false && (
                     <GrowIcon
                     spritemap={this.props.spritemap}
                     classes="lexicon-icon inline-item"
-                    iconName="star"
+                    iconName="star-o"
                     />
                   )}
               </button>

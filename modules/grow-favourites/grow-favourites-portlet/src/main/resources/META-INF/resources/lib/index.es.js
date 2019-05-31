@@ -100,29 +100,36 @@ class App extends React.Component {
 		this.state = 
 			{
 				data: [],
-				spritemap: spritemap
+				spritemap: spritemap,
+				isLoading: false,
+				error: null,
 			};
 	}
 	
 	componentDidMount() {
+		this.setState({ isLoading: true });
+		
 		fetch(favoruitesUrl)
 			.then(
 				/*response => response.json()*/
 				response => mockupData.data
 			)
 			.then(
-				data => this.setState({ data })
-			);
+				data => this.setState({ data: data, isLoading: false })
+			)
+			.catch(error => this.setState({ error, isLoading: false }));
 	}
 	
 	render() {
 		
+		const { data, isLoading } = this.state;
+		
 		let i=0,index=0;
 		const slider = []
 		
-		while(i< this.state.data.length){						
+		while(i< data.length){						
 			
-			let dataSlide = this.state.data.filter(function(value, idx, Arr) {
+			let dataSlide = data.filter(function(value, idx, Arr) {
 				return idx >= (0+i) && idx < (3+i);
 			});
 			

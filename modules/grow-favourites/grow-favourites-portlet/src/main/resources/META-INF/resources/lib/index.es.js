@@ -3,11 +3,13 @@ import ReactDOM from "react-dom";
 import axios from 'axios';
 import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from 'pure-react-carousel';
 
+import GrowFavouritesPortletLeftPanel from './modules/GrowFavouritesPortletLeftPanel.es';
 import GrowFavouritesSlide from './modules/GrowFavouritesSlide.es';
-import GrowIcon from './modules/GrowIcon.es';
+import GrowIcon from "./modules/GrowIcon.es";
 
-const spritemap = Liferay.ThemeDisplay.getPathThemeImages();
+const SPRITEMAP = Liferay.ThemeDisplay.getPathThemeImages();
 const CARDS_PER_COLUMN = 3;
+const VISIBLE_SLIDES = 2;
 const API = 'https://jsonplaceholder.typicode.com';
 const DEFAULT_QUERY = '/todos/1';
 
@@ -100,13 +102,12 @@ class App extends React.Component {
 	
 	constructor(props) {
 		super(props);
-		this.state = 
-			{
-				data: [],
-				spritemap: spritemap,
-				isLoading: false,
-				error: null,
-			};
+		
+		this.state = {
+			data: [],
+			isLoading: false,
+			error: null,
+		};
 	}
 	
 	componentDidMount() {
@@ -127,7 +128,7 @@ class App extends React.Component {
 		
 		const { data, isLoading, error } = this.state;
 		
-		 if (error) {
+		if (error) {
 			 
 			return (
 				<p>{error.message}</p>
@@ -136,12 +137,28 @@ class App extends React.Component {
 		} else if (isLoading) {
 			
 			return (
-				<p>Loading ...</p>
-			);
+				<div className="grow-favourites-porltet">
+					<div className="container">
+					  <div className="row">
+						<div className="col-sm-4">
+						
+							<GrowFavouritesPortletLeftPanel />
+							
+						</div>
+						<div className="col-sm-8">
+						
+							<p>Loading ...</p>
+					
+						</div>
+					  </div>
+					</div>
+				</div>
+			)
 			
 		} else {
+			
 			let i=0,index=0;
-			const slider = []
+			const growFavouritesSlides = []
 			
 			while(i< data.length){						
 				
@@ -149,10 +166,10 @@ class App extends React.Component {
 					return idx >= (0 + i) && idx < (CARDS_PER_COLUMN + i);
 				});
 				
-				slider.push(
+				growFavouritesSlides.push(
 					<Slide index={index} key={index}>
 						<GrowFavouritesSlide
-							spritemap={this.state.spritemap}
+							spritemap={SPRITEMAP}
 							data={dataSlide}
 							slideIndex={index}
 						/>
@@ -162,55 +179,48 @@ class App extends React.Component {
 				i += CARDS_PER_COLUMN;
 				index++;
 			}
-			
+
 			return (
 				<div className="grow-favourites-porltet">
 					<div className="container">
 					  <div className="row">
 						<div className="col-sm-4">
 						
-							<div className="">
-								<h1 className="my-favourites">
-									My<br />Favourites
-								</h1>
+							<GrowFavouritesPortletLeftPanel />
 							
-								<div className="text-secondary strong">Browse your most favourite articles</div>
-							</div>
-					
 						</div>
-						
 						<div className="col-sm-8">
+						
 							<CarouselProvider
 								naturalSlideWidth={400}
 								naturalSlideHeight={520}
 								totalSlides={index}
-								visibleSlides={2}
+								visibleSlides={VISIBLE_SLIDES}
 							>
 								<ButtonBack
 									className={"grow-favourites-carousel-button-back"}>
 									<GrowIcon
-										spritemap={spritemap}
+										spritemap={SPRITEMAP}
 										classes="lexicon-icon inline-item"
 										iconName="angle-left"
 									/>
 								</ButtonBack>
 								<Slider>
-									{slider}
+									{growFavouritesSlides}
 								</Slider>		
 								<ButtonNext
 									className={"grow-favourites-carousel-button-next"}>
 									<GrowIcon
-										spritemap={spritemap}
+										spritemap={SPRITEMAP}
 										classes="lexicon-icon inline-item"
 										iconName="angle-right"
 									/>
 								</ButtonNext>
 							</CarouselProvider>
+					
 						</div>
-
 					  </div>
 					</div>
-				
 				</div>
 			);
 		}

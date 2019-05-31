@@ -1,12 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import axios from 'axios';
 import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from 'pure-react-carousel';
 
 import GrowFavouritesSlide from './modules/GrowFavouritesSlide.es';
 import GrowIcon from './modules/GrowIcon.es';
 
 const spritemap = Liferay.ThemeDisplay.getPathThemeImages();
-const favoruitesUrl = 'https://jsonplaceholder.typicode.com/todos/1';
+const CARDS_PER_COLUMN = 3;
+const API = 'https://jsonplaceholder.typicode.com';
+const DEFAULT_QUERY = '/todos/1';
 
 const mockupData = {
 	"data": [
@@ -110,13 +113,10 @@ class App extends React.Component {
 		this.setState({ isLoading: true });
 		
 		setTimeout(() => {
-		fetch(favoruitesUrl)
+			
+		axios.get(API + DEFAULT_QUERY)
 			.then(
-				/*response => response.json()*/
-				response => mockupData.data
-			)
-			.then(
-				data => this.setState({ data: data, isLoading: false })
+				response => this.setState({ data: mockupData.data, isLoading: false })
 			)
 			.catch(error => this.setState({ error, isLoading: false }));
 			
@@ -125,81 +125,95 @@ class App extends React.Component {
 	
 	render() {
 		
-		const { data, isLoading } = this.state;
+		const { data, isLoading, error } = this.state;
 		
-		let i=0,index=0;
-		const slider = []
-		
-		while(i< data.length){						
-			
-			let dataSlide = data.filter(function(value, idx, Arr) {
-				return idx >= (0+i) && idx < (3+i);
-			});
-			
-			slider.push(
-				<Slide index={index} key={index}>
-					<GrowFavouritesSlide
-						spritemap={this.state.spritemap}
-						data={dataSlide}
-						slideIndex={index}
-					/>
-				</Slide>
+		 if (error) {
+			 
+			return (
+				<p>{error.message}</p>
 			);
 			
-			i+=3;
-			index++;
-		}
-		
-		return (
-			<div className="grow-favourites-porltet">
-				<div className="container">
-				  <div className="row">
-					<div className="col-sm-4">
-					
-						<div className="">
-							<h1 className="my-favourites">
-								My<br />Favourites
-							</h1>
-						
-							<div className="text-secondary strong">Browse your most favourite articles</div>
-						</div>
-				
-					</div>
-					
-					<div className="col-sm-8">
-						<CarouselProvider
-							naturalSlideWidth={400}
-							naturalSlideHeight={520}
-							totalSlides={index}
-							visibleSlides={2}
-						>
-							<ButtonBack
-								className={"grow-favourites-carousel-button-back"}>
-								<GrowIcon
-									spritemap={spritemap}
-									classes="lexicon-icon inline-item"
-									iconName="angle-left"
-								/>
-							</ButtonBack>
-							<Slider>
-								{slider}
-							</Slider>		
-							<ButtonNext
-								className={"grow-favourites-carousel-button-next"}>
-								<GrowIcon
-									spritemap={spritemap}
-									classes="lexicon-icon inline-item"
-									iconName="angle-right"
-								/>
-							</ButtonNext>
-						</CarouselProvider>
-					</div>
-
-				  </div>
-				</div>
+		} else if (isLoading) {
 			
-			</div>
-		);
+			return (
+				<p>Loading ...</p>
+			);
+			
+		} else {
+			let i=0,index=0;
+			const slider = []
+			
+			while(i< data.length){						
+				
+				let dataSlide = data.filter(function(value, idx, Arr) {
+					return idx >= (0 + i) && idx < (CARDS_PER_COLUMN + i);
+				});
+				
+				slider.push(
+					<Slide index={index} key={index}>
+						<GrowFavouritesSlide
+							spritemap={this.state.spritemap}
+							data={dataSlide}
+							slideIndex={index}
+						/>
+					</Slide>
+				);
+				
+				i += CARDS_PER_COLUMN;
+				index++;
+			}
+			
+			return (
+				<div className="grow-favourites-porltet">
+					<div className="container">
+					  <div className="row">
+						<div className="col-sm-4">
+						
+							<div className="">
+								<h1 className="my-favourites">
+									My<br />Favourites
+								</h1>
+							
+								<div className="text-secondary strong">Browse your most favourite articles</div>
+							</div>
+					
+						</div>
+						
+						<div className="col-sm-8">
+							<CarouselProvider
+								naturalSlideWidth={400}
+								naturalSlideHeight={520}
+								totalSlides={index}
+								visibleSlides={2}
+							>
+								<ButtonBack
+									className={"grow-favourites-carousel-button-back"}>
+									<GrowIcon
+										spritemap={spritemap}
+										classes="lexicon-icon inline-item"
+										iconName="angle-left"
+									/>
+								</ButtonBack>
+								<Slider>
+									{slider}
+								</Slider>		
+								<ButtonNext
+									className={"grow-favourites-carousel-button-next"}>
+									<GrowIcon
+										spritemap={spritemap}
+										classes="lexicon-icon inline-item"
+										iconName="angle-right"
+									/>
+								</ButtonNext>
+							</CarouselProvider>
+						</div>
+
+					  </div>
+					</div>
+				
+				</div>
+			);
+		}
 	}
 }
 

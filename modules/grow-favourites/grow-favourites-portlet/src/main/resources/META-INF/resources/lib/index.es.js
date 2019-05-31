@@ -2,7 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from 'pure-react-carousel';
 
-import GrowFavouritesCard from './modules/GrowFavouritesCard.es';
+import GrowFavouritesSlide from './modules/GrowFavouritesSlide.es';
+import GrowIcon from './modules/GrowIcon.es';
 
 const spritemap = Liferay.ThemeDisplay.getPathThemeImages();
 
@@ -18,55 +19,176 @@ const GrowFavouriteCardData = {
 	articleCategory: "Share"
 };
 
+const mockupData = {
+	"data": [
+		{
+		articleAuthor: "Author 01",
+		authorAvatar: "/o/GrowFavouritesPortlet/images/0.jpeg",
+		createDate: "01.01.2019",
+		articleTitle: "Title 01",
+		articleContent: "",
+		tags: ["badge", "gamification", "respect", "test1", "test2"],
+		readCount: "626",
+		articleCategory: "Share"
+		},
+		{
+		articleAuthor: "Author 02",
+		authorAvatar: "/o/GrowFavouritesPortlet/images/0.jpeg",
+		createDate: "01.01.2019",
+		articleTitle: "Title 02",
+		articleContent: "",
+		tags: ["badge", "gamification", "respect", "test1", "test2"],
+		readCount: "626",
+		articleCategory: "Share"
+		},
+		{
+		articleAuthor: "Author 03",
+		authorAvatar: "/o/GrowFavouritesPortlet/images/0.jpeg",
+		createDate: "01.01.2019",
+		articleTitle: "Title 03",
+		articleContent: "",
+		tags: ["badge", "gamification", "respect", "test1", "test2"],
+		readCount: "626",
+		articleCategory: "Share"
+		},
+		{
+		articleAuthor: "Author 04",
+		authorAvatar: "/o/GrowFavouritesPortlet/images/0.jpeg",
+		createDate: "01.01.2019",
+		articleTitle: "Title 04",
+		articleContent: "",
+		tags: ["badge", "gamification", "respect", "test1", "test2"],
+		readCount: "626",
+		articleCategory: "Share"
+		},
+		{
+		articleAuthor: "Author 05",
+		authorAvatar: "/o/GrowFavouritesPortlet/images/0.jpeg",
+		createDate: "01.01.2019",
+		articleTitle: "Title 05",
+		articleContent: "",
+		tags: ["badge", "gamification", "respect", "test1", "test2"],
+		readCount: "626",
+		articleCategory: "Share"
+		},
+		{
+		articleAuthor: "Author 06",
+		authorAvatar: "/o/GrowFavouritesPortlet/images/0.jpeg",
+		createDate: "01.01.2019",
+		articleTitle: "Title 06",
+		articleContent: "",
+		tags: ["badge", "gamification", "respect", "test1", "test2"],
+		readCount: "626",
+		articleCategory: "Share"
+		},
+		{
+		articleAuthor: "Author 07",
+		authorAvatar: "/o/GrowFavouritesPortlet/images/0.jpeg",
+		createDate: "01.01.2019",
+		articleTitle: "Title 06",
+		articleContent: "",
+		tags: ["badge", "gamification", "respect", "test1", "test2"],
+		readCount: "626",
+		articleCategory: "Share"
+		},
+		{
+		articleAuthor: "Author 08",
+		authorAvatar: "/o/GrowFavouritesPortlet/images/0.jpeg",
+		createDate: "01.01.2019",
+		articleTitle: "Title 06",
+		articleContent: "",
+		tags: ["badge", "gamification", "respect", "test1", "test2"],
+		readCount: "626",
+		articleCategory: "Share"
+		}
+	]
+};
+
 class App extends React.Component {
+	
+	constructor(props) {
+		super(props);
+		this.state = 
+			{
+				data: mockupData.data,
+				spritemap: spritemap
+			};
+	}
+	
 	render() {
+		
+		let i=0,index=0;
+		const slider = []
+		
+		while(i< this.state.data.length){						
+			
+			let dataSlide = this.state.data.filter(function(value, idx, Arr) {
+				return idx >= (0+i) && idx < (3+i);
+			});
+			console.log(dataSlide);
+			
+			slider.push(
+				<Slide index={index} key={index}>
+					<GrowFavouritesSlide
+						spritemap={this.state.spritemap}
+						data={dataSlide}
+					/>
+				</Slide>
+			);
+			
+			i+=3;
+			index++;
+		}
+		
 		return (
-					<CarouselProvider
-						naturalSlideWidth={100}
-						naturalSlideHeight={125}
-						totalSlides={3}
-					>
-						<Slider>
-							<Slide index={0}>
-								<div className="col-lg-6">
-									<GrowFavouritesCard
-										spritemap={spritemap}
-										articleAuthor={GrowFavouriteCardData.articleAuthor}
-										articleAuthorAvatar={GrowFavouriteCardData.authorAvatar}
-										articleCreateDate={GrowFavouriteCardData.createDate}
-										articleTitle={GrowFavouriteCardData.articleTitle}
-										articleCategory={GrowFavouriteCardData.articleCategory}
-									/>
-								</div>
-							</Slide>
-							<Slide index={1}>
-								<div className="col-lg-6">
-									<GrowFavouritesCard
-										spritemap={spritemap}
-										articleAuthor={GrowFavouriteCardData.articleAuthor}
-										articleAuthorAvatar={GrowFavouriteCardData.authorAvatar}
-										articleCreateDate={GrowFavouriteCardData.createDate}
-										articleTitle={GrowFavouriteCardData.articleTitle}
-										articleCategory={"People"}
-									/>
-								</div>
-							</Slide>
-							<Slide index={2}>
-								<div className="col-lg-6">
-									<GrowFavouritesCard
-										spritemap={spritemap}
-										articleAuthor={GrowFavouriteCardData.articleAuthor}
-										articleAuthorAvatar={GrowFavouriteCardData.authorAvatar}
-										articleCreateDate={GrowFavouriteCardData.createDate}
-										articleTitle={GrowFavouriteCardData.articleTitle}
-										articleCategory={"Excellence"}
-									/>
-								</div>
-							</Slide>
-						</Slider>
-						<ButtonBack>Back</ButtonBack>
-						<ButtonNext>Next</ButtonNext>
-					</CarouselProvider>
+			<div className="grow-favourites-porltet">
+				<div className="container">
+				  <div className="row">
+					<div className="col-sm-4">
+					
+						<div className="">
+							<h1 className="my-favourites">
+								My<br />Favourites
+							</h1>
+						
+							<div className="text-secondary strong">Browse your most favourite articles</div>
+						</div>
+				
+					</div>
+					
+					<div className="col-sm-8">
+						<CarouselProvider
+							naturalSlideWidth={400}
+							naturalSlideHeight={500}
+							totalSlides={3}
+							visibleSlides={2}
+						>
+							<ButtonBack
+								className={"grow-favourites-carousel-button-back"}>
+								<GrowIcon
+									spritemap={spritemap}
+									classes="lexicon-icon inline-item"
+									iconName="angle-left"
+								/>
+							</ButtonBack>
+							<Slider>
+								{slider}
+							</Slider>		
+							<ButtonNext
+								className={"grow-favourites-carousel-button-next"}>
+								<GrowIcon
+									spritemap={spritemap}
+									classes="lexicon-icon inline-item"
+									iconName="angle-right"
+								/>
+							</ButtonNext>
+						</CarouselProvider>
+					</div>
+
+				  </div>
+				</div>
+			
+			</div>
 		);
 	}
 }

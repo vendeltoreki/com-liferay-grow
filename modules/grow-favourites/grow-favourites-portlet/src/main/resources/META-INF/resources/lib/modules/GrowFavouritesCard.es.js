@@ -2,8 +2,9 @@ import React from 'react';
 import GrowIcon from "./GrowIcon.es";
 
 class GrowFavouritesCard extends React.Component {
+	
   constructor(props) {
-    super(props);
+	super(props);
     this.state = {star: true};
     this.handleClick = this.handleClick.bind(this);
   }
@@ -17,7 +18,7 @@ class GrowFavouritesCard extends React.Component {
   render() {
     return (
       <div
-          className={"card card-" + this.props.articleCategory.toLowerCase()}
+          className={"card card-" + this.props.articleCategory.toLowerCase() + " mr-4"}
         >
         <div className="card-body">
           <div className="autofit-row autofit-padded mb-2">

@@ -1,0 +1,25 @@
+.grow-favourites-porltet {
+	.grow-favourites-carousel-button-back {
+		position: absolute;
+		top: 42%;
+		left: -1%;
+		z-index: 1;
+		border-color: transparent;
+		background-color: transparent;
+	}
+
+	.grow-favourites-carousel-button-next {
+		position: absolute;
+		top: 42%;
+		margin-left: 98%;
+		z-index: 1;
+		border-color: transparent;
+		background-color: transparent;
+	}
+	
+	.grow-favourites-slide {
+	    border-width: 1px 1px 1px 1px;
+		border-color: #80ACFF;
+		border-style: solid;
+	}
+}

@@ -12,6 +12,7 @@ const CARDS_PER_COLUMN = 3;
 const VISIBLE_SLIDES = 2;
 const API = 'https://jsonplaceholder.typicode.com';
 const DEFAULT_QUERY = '/todos/1';
+const REMOVE_QUERY = '/todos/1';
 
 const mockupData = {
 	"data": [
@@ -23,7 +24,8 @@ const mockupData = {
 		articleContent: 'A respect badge can be given by anyone to anyone. You can give 1 badge per month. You can use the Respect badge page to add badges. To give a respect badge, @ mention the name in the table, write your name to the From column and write the reason, why do you give it. The reason has to be for a "superpower", something why you respect the other person and something which you would like to learn from them. For Support Hungary 2016Q3 goals, you have to give min. 1 respect badge until Sept 30. If there will be need, we will add gamification to Grow later on.',
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
-		articleCategory: "Share"
+		articleCategory: "Share",
+		star: true
 		},
 		{
 		articleAuthor: "Author 02",
@@ -33,7 +35,8 @@ const mockupData = {
 		articleContent: "",
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
-		articleCategory: "Share"
+		articleCategory: "Share",
+		star: true
 		},
 		{
 		articleAuthor: "Author 03",
@@ -43,7 +46,8 @@ const mockupData = {
 		articleContent: "",
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
-		articleCategory: "Share"
+		articleCategory: "Share",
+		star: true
 		},
 		{
 		articleAuthor: "Author 04",
@@ -53,7 +57,8 @@ const mockupData = {
 		articleContent: "",
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
-		articleCategory: "Share"
+		articleCategory: "Share",
+		star: true
 		},
 		{
 		articleAuthor: "Author 05",
@@ -63,7 +68,8 @@ const mockupData = {
 		articleContent: "",
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
-		articleCategory: "Share"
+		articleCategory: "Share",
+		star: true
 		},
 		{
 		articleAuthor: "Author 06",
@@ -73,7 +79,8 @@ const mockupData = {
 		articleContent: "",
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
-		articleCategory: "Share"
+		articleCategory: "Share",
+		star: true
 		},
 		{
 		articleAuthor: "Author 07",
@@ -83,7 +90,8 @@ const mockupData = {
 		articleContent: "",
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
-		articleCategory: "Share"
+		articleCategory: "Share",
+		star: true
 		},
 		{
 		articleAuthor: "Author 08",
@@ -93,7 +101,8 @@ const mockupData = {
 		articleContent: "",
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
-		articleCategory: "Share"
+		articleCategory: "Share",
+		star: true
 		}
 	]
 };
@@ -108,6 +117,25 @@ class App extends React.Component {
 			isLoading: false,
 			error: null,
 		};
+		
+		this.removeCardFromMyFavourites = this.removeCardFromMyFavourites.bind(this);
+	}
+	
+	removeCardFromMyFavourites() {
+		/*this.setState({ isRemovedFromMyFavourites: false });*/
+		
+		setTimeout(() => {
+			
+		axios.get(API + REMOVE_QUERY)
+			.then(
+				/*response => this.setState({ data: mockupData.data, isLoading: false })*/
+				console.log("isRemovedFromMyFavourites")
+			)
+			.catch(error => this.setState({ error}));
+			
+		}, 2000);
+		
+
 	}
 	
 	componentDidMount() {
@@ -172,6 +200,7 @@ class App extends React.Component {
 							spritemap={SPRITEMAP}
 							data={dataSlide}
 							slideIndex={index}
+							handleStarClick={this.removeCardFromMyFavourites}
 						/>
 					</Slide>
 				);

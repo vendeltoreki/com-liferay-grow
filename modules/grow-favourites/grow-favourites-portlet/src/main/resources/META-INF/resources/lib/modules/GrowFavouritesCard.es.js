@@ -10,14 +10,14 @@ class GrowFavouritesCard extends React.Component {
 			star: this.props.star
 		};
 	
-		this.handleClick = this.handleClick.bind(this);
+		this.handleStarClick = this.props.handleStarClick.bind(this);
 	}
 
-	handleClick() {
+	/*handleStarClick() {
 		this.setState(state => ({
 		  star: !state.star
 		}));
-	}
+	}*/
 
 	render() {
 		return (
@@ -40,7 +40,7 @@ class GrowFavouritesCard extends React.Component {
 					  </div>
 					</div>
 					<div className="autofit-section">
-					  <button className="btn btn-outline-secondary btn-outline-borderless" type="button" onClick={this.handleClick}>
+					  <button className="btn btn-outline-secondary btn-outline-borderless" type="button" onClick={this.handleStarClick}>
 						  {this.state.star && (
 							<GrowIcon
 							  spritemap={this.props.spritemap}

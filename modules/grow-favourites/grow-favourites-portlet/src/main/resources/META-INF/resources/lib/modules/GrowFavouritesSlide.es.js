@@ -30,7 +30,8 @@ class GrowFavouritesSlide extends React.Component {
 							articleCreateDate={cardData.createDate}
 							articleTitle={cardData.articleTitle}
 							articleCategory={cardData.articleCategory}
-							star={true}
+							handleStarClick={this.props.handleStarClick}
+							star={this.props.true}
 						/>
 					</div>
 				</div>

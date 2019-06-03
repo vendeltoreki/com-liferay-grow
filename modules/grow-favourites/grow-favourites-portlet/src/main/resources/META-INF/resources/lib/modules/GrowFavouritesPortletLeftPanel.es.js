@@ -9,7 +9,7 @@ class GrowFavouritesPortletLeftPanel extends React.Component {
 
 	render() {
 		return (
-			<div className="">
+			<div className="grow-favourites-porltet-left-panel">
 			
 				<h1 className="my-favourites">
 					My<br />Favourites

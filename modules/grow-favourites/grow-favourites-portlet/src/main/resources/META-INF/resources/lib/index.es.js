@@ -179,6 +179,8 @@ class App extends React.Component {
 	}
 	
 	removeCardFromMyFavourites(data) {
+		this.setState({ isLoading: true });
+		
 		setTimeout(() => {			
 			axios.get(API + REMOVE_QUERY)
 				.then(
@@ -192,7 +194,7 @@ class App extends React.Component {
 					}
 				)
 				.catch(function(error) {
-					this.setState({ error: error });
+					this.setState({ error: error, isLoading: false });
 					Liferay.Util.openToast(
 						{
 							message: error,
@@ -203,8 +205,6 @@ class App extends React.Component {
 				});
 			
 		}, 500);
-		
-
 	}
 	
 	addCardToMyFavourites(card) {
@@ -215,7 +215,8 @@ class App extends React.Component {
 			.then(
 				response => {
 					this.setState(prevState => ({
-						data: [card].concat(prevState.data)
+						data: [card].concat(prevState.data),
+						isLoading: false
 					}));
 					this.organizeSlides();
 				}
@@ -232,7 +233,6 @@ class App extends React.Component {
 			});
 			
 		}, 500);
-		
 	}
 
 	componentDidMount() {

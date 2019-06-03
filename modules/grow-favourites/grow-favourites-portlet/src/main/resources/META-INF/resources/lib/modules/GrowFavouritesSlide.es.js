@@ -25,13 +25,14 @@ class GrowFavouritesSlide extends React.Component {
 						<GrowFavouritesCard
 							key={"growfavouritescard-"+this.props.slideIndex+"-"+key}
 							spritemap={this.props.spritemap}
+							handleStarClick={this.props.handleStarClick}
 							articleAuthor={cardData.articleAuthor}
 							articleAuthorAvatar={cardData.authorAvatar}
 							articleCreateDate={cardData.createDate}
 							articleTitle={cardData.articleTitle}
 							articleCategory={cardData.articleCategory}
-							handleStarClick={this.props.handleStarClick}
-							star={this.props.true}
+							star={cardData.star}
+							id={cardData.id}
 						/>
 					</div>
 				</div>

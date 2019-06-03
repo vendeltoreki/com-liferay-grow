@@ -204,7 +204,7 @@ class App extends React.Component {
 	
 	removeCardFromMyFavourites(data) {
 		
-		if(data) {
+		if (data) {
 			this.setState({ isLoading: true });
 			
 			setTimeout(() => {			
@@ -237,7 +237,7 @@ class App extends React.Component {
 	
 	addCardToMyFavourites(id) {
 		
-		if(id) {
+		if (id) {
 			this.setState({ isLoading: true });
 		
 			setTimeout(() => {

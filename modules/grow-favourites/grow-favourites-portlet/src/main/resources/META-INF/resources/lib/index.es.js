@@ -266,76 +266,60 @@ class App extends React.Component {
 
 		const {growFavouritesSlides, isLoading, error } = this.state;
 
-		if (isLoading) {
-			
-			return (
-				<div className="grow-favourites-porltet">
-					<div className="container">
-					  <div className="row">
-						<div className="col-sm-4">
+		return (
+			<div className="grow-favourites-porltet">
+				<div className="container">
+				  <div className="row">
+					<div className="col-sm-4">
+					
+						<GrowFavouritesPortletLeftPanel />
 						
-							<GrowFavouritesPortletLeftPanel />
-							
-						</div>
-						<div className="col-sm-8">
+						<button type="button" onClick={this.addCardToMyFavourites.bind(this,newCardMockupData)}>
+							Add to My Favourite
+						</button>
+						
+					</div>
+					<div className="col-sm-8">
+					
+						{isLoading && (
 							<div className="loading-indicator">
 								<span aria-hidden="true" className="loading-animation"></span>
 							</div>
-						</div>
-					  </div>
-					</div>
-				</div>
-			)
-			
-		} else {
-			return (
-				<div className="grow-favourites-porltet">
-					<div className="container">
-					  <div className="row">
-						<div className="col-sm-4">
-						
-							<GrowFavouritesPortletLeftPanel />
-							
-							<button type="button" onClick={this.addCardToMyFavourites.bind(this,newCardMockupData)}>
-								Add to My Favourite
-							</button>
-							
-						</div>
-						<div className="col-sm-8">
-						
-							<CarouselProvider
-								naturalSlideWidth={400}
-								naturalSlideHeight={520}
-								totalSlides={this.state.totalSlides}
-								visibleSlides={VISIBLE_SLIDES}
-							>
-								<ButtonBack
-									className={"grow-favourites-carousel-button-back"}>
-									<GrowIcon
-										spritemap={SPRITEMAP}
-										classes="lexicon-icon inline-item"
-										iconName="angle-left"
-									/>
-								</ButtonBack>
-								<Slider>
-									{growFavouritesSlides}
-								</Slider>		
-								<ButtonNext
-									className={"grow-favourites-carousel-button-next"}>
-									<GrowIcon
-										spritemap={SPRITEMAP}
-										classes="lexicon-icon inline-item"
-										iconName="angle-right"
-									/>
-								</ButtonNext>
-							</CarouselProvider>
+						)}
 					
-						</div>
-					  </div>
+						<CarouselProvider
+							className={"grow-favourites-carousel"}
+							naturalSlideWidth={400}
+							naturalSlideHeight={520}
+							totalSlides={this.state.totalSlides}
+							visibleSlides={VISIBLE_SLIDES}
+						>
+							<ButtonBack
+								className={"grow-favourites-carousel-button-back"}>
+								<GrowIcon
+									spritemap={SPRITEMAP}
+									classes="lexicon-icon inline-item"
+									iconName="angle-left"
+								/>
+							</ButtonBack>
+							<Slider>
+								{growFavouritesSlides}
+							</Slider>		
+							<ButtonNext
+								className={"grow-favourites-carousel-button-next"}>
+								<GrowIcon
+									spritemap={SPRITEMAP}
+									classes="lexicon-icon inline-item"
+									iconName="angle-right"
+								/>
+							</ButtonNext>
+						</CarouselProvider>
+				
 					</div>
+				  </div>
 				</div>
-			);
-		}
+			</div>
+		);
 	}
 }
 

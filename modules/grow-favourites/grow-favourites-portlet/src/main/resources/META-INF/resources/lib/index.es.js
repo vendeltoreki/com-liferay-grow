@@ -13,6 +13,20 @@ const VISIBLE_SLIDES = 2;
 const API = 'https://jsonplaceholder.typicode.com';
 const DEFAULT_QUERY = '/todos/1';
 const REMOVE_QUERY = '/todos/1';
+const ADD_QUERY = '/todos/1';
+
+const newCardMockupData = 		{
+		articleAuthor: "New Author",
+		authorAvatar: "/o/GrowFavouritesPortlet/images/0.jpeg",
+		createDate: "01.01.2019",
+		articleTitle: "Title New",
+		articleContent: "",
+		tags: ["badge", "gamification", "respect", "test1", "test2"],
+		readCount: "626",
+		articleCategory: "Share",
+		id: "card-111",
+		star: true
+		};
 
 const mockupData = {
 	"data": [
@@ -21,10 +35,11 @@ const mockupData = {
 		authorAvatar: "/o/GrowFavouritesPortlet/images/0.jpeg",
 		createDate: "01.01.2019",
 		articleTitle: "Title 01",
-		articleContent: 'A respect badge can be given by anyone to anyone. You can give 1 badge per month. You can use the Respect badge page to add badges. To give a respect badge, @ mention the name in the table, write your name to the From column and write the reason, why do you give it. The reason has to be for a "superpower", something why you respect the other person and something which you would like to learn from them. For Support Hungary 2016Q3 goals, you have to give min. 1 respect badge until Sept 30. If there will be need, we will add gamification to Grow later on.',
+		articleContent: "",
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
 		articleCategory: "Share",
+		id: "card-001",
 		star: true
 		},
 		{
@@ -36,6 +51,7 @@ const mockupData = {
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
 		articleCategory: "Share",
+		id: "card-002",
 		star: true
 		},
 		{
@@ -47,6 +63,7 @@ const mockupData = {
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
 		articleCategory: "Share",
+		id: "card-003",
 		star: true
 		},
 		{
@@ -58,6 +75,7 @@ const mockupData = {
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
 		articleCategory: "Share",
+		id: "card-004",
 		star: true
 		},
 		{
@@ -69,6 +87,7 @@ const mockupData = {
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
 		articleCategory: "Share",
+		id: "card-005",
 		star: true
 		},
 		{
@@ -80,28 +99,31 @@ const mockupData = {
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
 		articleCategory: "Share",
+		id: "card-006",
 		star: true
 		},
 		{
 		articleAuthor: "Author 07",
 		authorAvatar: "/o/GrowFavouritesPortlet/images/0.jpeg",
 		createDate: "01.01.2019",
-		articleTitle: "Title 06",
+		articleTitle: "Title 07",
 		articleContent: "",
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
 		articleCategory: "Share",
+		id: "card-007",
 		star: true
 		},
 		{
 		articleAuthor: "Author 08",
 		authorAvatar: "/o/GrowFavouritesPortlet/images/0.jpeg",
 		createDate: "01.01.2019",
-		articleTitle: "Title 06",
+		articleTitle: "Title 08",
 		articleContent: "",
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
 		articleCategory: "Share",
+		id: "card-008",
 		star: true
 		}
 	]
@@ -119,9 +141,10 @@ class App extends React.Component {
 		};
 		
 		this.removeCardFromMyFavourites = this.removeCardFromMyFavourites.bind(this);
+		this.addCardToMyFavourites = this.addCardToMyFavourites.bind(this);
 	}
 	
-	removeCardFromMyFavourites() {
+	removeCardFromMyFavourites(data) {
 		/*this.setState({ isRemovedFromMyFavourites: false });*/
 		
 		setTimeout(() => {
@@ -136,6 +159,20 @@ class App extends React.Component {
 		}, 2000);
 		
 
+	}
+	
+	addCardToMyFavourites() {
+		
+		setTimeout(() => {
+			
+		axios.get(API + ADD_QUERY)
+			.then(
+				response => this.setState({data: [newCardMockupData].concat(this.state.data)})
+			)
+			.catch(error => this.setState({ error}));
+			
+		}, 2000);
+		
 	}
 	
 	componentDidMount() {
@@ -216,6 +253,10 @@ class App extends React.Component {
 						<div className="col-sm-4">
 						
 							<GrowFavouritesPortletLeftPanel />
+							
+							<button type="button" onClick={this.addCardToMyFavourites}>
+								Add to My Favourite
+							</button>
 							
 						</div>
 						<div className="col-sm-8">

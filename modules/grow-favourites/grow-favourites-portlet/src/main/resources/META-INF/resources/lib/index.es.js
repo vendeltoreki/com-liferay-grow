@@ -203,33 +203,36 @@ class App extends React.Component {
 	}
 	
 	removeCardFromMyFavourites(data) {
-		this.setState({ isLoading: true });
 		
-		setTimeout(() => {			
-			axios.get(API + REMOVE_QUERY)
-				.then(
-					response => {
-						let newData = this.state.data.filter(card => card !== data);
-						this.setState({
-							data: newData,
-							isLoading: false
-						})
-						this.organizeSlides();
-						this.fireAddCardToMyFavouritesEvent(data.id);
-					}
-				)
-				.catch(function(error) {
-					this.setState({ error: error, isLoading: false });
-					Liferay.Util.openToast(
-						{
-							message: error,
-							title: Liferay.Language.get('error'),
-							type: 'danger'
-						}
-					);
-				});
+		if(data) {
+			this.setState({ isLoading: true });
 			
-		}, 500);
+			setTimeout(() => {			
+				axios.get(API + REMOVE_QUERY)
+					.then(
+						response => {
+							let newData = this.state.data.filter(card => card !== data);
+							this.setState({
+								data: newData,
+								isLoading: false
+							})
+							this.organizeSlides();
+							this.fireAddCardToMyFavouritesEvent(data.id);
+						}
+					)
+					.catch(function(error) {
+						this.setState({ error: error, isLoading: false });
+						Liferay.Util.openToast(
+							{
+								message: error,
+								title: Liferay.Language.get('error'),
+								type: 'danger'
+							}
+						);
+					});
+				
+			}, 500);
+		}
 	}
 	
 	addCardToMyFavourites(id) {

@@ -9,15 +9,7 @@ class GrowFavouritesCard extends React.Component {
 		this.state = {
 			star: this.props.star
 		};
-	
-		/*this.handleStarClick = this.props.handleStarClick.bind(this);*/
 	}
-
-	/*handleStarClick() {
-		this.setState(state => ({
-		  star: !state.star
-		}));
-	}*/
 
 	render() {
 		return (

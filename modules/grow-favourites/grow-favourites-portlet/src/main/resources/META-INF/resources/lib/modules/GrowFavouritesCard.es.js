@@ -22,7 +22,7 @@ class GrowFavouritesCard extends React.Component {
 	render() {
 		return (
 			<div
-			  className={"card card-" + this.props.articleCategory.toLowerCase() + " mr-2 ml-2"}
+			  className={"grow-favourite-card card card-" + this.props.articleCategory.toLowerCase() + " mr-2 ml-2"}
 			>
 				<div className="card-body">
 				  <div className="autofit-row autofit-padded mb-2">
@@ -40,7 +40,7 @@ class GrowFavouritesCard extends React.Component {
 					  </div>
 					</div>
 					<div className="autofit-section">
-					  <button className="btn btn-outline-secondary btn-outline-borderless" type="button" onClick={this.props.handleStarClick.bind(this.props.id)}>
+					  <button className="btn btn-outline-secondary btn-outline-borderless" type="button" onClick={this.props.handleStarClick.bind(this,this.props.cardData)}>
 						  {this.state.star && (
 							<GrowIcon
 							  spritemap={this.props.spritemap}

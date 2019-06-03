@@ -136,70 +136,137 @@ class App extends React.Component {
 		
 		this.state = {
 			data: [],
+			growFavouritesSlides: [],
+			totalSlides: 1,
 			isLoading: false,
 			error: null,
 		};
 		
+		this.organizeSlides = this.organizeSlides.bind(this);
 		this.removeCardFromMyFavourites = this.removeCardFromMyFavourites.bind(this);
 		this.addCardToMyFavourites = this.addCardToMyFavourites.bind(this);
 	}
 	
+	organizeSlides() {
+		let i=0,index=0;
+		const growFavouritesSlides = []
+		this.setState({growFavouritesSlides: []});
+
+		while(i< this.state.data.length){						
+
+			let dataSlide = this.state.data.filter(function(value, idx, Arr) {
+				return idx >= (0 + i) && idx < (CARDS_PER_COLUMN + i);
+			});
+
+			growFavouritesSlides.push(
+				<Slide index={index} key={index}>
+					<GrowFavouritesSlide
+						spritemap={SPRITEMAP}
+						data={dataSlide}
+						slideIndex={index}
+						handleStarClick={this.removeCardFromMyFavourites}
+					/>
+				</Slide>
+			);
+
+			i += CARDS_PER_COLUMN;
+			index++;
+		}
+		this.setState(prevState => ({
+			growFavouritesSlides : [...prevState.growFavouritesSlides, growFavouritesSlides],
+			totalSlides: index
+		}));
+	}
+	
 	removeCardFromMyFavourites(data) {
-		/*this.setState({ isRemovedFromMyFavourites: false });*/
-		
-		setTimeout(() => {
+		setTimeout(() => {			
+			axios.get(API + REMOVE_QUERY)
+				.then(
+					response => {
+						let newData = this.state.data.filter(card => card !== data);
+						this.setState({
+							data: newData,
+							isLoading: false
+						})
+						this.organizeSlides();
+					}
+				)
+				.catch(function(error) {
+					this.setState({ error: error });
+					Liferay.Util.openToast(
+						{
+							message: error,
+							title: Liferay.Language.get('error'),
+							type: 'danger'
+						}
+					);
+				});
 			
-		axios.get(API + REMOVE_QUERY)
-			.then(
-				/*response => this.setState({ data: mockupData.data, isLoading: false })*/
-				console.log("isRemovedFromMyFavourites")
-			)
-			.catch(error => this.setState({ error}));
-			
-		}, 2000);
+		}, 500);
 		
 
 	}
 	
-	addCardToMyFavourites() {
-		
-		setTimeout(() => {
-			
-		axios.get(API + ADD_QUERY)
-			.then(
-				response => this.setState({data: [newCardMockupData].concat(this.state.data)})
-			)
-			.catch(error => this.setState({ error}));
-			
-		}, 2000);
-		
-	}
-	
-	componentDidMount() {
+	addCardToMyFavourites(card) {
 		this.setState({ isLoading: true });
 		
 		setTimeout(() => {
+		axios.get(API + ADD_QUERY)
+			.then(
+				response => {
+					this.setState(prevState => ({
+						data: [card].concat(prevState.data)
+					}));
+					this.organizeSlides();
+				}
+			)
+			.catch(function(error) {
+				this.setState({ error: error, isLoading: false });
+				Liferay.Util.openToast(
+					{
+						message: error,
+						title: Liferay.Language.get('error'),
+						type: 'danger'
+					}
+				);
+			});
 			
+		}, 500);
+		
+	}
+
+	componentDidMount() {
+		this.setState({ isLoading: true });
+
+		setTimeout(() => {
 		axios.get(API + DEFAULT_QUERY)
 			.then(
-				response => this.setState({ data: mockupData.data, isLoading: false })
+				response => {
+					this.setState({ 
+						data: mockupData.data,
+						isLoading: false })
+					this.organizeSlides();
+				}
 			)
-			.catch(error => this.setState({ error, isLoading: false }));
+			.catch(function(error) {
+				this.setState({ error: error, isLoading: false });
+				Liferay.Util.openToast(
+					{
+						message: error,
+						title: Liferay.Language.get('error'),
+						type: 'danger'
+					}
+				);
+			});
 			
-		}, 2000);
+		}, 500);
 	}
-	
+
 	render() {
-		
-		const { data, isLoading, error } = this.state;
-		
-		if (error) {
-			 
-			return (
-				<p>{error.message}</p>
-			);
-			
-		} else if (isLoading) {
+
+		const {growFavouritesSlides, isLoading, error } = this.state;
+
+		if (isLoading) {
 			
 			return (
 				<div className="grow-favourites-porltet">
@@ -211,9 +278,9 @@ class App extends React.Component {
 							
 						</div>
 						<div className="col-sm-8">
-						
-							<p>Loading ...</p>
-					
+							<div className="loading-indicator">
+								<span aria-hidden="true" className="loading-animation"></span>
+							</div>
 						</div>
 					  </div>
 					</div>
@@ -221,31 +288,6 @@ class App extends React.Component {
 			)
 			
 		} else {
-			
-			let i=0,index=0;
-			const growFavouritesSlides = []
-			
-			while(i< data.length){						
-				
-				let dataSlide = data.filter(function(value, idx, Arr) {
-					return idx >= (0 + i) && idx < (CARDS_PER_COLUMN + i);
-				});
-				
-				growFavouritesSlides.push(
-					<Slide index={index} key={index}>
-						<GrowFavouritesSlide
-							spritemap={SPRITEMAP}
-							data={dataSlide}
-							slideIndex={index}
-							handleStarClick={this.removeCardFromMyFavourites}
-						/>
-					</Slide>
-				);
-				
-				i += CARDS_PER_COLUMN;
-				index++;
-			}
-
 			return (
 				<div className="grow-favourites-porltet">
 					<div className="container">
@@ -254,7 +296,7 @@ class App extends React.Component {
 						
 							<GrowFavouritesPortletLeftPanel />
 							
-							<button type="button" onClick={this.addCardToMyFavourites}>
+							<button type="button" onClick={this.addCardToMyFavourites.bind(this,newCardMockupData)}>
 								Add to My Favourite
 							</button>
 							
@@ -264,7 +306,7 @@ class App extends React.Component {
 							<CarouselProvider
 								naturalSlideWidth={400}
 								naturalSlideHeight={520}
-								totalSlides={index}
+								totalSlides={this.state.totalSlides}
 								visibleSlides={VISIBLE_SLIDES}
 							>
 								<ButtonBack

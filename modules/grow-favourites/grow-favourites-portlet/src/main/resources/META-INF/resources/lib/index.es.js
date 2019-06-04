@@ -12,8 +12,11 @@ const CARDS_PER_COLUMN = 3;
 const VISIBLE_SLIDES = 2;
 const API = 'https://jsonplaceholder.typicode.com';
 const DEFAULT_QUERY = '/todos/1';
-const REMOVE_QUERY = '/todos/1';
-const ADD_QUERY = '/todos/1';
+const REMOVE_FROM_MYFAVOURITES_QUERY = '/todos/1';
+const ADD_TO_MYFAVOURITES_QUERY = '/todos/1';
+const ADD_TO_MYFAVOURITES_EVENT_NAME = 'addGrowCardToMyFavouritesEvent';
+const REMOVE_FROM_MYFAVOURITES_EVENT_NAME = 'removeGrowCardFromMyFavouritesEvent';
+const TOGGLE_FAVOURITES_EVENT = 'toggleFavouritesEvent';
 
 const newCardMockupData = 		{
 		articleAuthor: "New Author",
@@ -34,7 +37,7 @@ const mockupData = {
 		articleAuthor: "Author 01",
 		authorAvatar: "/o/GrowFavouritesPortlet/images/0.jpeg",
 		createDate: "01.01.2019",
-		articleTitle: "Title 01",
+		articleTitle: "Title 01 My Faavourite",
 		articleContent: "",
 		tags: ["badge", "gamification", "respect", "test1", "test2"],
 		readCount: "626",
@@ -145,19 +148,29 @@ class App extends React.Component {
 		let instance = this;
 		
 		Liferay.on(
-			'addCardToMyFavouritesEvent',
+			ADD_TO_MYFAVOURITES_EVENT_NAME,
 			function(event) {
-				if(event && event.data && event.data.id) {
-					instance.addCardToMyFavourites(event.data.id);
+				if(event && event.data) {
+					instance.addCardDataToState(event.data);
 				}
+			}
+		);
 		
+		Liferay.on(
+			REMOVE_FROM_MYFAVOURITES_EVENT_NAME,
+			function(event) {
+				if(event && event.data) {
+					instance.removeCardDataFromState(event.data);
+				}
 			}
 		);
 		
 		this.organizeSlides = this.organizeSlides.bind(this);
 		this.removeCardFromMyFavourites = this.removeCardFromMyFavourites.bind(this);
-		this.addCardToMyFavourites = this.addCardToMyFavourites.bind(this);
-		this.fireAddCardToMyFavouritesEvent = this.fireAddCardToMyFavouritesEvent.bind(this);
+		this.fireToggleFavouritesEvent = this.fireToggleFavouritesEvent.bind(this);
+		
+		this.addCardDataToState = this.addCardDataToState.bind(this);
+		this.removeCardDataFromState = this.removeCardDataFromState.bind(this);
 	}
 	
 	organizeSlides() {
@@ -191,13 +204,11 @@ class App extends React.Component {
 		}));
 	}
 	
-	fireAddCardToMyFavouritesEvent() {
+	fireToggleFavouritesEvent(data) {
 		Liferay.fire(
-			'addCardToMyFavouritesEvent',
+			TOGGLE_FAVOURITES_EVENT,
 			{
-				data: {
-					id: 'card-999'
-				}
+				data: data
 			}
 		);
 	}
@@ -208,16 +219,19 @@ class App extends React.Component {
 			this.setState({ isLoading: true });
 			
 			setTimeout(() => {			
-				axios.get(API + REMOVE_QUERY)
+				axios.get(API + REMOVE_FROM_MYFAVOURITES_QUERY)
 					.then(
 						response => {
-							let newData = this.state.data.filter(card => card !== data);
+							let newData = this.state.data.filter(card => card.id !== data.id);
+							
 							this.setState({
 								data: newData,
 								isLoading: false
-							})
+							});
+							
 							this.organizeSlides();
-							this.fireAddCardToMyFavouritesEvent(data.id);
+							
+							this.fireToggleFavouritesEvent(data);
 						}
 					)
 					.catch(function(error) {
@@ -235,49 +249,41 @@ class App extends React.Component {
 		}
 	}
 	
-	addCardToMyFavourites(id) {
-		
-		if (id) {
+	removeCardDataFromState(data) {
+		if (data) {
 			this.setState({ isLoading: true });
 		
 			setTimeout(() => {
-			axios.get(API + ADD_QUERY)
-				.then(
-					response => {
-						this.setState(prevState => ({
-							data: [newCardMockupData].concat(prevState.data),
-							isLoading: false
-						}));
-						this.organizeSlides();
-					}
-				)
-				.catch(function(error) {
-					this.setState({ error: error, isLoading: false });
-					Liferay.Util.openToast(
-						{
-							message: error,
-							title: Liferay.Language.get('error'),
-							type: 'danger'
-						}
-					);
-				});
+					let newData = this.state.data.filter(card => card.id !== data.id);
+					
+					this.setState({
+						data: newData,
+						isLoading: false
+					});
+					
+					this.organizeSlides();
 				
 			}, 500);
 		}
 	}
 	
-	testAddCardToMyFavourites() {
+	addCardDataToState(data) {
+		if (data) {
+			this.setState({ isLoading: true });
 		
-		Liferay.fire(
-				'addCardToMyFavouritesEvent',
-				{
-					data: {
-						id: 'card-999'
-					}
-				}
-		);
+			setTimeout(() => {
+				
+				this.setState(prevState => ({
+					data: [data].concat(prevState.data),
+					isLoading: false
+				}));
+				
+				this.organizeSlides();
+				
+			}, 500);
+		}
 	}
-
+	
 	componentDidMount() {
 		this.setState({ isLoading: true });
 
@@ -316,10 +322,6 @@ class App extends React.Component {
 					<div className="col-sm-4">
 					
 						<GrowFavouritesPortletLeftPanel />
-						
-						<button type="button" onClick={this.testAddCardToMyFavourites.bind(this)}>
-							Add to My Favourite
-						</button>
 						
 					</div>
 					<div className="col-sm-8">

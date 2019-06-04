@@ -10,13 +10,14 @@ import GrowIcon from "./modules/GrowIcon.es";
 const SPRITEMAP = Liferay.ThemeDisplay.getPathThemeImages();
 const CARDS_PER_COLUMN = 3;
 const VISIBLE_SLIDES = 2;
+
 const API = 'https://jsonplaceholder.typicode.com';
 const DEFAULT_QUERY = '/todos/1';
 const REMOVE_FROM_MYFAVOURITES_QUERY = '/todos/1';
 const ADD_TO_MYFAVOURITES_QUERY = '/todos/1';
-const ADD_TO_MYFAVOURITES_EVENT_NAME = 'addGrowCardToMyFavouritesEvent';
-const REMOVE_FROM_MYFAVOURITES_EVENT_NAME = 'removeGrowCardFromMyFavouritesEvent';
-const TOGGLE_FAVOURITES_EVENT = 'toggleFavouritesEvent';
+
+const RECOMMENDATION_TOGGLE_STAR_EVENT = 'recommendationtoggleStarEvent';
+const FAVOURITES_TOGGLE_STAR_EVENT = 'favouritesToggleStarEvent';
 
 const newCardMockupData = 		{
 		articleAuthor: "New Author",
@@ -148,29 +149,18 @@ class App extends React.Component {
 		let instance = this;
 		
 		Liferay.on(
-			ADD_TO_MYFAVOURITES_EVENT_NAME,
+			RECOMMENDATION_TOGGLE_STAR_EVENT,
 			function(event) {
 				if(event && event.data) {
-					instance.addCardDataToState(event.data);
-				}
-			}
-		);
-		
-		Liferay.on(
-			REMOVE_FROM_MYFAVOURITES_EVENT_NAME,
-			function(event) {
-				if(event && event.data) {
-					instance.removeCardDataFromState(event.data);
+					instance.toggleStar(event.data);
 				}
 			}
 		);
 		
 		this.organizeSlides = this.organizeSlides.bind(this);
-		this.removeCardFromMyFavourites = this.removeCardFromMyFavourites.bind(this);
-		this.fireToggleFavouritesEvent = this.fireToggleFavouritesEvent.bind(this);
-		
-		this.addCardDataToState = this.addCardDataToState.bind(this);
-		this.removeCardDataFromState = this.removeCardDataFromState.bind(this);
+		this.handleStarClick = this.handleStarClick.bind(this);
+		this.fireToggleStarEvent = this.fireToggleStarEvent.bind(this);
+		this.toggleStar = this.toggleStar.bind(this);
 	}
 	
 	organizeSlides() {
@@ -190,7 +180,7 @@ class App extends React.Component {
 						spritemap={SPRITEMAP}
 						data={dataSlide}
 						slideIndex={index}
-						handleStarClick={this.removeCardFromMyFavourites}
+						handleStarClick={this.handleStarClick}
 					/>
 				</Slide>
 			);
@@ -198,22 +188,23 @@ class App extends React.Component {
 			i += CARDS_PER_COLUMN;
 			index++;
 		}
+		
 		this.setState(prevState => ({
 			growFavouritesSlides : [...prevState.growFavouritesSlides, growFavouritesSlides],
 			totalSlides: index
 		}));
 	}
 	
-	fireToggleFavouritesEvent(data) {
+	fireToggleStarEvent(data) {
 		Liferay.fire(
-			TOGGLE_FAVOURITES_EVENT,
+			FAVOURITES_TOGGLE_STAR_EVENT,
 			{
 				data: data
 			}
 		);
 	}
 	
-	removeCardFromMyFavourites(data) {
+	handleStarClick(data) {
 		
 		if (data) {
 			this.setState({ isLoading: true });
@@ -231,7 +222,7 @@ class App extends React.Component {
 							
 							this.organizeSlides();
 							
-							this.fireToggleFavouritesEvent(data);
+							this.fireToggleStarEvent(data);
 						}
 					)
 					.catch(function(error) {
@@ -249,36 +240,24 @@ class App extends React.Component {
 		}
 	}
 	
-	removeCardDataFromState(data) {
+	toggleStar(data) {
 		if (data) {
 			this.setState({ isLoading: true });
 		
 			setTimeout(() => {
-					let newData = this.state.data.filter(card => card.id !== data.id);
-					
-					this.setState({
-						data: newData,
-						isLoading: false
-					});
+					if(data.star) {
+						this.setState(prevState => ({
+							data: [data].concat(prevState.data),
+							isLoading: false
+						}));
+					} else {
+						this.setState(prevState => ({
+							data: prevState.data.filter(card => card.id !== data.id),
+							isLoading: false
+						}));
+					}
 					
 					this.organizeSlides();
-				
-			}, 500);
-		}
-	}
-	
-	addCardDataToState(data) {
-		if (data) {
-			this.setState({ isLoading: true });
-		
-			setTimeout(() => {
-				
-				this.setState(prevState => ({
-					data: [data].concat(prevState.data),
-					isLoading: false
-				}));
-				
-				this.organizeSlides();
 				
 			}, 500);
 		}

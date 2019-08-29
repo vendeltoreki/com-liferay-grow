@@ -28,7 +28,11 @@ String title = BeanParamUtil.getString(wikiPage, request, "title");
 
 boolean editTitle = ParamUtil.getBoolean(request, "editTitle");
 
-String selectedFormat = BeanParamUtil.getString(wikiPage, request, "format", wikiGroupServiceOverriddenConfiguration.defaultFormat());
+PortalPreferences userPortalPreferences = PortletPreferencesFactoryUtil.getPortalPreferences(themeDisplay.getUserId(), true);
+
+String userFormat = userPortalPreferences.getValue(WikiPage.class.getName(), "format", wikiGroupServiceOverriddenConfiguration.defaultFormat());
+
+String selectedFormat = BeanParamUtil.getString(wikiPage, request, "format", userFormat);
 
 Collection<String> formats = wikiEngineRenderer.getFormats();
 

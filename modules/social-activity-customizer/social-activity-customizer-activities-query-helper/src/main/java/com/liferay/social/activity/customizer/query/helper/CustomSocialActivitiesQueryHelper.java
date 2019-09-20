@@ -41,11 +41,13 @@ public class CustomSocialActivitiesQueryHelper
 		if ((scope == Scope.ALL) && group.isUser() && (_types != null)) {
 			return _customSocialActivitySetLocalService.
 				getUserViewableActivitySets(
-					group.getClassPK(), _types, start, end);
+					group.getClassPK(), _types, _classicPaginationStart,
+					_classicPaginationEnd);
 		}
 		else {
 			return super.getSocialActivitySets(
-				group, layout, scope, start, end);
+				group, layout, scope, _classicPaginationStart,
+				_classicPaginationEnd);
 		}
 	}
 
@@ -60,6 +62,14 @@ public class CustomSocialActivitiesQueryHelper
 		else {
 			return super.getSocialActivitySetsCount(group, layout, scope);
 		}
+	}
+
+	public void setClassicPaginationEnd(int classicPaginationEnd) {
+		_classicPaginationEnd = classicPaginationEnd;
+	}
+
+	public void setClassicPaginationStart(int classicPaginationStart) {
+		_classicPaginationStart = classicPaginationStart;
 	}
 
 	public void setTypes(long[] types) {
@@ -87,6 +97,8 @@ public class CustomSocialActivitiesQueryHelper
 		super.setSocialActivitySetLocalService(socialActivitySetLocalService);
 	}
 
+	private int _classicPaginationEnd;
+	private int _classicPaginationStart;
 	private CustomSocialActivitySetLocalService
 		_customSocialActivitySetLocalService;
 	private long[] _types;

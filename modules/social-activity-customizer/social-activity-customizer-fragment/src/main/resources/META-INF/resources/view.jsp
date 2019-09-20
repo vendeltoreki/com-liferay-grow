@@ -26,13 +26,27 @@ if (scopeGroup.isUser()) {
 
 	customSocialActivitiesQueryHelper.setTypes(null);
 
+	// Social Activities widget uses "Show more" type of pagination, therefore
+	// we need to calculate the start and end values for classic pagination and
+	// make it available for the servide methods.
+
+	int cur = com.liferay.portal.kernel.util.ParamUtil.getInteger(request, "cur", 1);
+	int delta = com.liferay.portal.kernel.util.ParamUtil.getInteger(request, "delta", 10);
+
+	int classicPaginationStart = (cur - 1) * delta;
+	int classicPaginationEnd = classicPaginationStart + delta;
+
+	customSocialActivitiesQueryHelper.setClassicPaginationStart(classicPaginationStart);
+	customSocialActivitiesQueryHelper.setClassicPaginationEnd(classicPaginationEnd);
+
 	socialActivitiesDisplayContext = new DefaultSocialActivitiesDisplayContext(socialActivitiesRequestHelper, customSocialActivitiesQueryHelper);
 
 	String activityType = ParamUtil.getString(request, "activityType");
+	long[] types = null;
+
+	int userActivitiesTotalCount;
 
 	if (!activityType.equals(StringPool.BLANK) && !activityType.equals("ALL")) {
-		long[] types = null;
-
 		switch (activityType) {
 			case "CREATED":
 				types = new long[] {
@@ -57,7 +71,14 @@ if (scopeGroup.isUser()) {
 		}
 
 		customSocialActivitiesQueryHelper.setTypes(types);
+
+		userActivitiesTotalCount = CustomSocialActivitySetLocalServiceUtil.getUserViewableActivitySetsCount(scopeGroup.getClassPK(), types);
 	}
+	else {
+		userActivitiesTotalCount = SocialActivitySetLocalServiceUtil.getUserViewableActivitySetsCount(scopeGroup.getClassPK());
+	}
+
+	request.setAttribute("liferay-social-activities:social-activities:userActivitiesTotalCount", userActivitiesTotalCount);
 }
 %>
 

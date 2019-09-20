@@ -38,6 +38,13 @@ public class SocialActivitySetServiceOverride
 	}
 
 	@Override
+	public List<SocialActivitySet> getUserActivitySets(
+		long userId, int start, int end) {
+
+		return getUserViewableActivitySets(userId, start, end);
+	}
+
+	@Override
 	public List<SocialActivitySet> getUserViewableActivitySets(
 		long userId, int start, int end) {
 
@@ -46,6 +53,14 @@ public class SocialActivitySetServiceOverride
 
 		return _customSocialActivitySetFinder.findByU_C(
 			userId, classNameId, start, end);
+	}
+
+	@Override
+	public int getUserViewableActivitySetsCount(long userId) {
+		long classNameId = _classNameLocalService.getClassNameId(
+			WikiPage.class);
+
+		return _customSocialActivitySetFinder.countByU_C(userId, classNameId);
 	}
 
 	@Reference

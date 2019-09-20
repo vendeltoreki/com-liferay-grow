@@ -18,7 +18,9 @@
 page import="com.liferay.portal.kernel.model.Group" %><%@
 page import="com.liferay.portal.kernel.service.ServiceContext" %><%@
 page import="com.liferay.portal.kernel.service.ServiceContextFactory" %><%@
+page import="com.liferay.social.kernel.service.SocialActivitySetLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.social.activity.customizer.service.CustomSocialActivitySetLocalServiceUtil" %><%@
 page import="com.liferay.social.activity.customizer.query.helper.CustomSocialActivitiesQueryHelper" %><%@
 page import="com.liferay.social.kernel.model.SocialActivityConstants" %><%@
 page import="com.liferay.wiki.social.WikiActivityKeys" %>

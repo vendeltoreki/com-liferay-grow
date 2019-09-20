@@ -89,14 +89,16 @@ if (delta == 0) {
 		}
 
 		String headerName = "x's-activities";
+
+		int totalCount = (Integer)request.getAttribute("liferay-social-activities:social-activities:userActivitiesTotalCount");
 		%>
 
 		<liferay-portlet:renderURL varImpl="iteratorURL">
 			<liferay-portlet:param name="activityType" value="<%= activityType %>" />
 		</liferay-portlet:renderURL>
 
-		<liferay-ui:search-container delta="<%= delta %>" emptyResultsMessage="there-are-no-recent-activities" iteratorURL="<%= iteratorURL %>" total="<%= feedEntries.size() %>">
-			<liferay-ui:search-container-results results="<%= ListUtil.subList(feedEntries, searchContainer.getStart(), searchContainer.getEnd()) %>" />
+		<liferay-ui:search-container delta="<%= delta %>" emptyResultsMessage="there-are-no-recent-activities" iteratorURL="<%= iteratorURL %>" total="<%= totalCount %>">
+			<liferay-ui:search-container-results results="<%= feedEntries %>" />
 
 			<liferay-ui:search-container-row className="FeedEntryHolder" keyProperty="feedEntryText" modelVar="enrty">
 				<liferay-ui:search-container-column-text name="<%= LanguageUtil.format(request, headerName, UserLocalServiceUtil.getUserById(scopeGroup.getClassPK()).getFirstName()) %>" property="feedEntryText" />

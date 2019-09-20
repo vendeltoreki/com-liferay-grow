@@ -76,13 +76,22 @@ public class CustomSocialActivitySetFinderImpl
 
 			Iterator<Long> itr = q.iterate();
 
-			if (itr.hasNext()) {
+			// The SELECT COUNT(*) ... query doesn't work probably because of
+			// Hibernate mapping problems due to subquery. Querying the records
+			// instead to be able to determine the count.
+			/*if (itr.hasNext()) {
 				Long count = itr.next();
 
 				if (count != null) {
 					return count.intValue();
 				}
-			}
+			}*/
+
+			List<SocialActivitySet> list = 
+				(List<SocialActivitySet>)QueryUtil.list(
+					q, getDialect(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+				return list.size();
 		}
 		catch (Exception e) {
 			try {
@@ -127,13 +136,22 @@ public class CustomSocialActivitySetFinderImpl
 
 			Iterator<Long> itr = q.iterate();
 
-			if (itr.hasNext()) {
+			// The SELECT COUNT(*) ... query doesn't work probably because of
+			// Hibernate mapping problems due to subquery. Querying the records
+			// instead to be able to determine the count.
+			/*if (itr.hasNext()) {
 				Long count = itr.next();
 
 				if (count != null) {
 					return count.intValue();
 				}
-			}
+			}*/
+
+			List<SocialActivitySet> list = 
+				(List<SocialActivitySet>)QueryUtil.list(
+					q, getDialect(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+			return list.size();
 		}
 		catch (Exception e) {
 			try {
@@ -178,7 +196,7 @@ public class CustomSocialActivitySetFinderImpl
 			qPos.add(classNameId);
 
 			return (List<SocialActivitySet>)QueryUtil.list(
-				q, getDialect(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+				q, getDialect(), begin, end);
 		}
 		catch (Exception e) {
 			try {
@@ -224,7 +242,7 @@ public class CustomSocialActivitySetFinderImpl
 			qPos.add(StringUtil.merge(types));
 
 			return (List<SocialActivitySet>)QueryUtil.list(
-				q, getDialect(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+				q, getDialect(), begin, end);
 		}
 		catch (Exception e) {
 			try {

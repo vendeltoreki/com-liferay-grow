@@ -64,9 +64,16 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 
 	@Override
 	public Badge addBadge(Badge badge) {
+		return addBadge(badge, true);
+	}
+
+	@Override
+	public Badge addBadge(Badge badge, boolean notify) {
 		badge = super.addBadge(badge);
 
-		_notifySubscribers(badge);
+		if (notify) {
+			_notifySubscribers(badge);
+		}
 
 		return badge;
 	}

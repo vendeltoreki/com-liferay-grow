@@ -15,7 +15,6 @@
 package com.liferay.grow.gamification.service.impl;
 
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
-import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.grow.gamification.badges.notification.BadgeReceivedSubscritpionSender;
 import com.liferay.grow.gamification.badges.notification.constants.BadgeNotificationPortletKeys;
 import com.liferay.grow.gamification.badges.notification.portlet.BadgeNotificationPortlet;
@@ -35,16 +34,19 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserNotificationEventLocalServiceUtil;
 import com.liferay.portal.kernel.settings.LocalizedValuesMap;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.Base64;
+import com.liferay.portal.kernel.util.StreamUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Locale;
 
 import javax.mail.internet.InternetAddress;
+
 
 /**
  * The implementation of the badge local service.
@@ -97,19 +99,44 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(
 			badgeType.getFileEntryId());
 
-		String downloadUrl = DLUtil.getPreviewURL(
-			fileEntry, fileEntry.getFileVersion(), null, "", false, true);
+		InputStream is = null;
+		byte[] imageContent = null;
 
-		String protocol = (Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL)) ? "http" :PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL));
-		String host = (Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_HOST)) ? "localhost:8080" : PropsUtil.get(PropsKeys.WEB_SERVER_HOST));
+		StringBundler sb = new StringBundler(2);
 
-		downloadUrl = protocol + "://" + host + downloadUrl;
+		try {
+			is = fileEntry.getContentStream();
 
+			imageContent = new byte[is.available()];
+
+			is.read(imageContent, 0, is.available());
+			
+			if (fileEntry.getMimeType().toLowerCase().contains("png")) {
+				sb.append("data:image/png;base64,");
+			}
+			else if (fileEntry.getMimeType().toLowerCase().contains("jpg") ||
+					fileEntry.getMimeType().toLowerCase().contains("jpeg")) {
+				sb.append("data:image/jpeg;base64,");
+			}
+			else {
+				sb.append("data:image/png;base64,");
+			}
+			sb.append(Base64.encode(imageContent));
+
+		}
+		catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+		finally {
+			StreamUtil.cleanUp(true, is);
+		}
 		content = StringUtil.replace(
 			content, "${badgeType}", badgeType.getType());
-		content = StringUtil.replace(content, "${bagdeImageLink}", downloadUrl);
+		content = StringUtil.replace(content, "${bagdeImageLink}", sb.toString());
 		content = StringUtil.replace(
 			content, "${colleague}", badge.getUserName());
+		content = StringUtil.replace(
+				content, "${reason}", badge.getDescription());
 
 		mailMessage.setBody(content);
 
@@ -234,7 +261,8 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 			"<td valign=\"top\">Good news! You've just received a ${badgeType} from ${colleague}!</td>" +
 			"</tr><tr align=\"center\"><td valign=\"top\"><img src=\"${bagdeImageLink}\"" +
 			"alt=\"Bagde image\" height=\"300\" width=\"300\"></td></tr><tr align=\"center\">" +
-			"<td valign=\"top\">Congratulations!</td></tr></tbody></table></center></body></html>";
+			"<td valign=\"top\">Congratulations!</td></tr><tr align=\"center\"><td valign=\"top\">"	+
+			"Reason you received this badge for : ${reason}</td></tr></tbody></table></center></body></html>";
 
 	private static final String _BADGE_EMAIL_SENDER_ADDRESS =
 		"admin@liferay.com";

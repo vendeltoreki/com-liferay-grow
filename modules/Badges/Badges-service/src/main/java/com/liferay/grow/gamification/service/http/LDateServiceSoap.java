@@ -65,6 +65,11 @@ import java.rmi.RemoteException;
  */
 @ProviderType
 public class LDateServiceSoap {
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link LDateServiceUtil} to access the l date remote service.
+	*/
 	public static long getDateId(int year, int month, int day)
 		throws RemoteException {
 		try {

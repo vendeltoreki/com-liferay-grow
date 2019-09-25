@@ -184,6 +184,11 @@ public class LDateLocalServiceWrapper implements LDateLocalService,
 		return _lDateLocalService.getActionableDynamicQuery();
 	}
 
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link LDateLocalServiceUtil} to access the l date local service.
+	*/
 	@Override
 	public long getDateId(int year, int month, int day)
 		throws com.liferay.grow.gamification.exception.NoSuchLDateException {

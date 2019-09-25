@@ -54,6 +54,12 @@ public interface BadgeService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link BadgeServiceUtil} to access the badge remote service. Add custom service methods to {@link com.liferay.grow.gamification.service.impl.BadgeServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link BadgeServiceUtil} to access the badge remote service.
+	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Badge> getBadgesOfUser(long userId);
 

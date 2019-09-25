@@ -185,6 +185,11 @@ public class BadgeTypeLocalServiceUtil {
 		return getService().getActionableDynamicQuery();
 	}
 
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link BadgeTypeLocalServiceUtil} to access the badge type local service.
+	*/
 	public static java.util.List<com.liferay.grow.gamification.model.BadgeType> getAvailableBadgeTypes() {
 		return getService().getAvailableBadgeTypes();
 	}

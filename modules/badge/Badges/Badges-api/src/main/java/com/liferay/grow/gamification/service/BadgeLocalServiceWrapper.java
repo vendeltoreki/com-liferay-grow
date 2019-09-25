@@ -44,6 +44,12 @@ public class BadgeLocalServiceWrapper implements BadgeLocalService,
 		return _badgeLocalService.addBadge(badge);
 	}
 
+	@Override
+	public com.liferay.grow.gamification.model.Badge addBadge(
+		com.liferay.grow.gamification.model.Badge badge, boolean notify) {
+		return _badgeLocalService.addBadge(badge, notify);
+	}
+
 	/**
 	* Creates a new badge with the primary key. Does not add the badge to the database.
 	*
@@ -283,6 +289,11 @@ public class BadgeLocalServiceWrapper implements BadgeLocalService,
 		return _badgeLocalService.getBadgesCount();
 	}
 
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link BadgeLocalServiceUtil} to access the badge local service.
+	*/
 	@Override
 	public java.util.List<com.liferay.grow.gamification.model.Badge> getBadgesOfUser(
 		long userId) {

@@ -32,6 +32,11 @@ public class BadgeTypeServiceWrapper implements BadgeTypeService,
 		_badgeTypeService = badgeTypeService;
 	}
 
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link BadgeTypeServiceUtil} to access the badge type remote service.
+	*/
 	@Override
 	public java.util.List<com.liferay.grow.gamification.model.BadgeType> getAvailableBadgeTypes() {
 		return _badgeTypeService.getAvailableBadgeTypes();

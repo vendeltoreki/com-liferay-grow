@@ -42,6 +42,12 @@ public class BadgeTypeServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.grow.gamification.service.impl.BadgeTypeServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link BadgeTypeServiceUtil} to access the badge type remote service.
+	*/
 	public static java.util.List<com.liferay.grow.gamification.model.BadgeType> getAvailableBadgeTypes() {
 		return getService().getAvailableBadgeTypes();
 	}

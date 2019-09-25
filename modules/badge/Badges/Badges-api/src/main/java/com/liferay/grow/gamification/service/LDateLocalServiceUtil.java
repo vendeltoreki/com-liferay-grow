@@ -184,6 +184,11 @@ public class LDateLocalServiceUtil {
 		return getService().getActionableDynamicQuery();
 	}
 
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link LDateLocalServiceUtil} to access the l date local service.
+	*/
 	public static long getDateId(int year, int month, int day)
 		throws com.liferay.grow.gamification.exception.NoSuchLDateException {
 		return getService().getDateId(year, month, day);

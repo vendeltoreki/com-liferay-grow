@@ -54,6 +54,11 @@ public class BadgeLocalServiceUtil {
 		return getService().addBadge(badge);
 	}
 
+	public static com.liferay.grow.gamification.model.Badge addBadge(
+		com.liferay.grow.gamification.model.Badge badge, boolean notify) {
+		return getService().addBadge(badge, notify);
+	}
+
 	/**
 	* Creates a new badge with the primary key. Does not add the badge to the database.
 	*
@@ -279,6 +284,11 @@ public class BadgeLocalServiceUtil {
 		return getService().getBadgesCount();
 	}
 
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link BadgeLocalServiceUtil} to access the badge local service.
+	*/
 	public static java.util.List<com.liferay.grow.gamification.model.Badge> getBadgesOfUser(
 		long userId) {
 		return getService().getBadgesOfUser(userId);

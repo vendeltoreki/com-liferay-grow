@@ -32,6 +32,11 @@ public class LDateServiceWrapper implements LDateService,
 		_lDateService = lDateService;
 	}
 
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link LDateServiceUtil} to access the l date remote service.
+	*/
 	@Override
 	public long getDateId(int year, int month, int day)
 		throws com.liferay.grow.gamification.exception.NoSuchLDateException {

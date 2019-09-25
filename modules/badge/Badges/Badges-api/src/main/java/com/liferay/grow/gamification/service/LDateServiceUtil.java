@@ -42,6 +42,12 @@ public class LDateServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.grow.gamification.service.impl.LDateServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link LDateServiceUtil} to access the l date remote service.
+	*/
 	public static long getDateId(int year, int month, int day)
 		throws com.liferay.grow.gamification.exception.NoSuchLDateException {
 		return getService().getDateId(year, month, day);

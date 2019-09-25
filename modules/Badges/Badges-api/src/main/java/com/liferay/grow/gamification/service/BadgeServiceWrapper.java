@@ -32,6 +32,11 @@ public class BadgeServiceWrapper implements BadgeService,
 		_badgeService = badgeService;
 	}
 
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link BadgeServiceUtil} to access the badge remote service.
+	*/
 	@Override
 	public java.util.List<com.liferay.grow.gamification.model.Badge> getBadgesOfUser(
 		long userId) {

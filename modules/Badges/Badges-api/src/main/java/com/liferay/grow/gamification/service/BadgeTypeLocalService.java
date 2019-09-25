@@ -171,6 +171,11 @@ public interface BadgeTypeLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link BadgeTypeLocalServiceUtil} to access the badge type local service.
+	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<BadgeType> getAvailableBadgeTypes();
 

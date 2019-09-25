@@ -171,6 +171,11 @@ public interface LDateLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link LDateLocalServiceUtil} to access the l date local service.
+	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public long getDateId(int year, int month, int day)
 		throws NoSuchLDateException;

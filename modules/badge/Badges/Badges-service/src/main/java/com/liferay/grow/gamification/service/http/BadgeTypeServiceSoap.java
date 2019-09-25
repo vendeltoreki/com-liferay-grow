@@ -65,6 +65,11 @@ import java.rmi.RemoteException;
  */
 @ProviderType
 public class BadgeTypeServiceSoap {
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link BadgeTypeServiceUtil} to access the badge type remote service.
+	*/
 	public static com.liferay.grow.gamification.model.BadgeTypeSoap[] getAvailableBadgeTypes()
 		throws RemoteException {
 		try {

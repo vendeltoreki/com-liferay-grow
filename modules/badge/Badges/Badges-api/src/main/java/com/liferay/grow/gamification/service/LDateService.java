@@ -52,6 +52,12 @@ public interface LDateService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link LDateServiceUtil} to access the l date remote service. Add custom service methods to {@link com.liferay.grow.gamification.service.impl.LDateServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link LDateServiceUtil} to access the l date remote service.
+	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public long getDateId(int year, int month, int day)
 		throws NoSuchLDateException;

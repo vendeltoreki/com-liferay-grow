@@ -49,7 +49,7 @@ try {
 		badge.setToUserId(rs.getLong("toUser"));
 		badge.setUserName(rs.getString("fromUserFullName"));
 		badge.setUuid(UUID.randomUUID().toString());
-		BadgeLocalServiceUtil.addBadge(badge);
+		BadgeLocalServiceUtil.addBadge(badge, false);
 	}
 }
 catch (Exception e) {

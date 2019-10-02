@@ -17,10 +17,10 @@ ResultSet rs = null;
 Statement stmt = null;
 Connection conn = null;
 
-long companyId = 20099;
-long groupId = 20142;
+long companyId = 20118;
+long groupId = 20147;
 long thankyou = 1;
-long respect = 4;
+long respect = 2;
 
 try {
 	conn = DataAccess.getConnection();

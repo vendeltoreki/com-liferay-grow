@@ -17,16 +17,20 @@ package com.liferay.grow.gamification.service.impl;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.grow.gamification.badges.notification.BadgeReceivedSubscritpionSender;
+import com.liferay.grow.gamification.badges.notification.BadgeWebSocketEndpoint;
 import com.liferay.grow.gamification.badges.notification.constants.BadgeNotificationPortletKeys;
 import com.liferay.grow.gamification.badges.notification.portlet.BadgeNotificationPortlet;
 import com.liferay.grow.gamification.model.Badge;
 import com.liferay.grow.gamification.model.BadgeType;
+import com.liferay.grow.gamification.model.Message;
 import com.liferay.grow.gamification.service.base.BadgeLocalServiceBaseImpl;
 import com.liferay.mail.kernel.model.MailMessage;
 import com.liferay.mail.kernel.service.MailServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserNotificationDeliveryConstants;
 import com.liferay.portal.kernel.model.UserNotificationEvent;
@@ -37,14 +41,22 @@ import com.liferay.portal.kernel.service.UserNotificationEventLocalServiceUtil;
 import com.liferay.portal.kernel.settings.LocalizedValuesMap;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
 
 import javax.mail.internet.InternetAddress;
+import javax.websocket.ClientEndpoint;
+import javax.websocket.ContainerProvider;
+import javax.websocket.DeploymentException;
+import javax.websocket.WebSocketContainer;
 
 
 /**
@@ -61,6 +73,7 @@ import javax.mail.internet.InternetAddress;
  * @see BadgeLocalServiceBaseImpl
  * @see com.liferay.grow.gamification.service.BadgeLocalServiceUtil
  */
+@ClientEndpoint
 public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 
 	@Override
@@ -88,23 +101,42 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		return badgePersistence.findBytoUserId(userId);
 	}
 
-	private MailMessage _getMailMessage(Badge badge) throws PortalException {
-		BadgeType badgeType = badgeTypeLocalService.getBadgeType(
-			badge.getBadgeTypeId());
-		MailMessage mailMessage = new MailMessage();
+	private String _getImageLink(Badge badge) throws PortalException {
 
-		String content = _BADGE_EMAIL_BODY;
+		BadgeType badgeType = badgeTypeLocalService.getBadgeType(badge.getBadgeTypeId());
 
-		FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(
-			badgeType.getFileEntryId());
+		FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(badgeType.getFileEntryId());
 
 		String downloadUrl = DLUtil.getPreviewURL(
 			fileEntry, fileEntry.getFileVersion(), null, "", false, true);
 
 		String protocol = (Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL)) ? "http" :PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL));
-		String host = (Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_HOST)) ? "localhost:8080" : PropsUtil.get(PropsKeys.WEB_SERVER_HOST));
+		String httpPort =  ((Integer.parseInt(PropsUtil.get(PropsKeys.WEB_SERVER_HTTP_PORT)) == -1) ? "8080" : PropsUtil.get(PropsKeys.WEB_SERVER_HTTP_PORT));
+		String httpsPort =  ((Integer.parseInt(PropsUtil.get(PropsKeys.WEB_SERVER_HTTPS_PORT)) == -1) ? "8443" : PropsUtil.get(PropsKeys.WEB_SERVER_HTTPS_PORT));
+		
 
-		downloadUrl = protocol + "://" + host + downloadUrl;
+		String host = (Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_HOST)) ? "localhost" : PropsUtil.get(PropsKeys.WEB_SERVER_HOST));
+
+		StringBundler imageLink = new StringBundler(6);
+		imageLink.append(protocol);
+		imageLink.append("://");
+		imageLink.append(host);
+		imageLink.append(":");
+		imageLink.append(protocol.equals("http") ? httpPort : httpsPort);
+		imageLink.append(downloadUrl);
+
+		return imageLink.toString();
+	}
+
+	private MailMessage _getMailMessage(Badge badge) throws PortalException {
+
+		MailMessage mailMessage = new MailMessage();
+
+		String content = _BADGE_EMAIL_BODY;
+
+		BadgeType badgeType = badgeTypeLocalService.getBadgeType(badge.getBadgeTypeId());
+
+		String downloadUrl = _getImageLink(badge);
 
 		if (downloadUrl.indexOf("t=") > 0) {
 			downloadUrl = downloadUrl.substring(0, downloadUrl.indexOf("t=")-1);
@@ -124,7 +156,45 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 	}
 
 	private void _notifySubscribers(Badge badge) {
+		URI endpointURI = null;
+		try {
+			String protocol = (Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL)) ? "ws" : PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL));
 
+			if (!protocol.startsWith("ws")) {
+				protocol = "wss";
+			}
+
+			String httpPort =  ((Integer.parseInt(PropsUtil.get(PropsKeys.WEB_SERVER_HTTP_PORT)) == -1) ? "8080" : PropsUtil.get(PropsKeys.WEB_SERVER_HTTP_PORT));
+			String httpsPort =  ((Integer.parseInt(PropsUtil.get(PropsKeys.WEB_SERVER_HTTPS_PORT)) == -1) ? "8443" : PropsUtil.get(PropsKeys.WEB_SERVER_HTTPS_PORT));
+			String host = (Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_HOST)) ? "localhost" : PropsUtil.get(PropsKeys.WEB_SERVER_HOST));
+
+			StringBundler endpoint = new StringBundler(6);
+			endpoint.append(protocol);
+			endpoint.append("://");
+			endpoint.append(host);
+			endpoint.append(":");
+			endpoint.append(protocol.equals("ws") ? httpPort : httpsPort);
+			endpoint.append("/o/gamification");
+			_log.info("endpoint:" + endpoint.toString());
+			endpointURI = new URI(endpoint.toString());
+
+		}
+		catch (URISyntaxException urise) {
+			_log.error(urise);
+		}
+
+		WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+		BadgeWebSocketEndpoint endpoint = new BadgeWebSocketEndpoint();
+
+		try {
+			container.connectToServer(endpoint, endpointURI);
+		}
+		catch (DeploymentException de) {
+			_log.error(de);
+		}
+		catch (IOException ioe) {
+			_log.error(ioe);
+		}
 		// so all of this stuff should normally come from some kind of configuration.
 		// As this is just an example, we're using a lot of hard coded values and portal-ext.properties values.
 
@@ -226,12 +296,32 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 			MailServiceUtil.sendEmail(mailMessage);
 		}
 		catch (UnsupportedEncodingException uee) {
-			uee.printStackTrace();
+			_log.error(uee);
 		}
 		catch (PortalException pe) {
-			pe.printStackTrace();
+			_log.error(pe);
+		}
+
+		try {
+			Message message = new Message();
+
+			message.setBadgeType(badgeType);
+			message.setMessageType(Message.BADGE_MESSAGE);
+			message.setDescription(badge.getDescription());
+			message.setUserName(fromUser.getFullName());
+			message.setImageURL(_getImageLink(badge));
+
+			endpoint.sendMessage(message.toString());
+		}
+		catch (IOException ioe) {
+			_log.error(ioe);
+		}
+		catch (PortalException pe) {
+			_log.error(pe);
 		}
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(BadgeLocalServiceImpl.class);
 
 	private static final String _BADGE_EMAIL_BODY = "<center><table style=\"border-radius: 10px;\" bgcolor=\"#ffffff\" \n" + 
 			"    width=\"90%\" cellspacing=\"2\" cellpadding=\"2\" border=\"0\"><tbody><tr align=\"center\">\n" + 

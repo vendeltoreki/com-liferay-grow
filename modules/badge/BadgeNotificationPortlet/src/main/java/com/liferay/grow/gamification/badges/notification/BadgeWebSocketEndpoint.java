@@ -45,34 +45,41 @@ public class BadgeWebSocketEndpoint extends Endpoint {
 		JsonSerializer jsonSerializer = new JsonSerializer();
 
 		String jsonMessage = jsonSerializer.serialize(message);
+		List<Session> toRemove = new ArrayList<>();
 
 		for (Session session : _sessions) {
 			if (session.isOpen()) {
 				session.getBasicRemote().sendText(jsonMessage);
-			}			
-		}
-		for (Session session : _sessions) {
-			if (!session.isOpen()) {
-				_sessions.remove(session);
+			}
+			else {
+				toRemove.add(session);
 			}
 		}
+
+		for (Session session : toRemove) {
+			_sessions.remove(session);
+		}
 	}
+
 	public void sendMessage(String message) throws IOException {
 		Message plainMessage = new JsonParser().parse(message, Message.class);
 
 		JsonSerializer jsonSerializer = new JsonSerializer();
 
 		String jsonMessage = jsonSerializer.serialize(plainMessage);
+		List<Session> toRemove = new ArrayList<>();
 
 		for (Session session : _sessions) {
 			if (session.isOpen()) {
 				session.getBasicRemote().sendText(jsonMessage);
-			}			
-		}
-		for (Session session : _sessions) {
-			if (!session.isOpen()) {
-				_sessions.remove(session);
 			}
+			else {
+				toRemove.add(session);
+			}
+		}
+
+		for (Session session : toRemove) {
+			_sessions.remove(session);
 		}
 	}
 

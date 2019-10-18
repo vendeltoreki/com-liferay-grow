@@ -33,6 +33,7 @@ class GrowFavouritesSlide extends React.Component {
 							articleCreateDate={cardData.createDate}
 							articleTitle={cardData.articleTitle}
 							articleCategory={cardData.articleCategory}
+							userInitials={cardData.userInitials}
 							star={cardData.star}
 							id={cardData.id}
 						/>

@@ -33,8 +33,14 @@ class GrowFavouritesCard extends React.Component {
 				  <div className="autofit-row autofit-padded grow-favourite-card-section">
 					<div className="autofit-col">
 					  <div className="autofit-section">
-						<img className="img-fluid sticker sticker-primary sticker-xl rounded-circle"
-							  src={this.props.articleAuthorAvatar} />
+					  {this.props.articleAuthorAvatar ?
+						(<img
+							alt="Author's thumbnail"
+							className="img-fluid sticker sticker-primary sticker-xl rounded-circle"
+							src={this.props.articleAuthorAvatar}
+						/>) :
+						<div className="img-fluid sticker sticker-primary sticker-xl rounded-circle">{this.props.userInitials || "Grow"}</div>
+						}
 					  </div>
 					</div>
 				  

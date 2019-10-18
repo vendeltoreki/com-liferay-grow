@@ -103,11 +103,24 @@ class App extends React.Component {
 			index++;
 		}
 
-		this.setState(prevState => ({
-			growFavouritesSlides : growFavouritesSlides,
-			totalSlides: index,
-			isLoading: false
-		}));
+		if (this.state.data.length > 6) {
+			this.setState(prevState => ({
+				growFavouritesSlides : growFavouritesSlides,
+				totalSlides: index,
+				isLoading: false,
+				btnBackClasses: 'grow-carousel-buttons grow-favourites-carousel-button-back',
+				btnNextClasses: 'grow-carousel-buttons grow-favourites-carousel-button-next'
+			}));
+		}
+		else {
+			this.setState(prevState => ({
+				growFavouritesSlides : growFavouritesSlides,
+				totalSlides: index,
+				isLoading: false,
+				btnBackClasses: 'grow-carousel-buttons grow-favourites-carousel-button-back hidden',
+				btnNextClasses: 'grow-carousel-buttons grow-favourites-carousel-button-next hidden'
+			}));
+		}
 
 		this.onResize();
 	}

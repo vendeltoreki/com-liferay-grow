@@ -1,3 +1,4 @@
+<%@page import="com.liferay.portal.kernel.dao.orm.QueryUtil"%>
 <%@page import="com.liferay.portal.kernel.service.UserLocalServiceUtil"%>
 <%@ include file="/init.jsp" %>
 <%@ page import="com.liferay.document.library.kernel.util.DLUtil" %>
@@ -47,7 +48,9 @@ if (!themeDisplay.getScopeGroup().isUser()) { %>
 			</div>
 		</div>
 	</div>
-<% } %>
+<% } 
+if (userId != 0) {
+%>
 	<div class="row">
 		<div class="col-sm">
 				<liferay-ui:search-container total="<%= BadgeLocalServiceUtil.getBadgesOfUser(userId).size() %>">
@@ -95,4 +98,57 @@ if (!themeDisplay.getScopeGroup().isUser()) { %>
 			</liferay-ui:search-container>
 		</div>
 	</div>
+<%} else { %>
+<div class="row">
+		<div class="col-sm">
+				<liferay-ui:search-container total="<%= BadgeLocalServiceUtil.getBadgesCount()%>">
+				<liferay-ui:search-container-results
+					results="<%= BadgeLocalServiceUtil.getBadges(QueryUtil.ALL_POS, QueryUtil.ALL_POS)%>" />
+					<liferay-ui:search-container-row className="com.liferay.grow.gamification.model.Badge" modelVar="badge">
+					<%
+					long fileEntryId = 0;
+					String type = "";
+						for (BadgeType badgeType : badgeTypes) {
+							if (badge.getBadgeTypeId() == badgeType.getBadgeTypeId()) {
+								fileEntryId = badgeType.getFileEntryId();
+								type = badgeType.getType();
+								break;
+							}
+						}
+					User badgeReceiver = UserLocalServiceUtil.getUserById(badge.getToUserId());
+					%>
+					<c:out value="${badgeReceiver.getFirstName()}"></c:out>
+						<liferay-ui:search-container-column-text name="Badge">
+							<%
+								FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(fileEntryId);
+								String downloadUrl = DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), themeDisplay, "", false, true);
+							%>
+							<p class="badge-icon">
+								<img class="badge-image" src="<%= downloadUrl %>" />
+							</p>
+						</liferay-ui:search-container-column-text>
+						<liferay-ui:search-container-column-text name="Receiver">
+							<%=badgeReceiver.getFullName()  %>
+						</liferay-ui:search-container-column-text>
+						<liferay-ui:search-container-column-text name="Type">
+							<%= type %>
+						</liferay-ui:search-container-column-text>
+
+						<liferay-ui:search-container-column-text name="Description">
+							<c:out value="${badge.getDescription()}"></c:out>
+						</liferay-ui:search-container-column-text>
+
+						<liferay-ui:search-container-column-text name="Received at">
+							<%= DateUtil.getDate(badge.getCreateDate(), "yyyy-MM-dd", Locale.US) %>
+						</liferay-ui:search-container-column-text>
+
+						<liferay-ui:search-container-column-text name="Given by">
+							<c:out value="${badge.getUserName()}"></c:out>
+						</liferay-ui:search-container-column-text>
+					</liferay-ui:search-container-row>
+				<liferay-ui:search-iterator />
+			</liferay-ui:search-container>
+		</div>
+	</div>
+<% } %>
 </div>

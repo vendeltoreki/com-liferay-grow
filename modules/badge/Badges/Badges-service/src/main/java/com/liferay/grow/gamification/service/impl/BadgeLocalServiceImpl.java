@@ -101,6 +101,10 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		return badgePersistence.findBytoUserId(userId);
 	}
 
+	public List<Badge> getBadgesOfUser(long userId, int start, int end) {
+		return badgePersistence.findBytoUserId(userId, start, end);
+	}
+
 	private String _getImageLink(Badge badge) throws PortalException {
 
 		BadgeType badgeType = badgeTypeLocalService.getBadgeType(badge.getBadgeTypeId());

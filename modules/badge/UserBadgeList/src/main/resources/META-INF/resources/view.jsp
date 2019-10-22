@@ -18,17 +18,23 @@ long userId = 0;
 if (request.getAttribute(UserBadgeListPortletKeys.BADGE_USER_ID) != null) {
 	userId = (long)request.getAttribute(UserBadgeListPortletKeys.BADGE_USER_ID);
 }
+else if (request.getParameter("userId") != null) {
+	userId = Long.parseLong(request.getParameter("userId"));
+}
 List<BadgeType> badgeTypes = (List<BadgeType>)request.getAttribute(UserBadgeListPortletKeys.BADGE_TYPES);
 List<User> users = (List<User>)request.getAttribute(UserBadgeListPortletKeys.USER_LIST);
 User selectedUser = null;
-
+System.out.println("userId:" + userId);
 if (userId > 0) {
 	selectedUser = UserLocalServiceUtil.fetchUser(userId);
 }
 if (!themeDisplay.getScopeGroup().isUser()) { %>
 <portlet:actionURL name="selectUser" var="selectUserURL">
-
+	<%if(userId > 0) { %>
+		<portlet:param name="userId" value="<%= String.valueOf(userId) %>" />
+	<% } %>
 </portlet:actionURL>
+
 <div class="container">
 	<div class="row">
 		<div class="col-sm">
@@ -51,11 +57,14 @@ if (!themeDisplay.getScopeGroup().isUser()) { %>
 <% } 
 if (userId != 0) {
 %>
+<liferay-portlet:renderURL varImpl="iteratorURL2">
+	<liferay-portlet:param name="userId" value="<%= String.valueOf(userId) %>"/>
+</liferay-portlet:renderURL>
 	<div class="row">
 		<div class="col-sm">
-				<liferay-ui:search-container total="<%= BadgeLocalServiceUtil.getBadgesOfUser(userId).size() %>">
+				<liferay-ui:search-container deltaConfigurable="<%= true %>" total="<%= BadgeLocalServiceUtil.getBadgesOfUser(userId).size() %>" iteratorURL="<%= iteratorURL2 %>">
 				<liferay-ui:search-container-results	
-					results="<%= BadgeLocalServiceUtil.getBadgesOfUser(userId) %>" />
+					results="<%= BadgeLocalServiceUtil.getBadgesOfUser(userId, searchContainer.getStart(), searchContainer.getEnd()) %>" />
 					<liferay-ui:search-container-row className="com.liferay.grow.gamification.model.Badge" modelVar="badge">
 					<%
 					long fileEntryId = 0;
@@ -99,11 +108,13 @@ if (userId != 0) {
 		</div>
 	</div>
 <%} else { %>
+<liferay-portlet:renderURL varImpl="iteratorURL" />
 <div class="row">
 		<div class="col-sm">
-				<liferay-ui:search-container total="<%= BadgeLocalServiceUtil.getBadgesCount()%>">
+		
+				<liferay-ui:search-container deltaConfigurable="<%= true %>" total="<%= BadgeLocalServiceUtil.getBadgesCount()%>" iteratorURL="<%= iteratorURL %>">
 				<liferay-ui:search-container-results
-					results="<%= BadgeLocalServiceUtil.getBadges(QueryUtil.ALL_POS, QueryUtil.ALL_POS)%>" />
+					results="<%= BadgeLocalServiceUtil.getBadges(searchContainer.getStart(), searchContainer.getEnd())%>" />
 					<liferay-ui:search-container-row className="com.liferay.grow.gamification.model.Badge" modelVar="badge">
 					<%
 					long fileEntryId = 0;

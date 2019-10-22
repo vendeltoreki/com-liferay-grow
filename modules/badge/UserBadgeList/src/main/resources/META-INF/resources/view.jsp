@@ -139,7 +139,7 @@ if (userId != 0) {
 							</p>
 						</liferay-ui:search-container-column-text>
 						<liferay-ui:search-container-column-text name="Receiver">
-							<%=badgeReceiver.getFullName()  %>
+							<a class="profile-link" href="/web/<%=badgeReceiver.getScreenName()%>"><%=badgeReceiver.getFullName()  %></a>
 						</liferay-ui:search-container-column-text>
 						<liferay-ui:search-container-column-text name="Type">
 							<%= type %>

@@ -280,11 +280,12 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 
 		InternetAddress recipient = null;
 		InternetAddress sender = null;
+		User user = null;
 
 		try {
 			MailMessage mailMessage = _getMailMessage(badge);
 
-			User user = userLocalService.getUserById(badge.getToUserId());
+			user = userLocalService.getUserById(badge.getToUserId());
 
 			sender = new InternetAddress(
 				_BADGE_EMAIL_SENDER_ADDRESS, _BADGE_EMAIL_SENDER_PERSONAL);
@@ -309,12 +310,15 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		try {
 			Message message = new Message();
 
+			if (user == null) {
+				user = userLocalService.getUserById(badge.getToUserId());
+			}
 			message.setBadgeType(badgeType);
 			message.setMessageType(Message.BADGE_MESSAGE);
 			message.setDescription(badge.getDescription());
 			message.setUserName(fromUser.getFullName());
 			message.setImageURL(_getImageLink(badge));
-
+			message.setReceiverName(user.getFullName());
 			endpoint.sendMessage(message.toString());
 		}
 		catch (IOException ioe) {

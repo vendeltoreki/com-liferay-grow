@@ -1,7 +1,7 @@
 package com.liferay.grow.gamification.model;
 
 import jodd.json.JsonSerializer;
-import jodd.util.Base64;
+
 
 public class Message {
 
@@ -49,6 +49,14 @@ public class Message {
 		return jsonSerializer.serialize(this);
 	}
 
+	public String getReceiverName() {
+		return receiverName;
+	}
+
+	public void setReceiverName(String receiverName) {
+		this.receiverName = receiverName;
+	}
+
 	public static final int SYSTEM_MESSAGE = 0;
 	public static final int BADGE_MESSAGE = 1;
 
@@ -57,5 +65,6 @@ public class Message {
 	private String userName;
 	private String description;
 	private String imageURL;
+	private String receiverName;
 
 }

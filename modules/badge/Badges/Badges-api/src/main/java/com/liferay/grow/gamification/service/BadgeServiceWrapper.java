@@ -43,6 +43,12 @@ public class BadgeServiceWrapper implements BadgeService,
 		return _badgeService.getBadgesOfUser(userId);
 	}
 
+	@Override
+	public java.util.List<com.liferay.grow.gamification.model.Badge> getBadgesOfUser(
+		long userId, int start, int end) {
+		return _badgeService.getBadgesOfUser(userId, start, end);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*

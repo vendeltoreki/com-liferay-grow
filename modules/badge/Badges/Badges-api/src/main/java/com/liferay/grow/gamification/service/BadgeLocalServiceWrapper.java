@@ -301,6 +301,12 @@ public class BadgeLocalServiceWrapper implements BadgeLocalService,
 	}
 
 	@Override
+	public java.util.List<com.liferay.grow.gamification.model.Badge> getBadgesOfUser(
+		long userId, int start, int end) {
+		return _badgeLocalService.getBadgesOfUser(userId, start, end);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		return _badgeLocalService.getIndexableActionableDynamicQuery();
 	}

@@ -81,8 +81,38 @@ public class BadgeServiceHttp {
 		}
 	}
 
+	public static java.util.List<com.liferay.grow.gamification.model.Badge> getBadgesOfUser(
+		HttpPrincipal httpPrincipal, long userId, int start, int end) {
+		try {
+			MethodKey methodKey = new MethodKey(BadgeServiceUtil.class,
+					"getBadgesOfUser", _getBadgesOfUserParameterTypes1);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey, userId,
+					start, end);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return (java.util.List<com.liferay.grow.gamification.model.Badge>)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(BadgeServiceHttp.class);
 	private static final Class<?>[] _getBadgesOfUserParameterTypes0 = new Class[] {
 			long.class
+		};
+	private static final Class<?>[] _getBadgesOfUserParameterTypes1 = new Class[] {
+			long.class, int.class, int.class
 		};
 }

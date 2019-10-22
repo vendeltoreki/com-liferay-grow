@@ -259,6 +259,9 @@ public interface BadgeLocalService extends BaseLocalService,
 	public List<Badge> getBadgesOfUser(long userId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Badge> getBadgesOfUser(long userId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
 
 	/**

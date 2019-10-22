@@ -294,6 +294,11 @@ public class BadgeLocalServiceUtil {
 		return getService().getBadgesOfUser(userId);
 	}
 
+	public static java.util.List<com.liferay.grow.gamification.model.Badge> getBadgesOfUser(
+		long userId, int start, int end) {
+		return getService().getBadgesOfUser(userId, start, end);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		return getService().getIndexableActionableDynamicQuery();
 	}

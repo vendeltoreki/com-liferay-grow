@@ -53,6 +53,11 @@ public class BadgeServiceUtil {
 		return getService().getBadgesOfUser(userId);
 	}
 
+	public static java.util.List<com.liferay.grow.gamification.model.Badge> getBadgesOfUser(
+		long userId, int start, int end) {
+		return getService().getBadgesOfUser(userId, start, end);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*

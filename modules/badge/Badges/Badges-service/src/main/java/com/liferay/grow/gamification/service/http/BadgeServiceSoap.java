@@ -85,5 +85,20 @@ public class BadgeServiceSoap {
 		}
 	}
 
+	public static com.liferay.grow.gamification.model.BadgeSoap[] getBadgesOfUser(
+		long userId, int start, int end) throws RemoteException {
+		try {
+			java.util.List<com.liferay.grow.gamification.model.Badge> returnValue =
+				BadgeServiceUtil.getBadgesOfUser(userId, start, end);
+
+			return com.liferay.grow.gamification.model.BadgeSoap.toSoapModels(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(BadgeServiceSoap.class);
 }

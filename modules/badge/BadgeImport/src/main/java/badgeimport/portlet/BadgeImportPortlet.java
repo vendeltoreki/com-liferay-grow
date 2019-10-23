@@ -86,6 +86,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 		long companyId = CompanyThreadLocal.getCompanyId();
 
 		User fromUser = themeDisplay.getUser();
+
 		long fromUserId = fromUser.getUserId();
 		String fromUserName = fromUser.getFullName();
 
@@ -147,9 +148,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 					badge.setGroupId(user.getGroupId());
 					badge.setToUserId(user.getUserId());
 					badge.setUserName(fromUserName);
-					badge.setUuid(
-						UUID.randomUUID(
-						).toString());
+					badge.setUuid(String.valueOf(UUID.randomUUID()));
 
 					BadgeLocalServiceUtil.addBadge(badge, false);
 				}

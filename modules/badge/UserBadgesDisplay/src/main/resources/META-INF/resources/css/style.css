@@ -32,3 +32,15 @@ width: 0;
 #portlet_userbadgesdisplay > div > div > div > div.container > div.row > div.col-sm-1 {
 	max-width: 100%;
 }
+.row .custom {
+	height: 48px;
+}
+
+.modal-dialog {
+	position: unset;
+	max-width: 50% !important;
+}
+
+div.flex {
+	display: flex;
+}

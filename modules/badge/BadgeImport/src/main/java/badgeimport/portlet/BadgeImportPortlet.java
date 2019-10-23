@@ -18,13 +18,16 @@ import badgeimport.constants.BadgeImportPortletKeys;
 
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.grow.gamification.model.Badge;
+import com.liferay.grow.gamification.model.BadgeType;
 import com.liferay.grow.gamification.service.BadgeLocalServiceUtil;
+import com.liferay.grow.gamification.service.BadgeTypeLocalServiceUtil;
 import com.liferay.grow.gamification.service.LDateLocalServiceUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -36,6 +39,9 @@ import java.io.InputStreamReader;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.portlet.ActionRequest;
@@ -72,6 +78,33 @@ public class BadgeImportPortlet extends MVCPortlet {
 
 		_importFromCSV("Loyalty_Badge_input.csv", themeDisplay);
 		_importFromCSV("1st_grow_article_badge_input.csv", themeDisplay);
+	}
+
+	private Map<Integer, Integer> _getLoyaltyBadgeTypeMap() {
+		HashMap<Integer, Integer> loyaltyBadgeTypeMap = new HashMap<>();
+
+		List<BadgeType> badgeTypes =
+			BadgeTypeLocalServiceUtil.getAvailableBadgeTypes();
+
+		for (BadgeType badgeType : badgeTypes) {
+			try {
+				String title = badgeType.getType();
+
+				if (!title.contains("Loyalty")) {
+					continue;
+				}
+
+				Integer year = GetterUtil.getInteger(title.charAt(0));
+				Integer badgeTypeId = GetterUtil.getInteger(
+					badgeType.getBadgeTypeId());
+
+				loyaltyBadgeTypeMap.put(year, badgeTypeId);
+			}
+			catch (Exception e) {
+			}
+		}
+
+		return loyaltyBadgeTypeMap;
 	}
 
 	private InputStream _getStream(String fileName) throws Exception {

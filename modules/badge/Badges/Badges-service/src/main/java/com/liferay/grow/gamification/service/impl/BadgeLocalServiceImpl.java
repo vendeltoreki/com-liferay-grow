@@ -114,19 +114,8 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		String downloadUrl = DLUtil.getPreviewURL(
 			fileEntry, fileEntry.getFileVersion(), null, "", false, true);
 
-		String protocol = (Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL)) ? "http" :PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL));
-		String httpPort =  ((Integer.parseInt(PropsUtil.get(PropsKeys.WEB_SERVER_HTTP_PORT)) == -1) ? "8080" : PropsUtil.get(PropsKeys.WEB_SERVER_HTTP_PORT));
-		String httpsPort =  ((Integer.parseInt(PropsUtil.get(PropsKeys.WEB_SERVER_HTTPS_PORT)) == -1) ? "8443" : PropsUtil.get(PropsKeys.WEB_SERVER_HTTPS_PORT));
-		
-
-		String host = (Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_HOST)) ? "localhost" : PropsUtil.get(PropsKeys.WEB_SERVER_HOST));
-
-		StringBundler imageLink = new StringBundler(6);
-		imageLink.append(protocol);
-		imageLink.append("://");
-		imageLink.append(host);
-		imageLink.append(":");
-		imageLink.append(protocol.equals("http") ? httpPort : httpsPort);
+		StringBundler imageLink = new StringBundler(2);
+		imageLink.append("https://grow.liferay.com");
 		imageLink.append(downloadUrl);
 
 		return imageLink.toString();

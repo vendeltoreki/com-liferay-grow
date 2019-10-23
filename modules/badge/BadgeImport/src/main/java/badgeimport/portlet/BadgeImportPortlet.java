@@ -76,8 +76,8 @@ public class BadgeImportPortlet extends MVCPortlet {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		_importFromCSV("Loyalty_Badge_input.csv", themeDisplay);
-		_importFromCSV("1st_grow_article_badge_input.csv", themeDisplay);
+		_importFromCSV(
+			"Loyalty_Badge_input.csv", _getLoyaltyBadgeTypeMap(), themeDisplay);
 	}
 
 	private Map<Integer, Integer> _getLoyaltyBadgeTypeMap() {
@@ -113,8 +113,9 @@ public class BadgeImportPortlet extends MVCPortlet {
 		return clazz.getResourceAsStream("dependencies/" + fileName);
 	}
 
-	private void _importFromCSV(String fileName, ThemeDisplay themeDisplay)
-		throws Exception {
+	private void _importFromCSV(
+		String fileName, Map<Integer, Integer> badgeTypeMap,
+		ThemeDisplay themeDisplay) throws Exception {
 
 		long companyId = CompanyThreadLocal.getCompanyId();
 
@@ -133,7 +134,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 			cal.get(Calendar.DAY_OF_MONTH));
 
 		String userEmailAddress = StringPool.BLANK;
-		String description = StringPool.BLANK;
+		String loyalty = StringPool.BLANK;
 
 		InputStream inputStream = null;
 		BufferedReader bufferedReader = null;
@@ -162,7 +163,13 @@ public class BadgeImportPortlet extends MVCPortlet {
 					}
 
 					userEmailAddress = fields[0];
-					description = fields[1];
+					loyalty = fields[1];
+
+					int year = loyalty.charAt(0);
+
+					String description =
+						("You've been a member of the Liferay Family for more" +
+							"than " + year + " years!");
 
 					user = UserLocalServiceUtil.getUserByEmailAddress(
 						companyId, userEmailAddress);
@@ -170,11 +177,13 @@ public class BadgeImportPortlet extends MVCPortlet {
 					long badgeId = CounterLocalServiceUtil.increment(
 						Badge.class.getName());
 
+					long badgeTypeId = badgeTypeMap.get(year);
+
 					Badge badge = BadgeLocalServiceUtil.createBadge(badgeId);
 
 					badge.setUserId(fromUserId);
 					badge.setAssignedDateId(dateId);
-					badge.setBadgeTypeId(_LOYALTY);
+					badge.setBadgeTypeId(badgeTypeId);
 					badge.setCompanyId(companyId);
 					badge.setCreateDate(now);
 					badge.setDescription(description);
@@ -210,7 +219,5 @@ public class BadgeImportPortlet extends MVCPortlet {
 			}
 		}
 	}
-
-	private static final int _LOYALTY = 3;
 
 }

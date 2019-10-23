@@ -249,6 +249,27 @@ public interface BadgeTypeModel extends BaseModel<BadgeType>, GroupedModel,
 	 */
 	public void setFileEntryId(long fileEntryId);
 
+	/**
+	 * Returns the system of this badge type.
+	 *
+	 * @return the system of this badge type
+	 */
+	public boolean getSystem();
+
+	/**
+	 * Returns <code>true</code> if this badge type is system.
+	 *
+	 * @return <code>true</code> if this badge type is system; <code>false</code> otherwise
+	 */
+	public boolean isSystem();
+
+	/**
+	 * Sets whether this badge type is system.
+	 *
+	 * @param system the system of this badge type
+	 */
+	public void setSystem(boolean system);
+
 	@Override
 	public boolean isNew();
 

@@ -60,6 +60,7 @@ page import="com.liferay.portal.kernel.util.DateUtil" %>
 								Forever
 							</c:if>
 						</liferay-ui:search-container-column-text>
+						<liferay-ui:search-container-column-text property="system" />
 					</liferay-ui:search-container-row>
 				<liferay-ui:search-iterator />
 			</liferay-ui:search-container>
@@ -102,7 +103,11 @@ page import="com.liferay.portal.kernel.util.DateUtil" %>
 							<div class="form-group">
 								<aui:input class="form-control" name="availableTo" type="date" value="" />
 							</div>
-	
+
+							<div class="form-group">
+								<aui:input class="form-control" name="system" type="checkbox" />
+							</div>
+
 							<div class="form-group">
 								<label for="fileEntry">Upload a transparent PNG file with 200x200 pixel size.</label>
 								<input class="form-control" name="fileEntry" required="required" type="file" value="" />

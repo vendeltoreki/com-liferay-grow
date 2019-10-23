@@ -251,6 +251,10 @@ public class BadgeTypeLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static java.util.List<com.liferay.grow.gamification.model.BadgeType> getUserBadgeTypes() {
+		return getService().getUserBadgeTypes();
+	}
+
 	/**
 	* Updates the badge type in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*

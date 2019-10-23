@@ -62,6 +62,8 @@ public class BadgeTypeEditorPortlet extends MVCPortlet {
 
 		String type = actionRequest.getParameter(
 			BadgeTypeEditorPortletKeys.TYPE);
+		String system = actionRequest.getParameter(
+				BadgeTypeEditorPortletKeys.SYSTEM);
 		String availableFrom = actionRequest.getParameter(
 			BadgeTypeEditorPortletKeys.AVAILABLE_FROM);
 		String availableTo = actionRequest.getParameter(
@@ -87,6 +89,7 @@ public class BadgeTypeEditorPortlet extends MVCPortlet {
 				badgeType.setAssignableTo(_parseDate(availableTo));
 			}
 
+			badgeType.setSystem(Boolean.parseBoolean(system));
 			badgeType.setCompanyId(user.getCompanyId());
 			badgeType.setCreateDate(new Date());
 

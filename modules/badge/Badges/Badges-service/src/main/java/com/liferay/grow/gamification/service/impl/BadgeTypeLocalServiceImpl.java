@@ -48,8 +48,8 @@ public class BadgeTypeLocalServiceImpl extends BadgeTypeLocalServiceBaseImpl {
 		Date now = new Date();
 
 		for (BadgeType badgeType : allBadgeTypes) {
-			if ((badgeType.getAssignableTo() == null) ||
-				now.before(badgeType.getAssignableTo())) {
+			if (!badgeType.isSystem() && ((badgeType.getAssignableTo() == null) ||
+				now.before(badgeType.getAssignableTo()))) {
 
 				availableBadgeTypes.add(badgeType);
 			}
@@ -58,4 +58,17 @@ public class BadgeTypeLocalServiceImpl extends BadgeTypeLocalServiceBaseImpl {
 		return availableBadgeTypes;
 	}
 
+	public List<BadgeType> getUserBadgeTypes() {
+		List<BadgeType> allBadgeTypes = badgeTypePersistence.findAll();
+		List<BadgeType> userBadgeTypes = new ArrayList<>();
+
+		for (BadgeType badgeType : allBadgeTypes) {
+			if (!badgeType.isSystem()) {
+
+				userBadgeTypes.add(badgeType);
+			}
+		}
+
+		return userBadgeTypes;
+	}
 }

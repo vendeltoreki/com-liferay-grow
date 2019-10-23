@@ -28,6 +28,7 @@
 		<field name="assignableFrom" type="Date" />
 		<field name="assignableTo" type="Date" />
 		<field name="fileEntryId" type="long" />
+		<field name="system" type="boolean" />
 	</model>
 	<model name="com.liferay.grow.gamification.model.LDate">
 		<field name="dateId" type="long" />

@@ -35,6 +35,7 @@
 		<property name="assignableFrom" type="org.hibernate.type.TimestampType" />
 		<property name="assignableTo" type="org.hibernate.type.TimestampType" />
 		<property name="fileEntryId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="system" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 	</class>
 	<class name="com.liferay.grow.gamification.model.impl.LDateImpl" table="gamification_LDate">
 		<id name="dateId" type="long">

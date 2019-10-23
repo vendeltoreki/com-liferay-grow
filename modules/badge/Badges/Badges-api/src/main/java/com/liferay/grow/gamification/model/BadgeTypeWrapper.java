@@ -68,6 +68,7 @@ public class BadgeTypeWrapper implements BadgeType, ModelWrapper<BadgeType> {
 		attributes.put("assignableFrom", getAssignableFrom());
 		attributes.put("assignableTo", getAssignableTo());
 		attributes.put("fileEntryId", getFileEntryId());
+		attributes.put("system", isSystem());
 
 		return attributes;
 	}
@@ -138,6 +139,12 @@ public class BadgeTypeWrapper implements BadgeType, ModelWrapper<BadgeType> {
 
 		if (fileEntryId != null) {
 			setFileEntryId(fileEntryId);
+		}
+
+		Boolean system = (Boolean)attributes.get("system");
+
+		if (system != null) {
+			setSystem(system);
 		}
 	}
 
@@ -252,6 +259,16 @@ public class BadgeTypeWrapper implements BadgeType, ModelWrapper<BadgeType> {
 	}
 
 	/**
+	* Returns the system of this badge type.
+	*
+	* @return the system of this badge type
+	*/
+	@Override
+	public boolean getSystem() {
+		return _badgeType.getSystem();
+	}
+
+	/**
 	* Returns the type of this badge type.
 	*
 	* @return the type of this badge type
@@ -309,6 +326,16 @@ public class BadgeTypeWrapper implements BadgeType, ModelWrapper<BadgeType> {
 	@Override
 	public boolean isNew() {
 		return _badgeType.isNew();
+	}
+
+	/**
+	* Returns <code>true</code> if this badge type is system.
+	*
+	* @return <code>true</code> if this badge type is system; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isSystem() {
+		return _badgeType.isSystem();
 	}
 
 	@Override
@@ -435,6 +462,16 @@ public class BadgeTypeWrapper implements BadgeType, ModelWrapper<BadgeType> {
 	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_badgeType.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	/**
+	* Sets whether this badge type is system.
+	*
+	* @param system the system of this badge type
+	*/
+	@Override
+	public void setSystem(boolean system) {
+		_badgeType.setSystem(system);
 	}
 
 	/**

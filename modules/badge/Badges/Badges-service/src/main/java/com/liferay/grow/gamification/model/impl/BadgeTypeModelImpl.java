@@ -80,7 +80,8 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 			{ "type_", Types.VARCHAR },
 			{ "assignableFrom", Types.TIMESTAMP },
 			{ "assignableTo", Types.TIMESTAMP },
-			{ "fileEntryId", Types.BIGINT }
+			{ "fileEntryId", Types.BIGINT },
+			{ "system", Types.BOOLEAN }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -96,9 +97,10 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		TABLE_COLUMNS_MAP.put("assignableFrom", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("assignableTo", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("fileEntryId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("system", Types.BOOLEAN);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table gamification_BadgeType (badgeTypeId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,type_ VARCHAR(75) null,assignableFrom DATE null,assignableTo DATE null,fileEntryId LONG)";
+	public static final String TABLE_SQL_CREATE = "create table gamification_BadgeType (badgeTypeId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,type_ VARCHAR(75) null,assignableFrom DATE null,assignableTo DATE null,fileEntryId LONG,system BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table gamification_BadgeType";
 	public static final String ORDER_BY_JPQL = " ORDER BY badgeType.badgeTypeId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY gamification_BadgeType.badgeTypeId ASC";
@@ -142,6 +144,7 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		model.setAssignableFrom(soapModel.getAssignableFrom());
 		model.setAssignableTo(soapModel.getAssignableTo());
 		model.setFileEntryId(soapModel.getFileEntryId());
+		model.setSystem(soapModel.isSystem());
 
 		return model;
 	}
@@ -217,6 +220,7 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		attributes.put("assignableFrom", getAssignableFrom());
 		attributes.put("assignableTo", getAssignableTo());
 		attributes.put("fileEntryId", getFileEntryId());
+		attributes.put("system", isSystem());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -290,6 +294,12 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 
 		if (fileEntryId != null) {
 			setFileEntryId(fileEntryId);
+		}
+
+		Boolean system = (Boolean)attributes.get("system");
+
+		if (system != null) {
+			setSystem(system);
 		}
 	}
 
@@ -478,6 +488,23 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		_fileEntryId = fileEntryId;
 	}
 
+	@JSON
+	@Override
+	public boolean getSystem() {
+		return _system;
+	}
+
+	@JSON
+	@Override
+	public boolean isSystem() {
+		return _system;
+	}
+
+	@Override
+	public void setSystem(boolean system) {
+		_system = system;
+	}
+
 	public long getColumnBitmask() {
 		return _columnBitmask;
 	}
@@ -520,6 +547,7 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		badgeTypeImpl.setAssignableFrom(getAssignableFrom());
 		badgeTypeImpl.setAssignableTo(getAssignableTo());
 		badgeTypeImpl.setFileEntryId(getFileEntryId());
+		badgeTypeImpl.setSystem(isSystem());
 
 		badgeTypeImpl.resetOriginalValues();
 
@@ -661,12 +689,14 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 
 		badgeTypeCacheModel.fileEntryId = getFileEntryId();
 
+		badgeTypeCacheModel.system = isSystem();
+
 		return badgeTypeCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(25);
 
 		sb.append("{badgeTypeId=");
 		sb.append(getBadgeTypeId());
@@ -690,6 +720,8 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		sb.append(getAssignableTo());
 		sb.append(", fileEntryId=");
 		sb.append(getFileEntryId());
+		sb.append(", system=");
+		sb.append(isSystem());
 		sb.append("}");
 
 		return sb.toString();
@@ -697,7 +729,7 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(37);
+		StringBundler sb = new StringBundler(40);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.grow.gamification.model.BadgeType");
@@ -747,6 +779,10 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 			"<column><column-name>fileEntryId</column-name><column-value><![CDATA[");
 		sb.append(getFileEntryId());
 		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>system</column-name><column-value><![CDATA[");
+		sb.append(isSystem());
+		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -773,6 +809,7 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 	private Date _assignableTo;
 	private Date _originalAssignableTo;
 	private long _fileEntryId;
+	private boolean _system;
 	private long _columnBitmask;
 	private BadgeType _escapedModel;
 }

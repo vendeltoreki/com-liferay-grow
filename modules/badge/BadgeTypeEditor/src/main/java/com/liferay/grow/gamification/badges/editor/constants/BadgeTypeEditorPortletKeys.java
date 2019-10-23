@@ -15,6 +15,8 @@ public class BadgeTypeEditorPortletKeys {
 
 	public static final String FOLDER_DESCRIPTION = "Folder for Badge icons";
 
+	public static final String SYSTEM = "system";
+
 	public static final String TYPE = "type";
 
 	public static final String BadgeTypeEditor = "badgetypeeditor";

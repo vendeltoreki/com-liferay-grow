@@ -226,6 +226,9 @@ public interface BadgeTypeLocalService extends BaseLocalService,
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<BadgeType> getUserBadgeTypes();
+
 	/**
 	* Updates the badge type in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*

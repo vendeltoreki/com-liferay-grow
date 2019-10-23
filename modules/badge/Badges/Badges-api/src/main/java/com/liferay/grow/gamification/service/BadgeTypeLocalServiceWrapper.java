@@ -261,6 +261,11 @@ public class BadgeTypeLocalServiceWrapper implements BadgeTypeLocalService,
 		return _badgeTypeLocalService.getPersistedModel(primaryKeyObj);
 	}
 
+	@Override
+	public java.util.List<com.liferay.grow.gamification.model.BadgeType> getUserBadgeTypes() {
+		return _badgeTypeLocalService.getUserBadgeTypes();
+	}
+
 	/**
 	* Updates the badge type in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*

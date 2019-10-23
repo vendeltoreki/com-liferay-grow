@@ -114,8 +114,9 @@ public class BadgeImportPortlet extends MVCPortlet {
 	}
 
 	private void _importFromCSV(
-		String fileName, Map<Integer, Integer> badgeTypeMap,
-		ThemeDisplay themeDisplay) throws Exception {
+			String fileName, Map<Integer, Integer> badgeTypeMap,
+			ThemeDisplay themeDisplay)
+		throws Exception {
 
 		long companyId = CompanyThreadLocal.getCompanyId();
 
@@ -168,8 +169,8 @@ public class BadgeImportPortlet extends MVCPortlet {
 					int year = loyalty.charAt(0);
 
 					String description =
-						("You've been a member of the Liferay Family for more" +
-							"than " + year + " years!");
+						"You have been a member of the Liferay Family for " +
+							"more than " + year + " years!";
 
 					user = UserLocalServiceUtil.getUserByEmailAddress(
 						companyId, userEmailAddress);

@@ -77,7 +77,7 @@ public class UserBadgeListPortlet extends MVCPortlet {
 			(OrderByComparator)OrderByComparatorFactoryUtil.create("BadgeType", "type", true);
 
 		List<BadgeType> badgeTypes = new ArrayList(
-			_badgeTypeLocalService.getAvailableBadgeTypes());
+				_badgeTypeLocalService.getBadgeTypes(QueryUtil.ALL_POS, QueryUtil.ALL_POS));
 
 		Collections.sort(badgeTypes, badgeTypeComparator);
 

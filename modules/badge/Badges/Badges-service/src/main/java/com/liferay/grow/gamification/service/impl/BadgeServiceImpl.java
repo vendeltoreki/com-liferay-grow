@@ -47,4 +47,5 @@ public class BadgeServiceImpl extends BadgeServiceBaseImpl {
 	public List<Badge> getBadgesOfUser(long userId, int start, int end) {
 		return badgeLocalService.getBadgesOfUser(userId, start, end);
 	}
+
 }

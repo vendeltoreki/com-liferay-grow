@@ -92,7 +92,7 @@
 		<column name="assignableFrom" type="Date"></column>
 		<column name="assignableTo" type="Date"></column>
 		<column name="fileEntryId" type="long" />
-		<column name="system" type="boolean"/>
+		<column name="system" type="boolean" />
 		<finder name="availableTo" return-type="Collection">
 			<finder-column name="assignableTo" />
 		</finder>

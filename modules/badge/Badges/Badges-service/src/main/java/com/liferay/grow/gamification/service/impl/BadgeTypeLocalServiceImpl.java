@@ -42,14 +42,19 @@ public class BadgeTypeLocalServiceImpl extends BadgeTypeLocalServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.liferay.grow.gamification.service.BadgeTypeLocalServiceUtil} to access the badge type local service.
 	 */
+	public List<BadgeType> getAllBadgeTypes() {
+		return badgeTypePersistence.findAll();
+	}
+
 	public List<BadgeType> getAvailableBadgeTypes() {
 		List<BadgeType> allBadgeTypes = badgeTypePersistence.findAll();
 		List<BadgeType> availableBadgeTypes = new ArrayList<>();
 		Date now = new Date();
 
 		for (BadgeType badgeType : allBadgeTypes) {
-			if (!badgeType.isSystem() && ((badgeType.getAssignableTo() == null) ||
-				now.before(badgeType.getAssignableTo()))) {
+			if (!badgeType.isSystem() &&
+				((badgeType.getAssignableTo() == null) ||
+				 now.before(badgeType.getAssignableTo()))) {
 
 				availableBadgeTypes.add(badgeType);
 			}
@@ -64,11 +69,11 @@ public class BadgeTypeLocalServiceImpl extends BadgeTypeLocalServiceBaseImpl {
 
 		for (BadgeType badgeType : allBadgeTypes) {
 			if (!badgeType.isSystem()) {
-
 				userBadgeTypes.add(badgeType);
 			}
 		}
 
 		return userBadgeTypes;
 	}
+
 }

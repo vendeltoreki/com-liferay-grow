@@ -47,17 +47,19 @@ import com.liferay.portal.kernel.util.Validator;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import java.util.List;
 import java.util.Locale;
 
 import javax.mail.internet.InternetAddress;
+
 import javax.websocket.ClientEndpoint;
 import javax.websocket.ContainerProvider;
 import javax.websocket.DeploymentException;
 import javax.websocket.WebSocketContainer;
-
 
 /**
  * The implementation of the badge local service.
@@ -106,15 +108,17 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 	}
 
 	private String _getImageLink(Badge badge) throws PortalException {
+		BadgeType badgeType = badgeTypeLocalService.getBadgeType(
+			badge.getBadgeTypeId());
 
-		BadgeType badgeType = badgeTypeLocalService.getBadgeType(badge.getBadgeTypeId());
-
-		FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(badgeType.getFileEntryId());
+		FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(
+			badgeType.getFileEntryId());
 
 		String downloadUrl = DLUtil.getPreviewURL(
 			fileEntry, fileEntry.getFileVersion(), null, "", false, true);
 
 		StringBundler imageLink = new StringBundler(2);
+
 		imageLink.append("https://grow.liferay.com");
 		imageLink.append(downloadUrl);
 
@@ -122,12 +126,12 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 	}
 
 	private MailMessage _getMailMessage(Badge badge) throws PortalException {
-
 		MailMessage mailMessage = new MailMessage();
 
 		String content = _BADGE_EMAIL_BODY;
 
-		BadgeType badgeType = badgeTypeLocalService.getBadgeType(badge.getBadgeTypeId());
+		BadgeType badgeType = badgeTypeLocalService.getBadgeType(
+			badge.getBadgeTypeId());
 
 		String downloadUrl = _getImageLink(badge);
 
@@ -141,7 +145,7 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		content = StringUtil.replace(
 			content, "${colleague}", badge.getUserName());
 		content = StringUtil.replace(
-				content, "${reason}", badge.getDescription());
+			content, "${reason}", badge.getDescription());
 
 		mailMessage.setBody(content);
 
@@ -150,18 +154,24 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 
 	private void _notifySubscribers(Badge badge) {
 		URI endpointURI = null;
+
 		try {
-			String protocol = (Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL)) ? "ws" : PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL));
+			String protocol =
+				(Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL)) ? "ws" : PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL));
 
 			if (!protocol.startsWith("ws")) {
 				protocol = "wss";
 			}
 
-			String httpPort =  ((Integer.parseInt(PropsUtil.get(PropsKeys.WEB_SERVER_HTTP_PORT)) == -1) ? "8080" : PropsUtil.get(PropsKeys.WEB_SERVER_HTTP_PORT));
-			String httpsPort =  ((Integer.parseInt(PropsUtil.get(PropsKeys.WEB_SERVER_HTTPS_PORT)) == -1) ? "8443" : PropsUtil.get(PropsKeys.WEB_SERVER_HTTPS_PORT));
-			String host = (Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_HOST)) ? "localhost" : PropsUtil.get(PropsKeys.WEB_SERVER_HOST));
+			String httpPort =
+				((Integer.parseInt(PropsUtil.get(PropsKeys.WEB_SERVER_HTTP_PORT)) == -1) ? "8080" : PropsUtil.get(PropsKeys.WEB_SERVER_HTTP_PORT));
+			String httpsPort =
+				((Integer.parseInt(PropsUtil.get(PropsKeys.WEB_SERVER_HTTPS_PORT)) == -1) ? "8443" : PropsUtil.get(PropsKeys.WEB_SERVER_HTTPS_PORT));
+			String host =
+				(Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_HOST)) ? "localhost" : PropsUtil.get(PropsKeys.WEB_SERVER_HOST));
 
 			StringBundler endpoint = new StringBundler(6);
+
 			endpoint.append(protocol);
 			endpoint.append("://");
 			endpoint.append(host);
@@ -170,13 +180,13 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 			endpoint.append("/o/gamification");
 			_log.info("endpoint:" + endpoint.toString());
 			endpointURI = new URI(endpoint.toString());
-
 		}
 		catch (URISyntaxException urise) {
 			_log.error(urise);
 		}
 
-		WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+		WebSocketContainer container =
+			ContainerProvider.getWebSocketContainer();
 		BadgeWebSocketEndpoint endpoint = new BadgeWebSocketEndpoint();
 
 		try {
@@ -188,6 +198,7 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		catch (IOException ioe) {
 			_log.error(ioe);
 		}
+
 		// so all of this stuff should normally come from some kind of configuration.
 		// As this is just an example, we're using a lot of hard coded values and portal-ext.properties values.
 
@@ -302,6 +313,7 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 			if (user == null) {
 				user = userLocalService.getUserById(badge.getToUserId());
 			}
+
 			message.setBadgeType(badgeType);
 			message.setMessageType(Message.BADGE_MESSAGE);
 			message.setDescription(badge.getDescription());
@@ -318,15 +330,13 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		}
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(BadgeLocalServiceImpl.class);
-
-	private static final String _BADGE_EMAIL_BODY = "<center><table style=\"border-radius: 10px;\" bgcolor=\"#ffffff\" \n" + 
-			"    width=\"90%\" cellspacing=\"2\" cellpadding=\"2\" border=\"0\"><tbody><tr align=\"center\">\n" + 
-			"    <td valign=\"top\">Good news! You've just received a ${badgeType} from ${colleague}!</td>\n" + 
-			"    </tr><tr align=\"center\"><td valign=\"top\"><img src=\"${badgeImageLink}\"\n" + 
-			"    alt=\"Badge image\" height=\"300\" width=\"300\">\n" + 
-			"    </td></tr><tr align=\"center\"><td valign=\"top\">Congratulations!</td></tr><tr align=\"center\">\n" + 
-			"    <td valign=\"top\">Reason you received this badge for : ${reason}</td></tr></tbody></table>\n" + 
+	private static final String _BADGE_EMAIL_BODY = "<center><table style=\"border-radius: 10px;\" bgcolor=\"#ffffff\" \n" +
+			"    width=\"90%\" cellspacing=\"2\" cellpadding=\"2\" border=\"0\"><tbody><tr align=\"center\">\n" +
+			"    <td valign=\"top\">Good news! You've just received a ${badgeType} from ${colleague}!</td>\n" +
+			"    </tr><tr align=\"center\"><td valign=\"top\"><img src=\"${badgeImageLink}\"\n" +
+			"    alt=\"Badge image\" height=\"300\" width=\"300\">\n" +
+			"    </td></tr><tr align=\"center\"><td valign=\"top\">Congratulations!</td></tr><tr align=\"center\">\n" +
+			"    <td valign=\"top\">Reason you received this badge for : ${reason}</td></tr></tbody></table>\n" +
 			"    </center>";
 
 	private static final String _BADGE_EMAIL_SENDER_ADDRESS =
@@ -336,5 +346,8 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		"GROW Badge Notification";
 
 	private static final String _BADGE_EMAIL_SUBJECT = "You received a Badge!";
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		BadgeLocalServiceImpl.class);
 
 }

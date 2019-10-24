@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.BufferedReader;
@@ -79,7 +80,32 @@ public class BadgeImportPortlet extends MVCPortlet {
 			WebKeys.THEME_DISPLAY);
 
 		_importFromCSV(
-			"Loyalty_Badge_input.csv", _getLoyaltyBadgeTypeMap(), themeDisplay);
+			"Loyalty_Badge_input.csv", _getLoyaltyBadgeTypeMap(),
+			themeDisplay.getUser(), _LOYALTY);
+	}
+
+	private String _getLoyaltyBadgeDescription(String loyalty) {
+		String description = StringPool.BLANK;
+
+		int year = _getLoyaltyYear(loyalty);
+
+		if (year > 0) {
+			description =
+				"You have been a member of the Liferay Family formore than " +
+					year + " years!";
+		}
+
+		return description;
+	}
+
+	private int _getLoyaltyBadgeTypeId(
+		String loyalty, Map<Integer, Integer> badgeTypeMap) {
+
+		int year = _getLoyaltyYear(loyalty);
+
+		int badgeTypeId = GetterUtil.getInteger(badgeTypeMap.get(year));
+
+		return badgeTypeId;
 	}
 
 	private Map<Integer, Integer> _getLoyaltyBadgeTypeMap() {
@@ -119,6 +145,31 @@ public class BadgeImportPortlet extends MVCPortlet {
 		return loyaltyBadgeTypeMap;
 	}
 
+	private Integer _getLoyaltyYear(String loyalty) {
+		String[] loyaltyParts = StringUtil.split(loyalty, StringPool.SPACE);
+
+		Integer year = 0;
+
+		for (String loyaltyPart : loyaltyParts) {
+			if (loyaltyPart.endsWith(StringPool.PLUS)) {
+				loyaltyPart = loyaltyPart.substring(
+					0, loyaltyPart.length() - 1);
+			}
+
+			if (GetterUtil.getInteger(loyaltyPart) > 0) {
+				year = GetterUtil.getInteger(loyaltyPart);
+			}
+
+			break;
+		}
+
+		if (year <= 0) {
+			_log.error("Cannot determine the year number: " + loyalty);
+		}
+
+		return year;
+	}
+
 	private InputStream _getStream(String fileName) throws Exception {
 		Class<?> clazz = getClass();
 
@@ -126,13 +177,11 @@ public class BadgeImportPortlet extends MVCPortlet {
 	}
 
 	private void _importFromCSV(
-			String fileName, Map<Integer, Integer> badgeTypeMap,
-			ThemeDisplay themeDisplay)
+			String fileName, Map<Integer, Integer> badgeTypeMap, User fromUser,
+			int importType)
 		throws Exception {
 
 		long companyId = CompanyThreadLocal.getCompanyId();
-
-		User fromUser = themeDisplay.getUser();
 
 		long fromUserId = fromUser.getUserId();
 		String fromUserName = fromUser.getFullName();
@@ -146,13 +195,8 @@ public class BadgeImportPortlet extends MVCPortlet {
 			cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1,
 			cal.get(Calendar.DAY_OF_MONTH));
 
-		String userEmailAddress = StringPool.BLANK;
-		String loyalty = StringPool.BLANK;
-
 		InputStream inputStream = null;
 		BufferedReader bufferedReader = null;
-
-		User user = null;
 
 		try {
 			inputStream = _getStream(fileName);
@@ -166,66 +210,58 @@ public class BadgeImportPortlet extends MVCPortlet {
 
 			line = bufferedReader.readLine();
 
-			badgeImport:
 			while ((line = bufferedReader.readLine()) != null) {
 				try {
 					String[] fields = StringUtil.split(
 						line, StringPool.SEMICOLON);
 
-					if (fields.length != 2) {
-						continue;
-					}
+					String userEmailAddress = fields[0];
 
-					userEmailAddress = fields[0];
-					loyalty = fields[1];
-
-					int year = _getLoyaltyYear(loyalty);
-
-					if (year <= 0) {
-						_log.error(
-							"Coudn't determine the year number for line: " +
-								line);
-
-						continue;
-					}
-
-					String description =
-						"You have been a member of the Liferay Family for " +
-							"more than " + year + " years!";
-
-					user = UserLocalServiceUtil.fetchUserByEmailAddress(
+					User user = UserLocalServiceUtil.fetchUserByEmailAddress(
 						companyId, userEmailAddress);
 
 					if (user == null) {
-						_log.warn(
-							"Coudn't find user with email address " +
-								userEmailAddress);
+						_log.warn("Cannot find user for line: " + line);
 
 						continue;
 					}
 
-					long badgeTypeId = badgeTypeMap.get(year);
+					long badgeTypeId = 0;
+					String description = StringPool.BLANK;
 
-					/*List<Badge> userBadges = 
-						BadgeLocalServiceUtil.getBadgesOfUser(user.getUserId());
+					if (importType == _LOYALTY) {
+						badgeTypeId = _getLoyaltyBadgeTypeId(
+							fields[1], badgeTypeMap);
 
-					for (Badge userBadge : userBadges) {
-						if (userBadge.getBadgeTypeId() == badgeTypeId) {
-							_log.info(
-								"Stopping import because loyalty badges were" +
-									"already generated");
+						description = _getLoyaltyBadgeDescription(fields[1]);
+					}
 
-							break badgeImport;
-						}
-					}*/
+					BadgeType badgeType =
+						BadgeTypeLocalServiceUtil.fetchBadgeType(badgeTypeId);
+
+					if (badgeType == null) {
+						_log.error("Cannot find badge type for line: " + line);
+
+						continue;
+					}
+
+					if (_isBadgeTypeProcessed(user.getUserId(), badgeTypeId)) {
+						_log.info(
+							"Stopping import because badge type " +
+								badgeTypeId + " was already processed");
+
+						break;
+					}
+
+					if (Validator.isNull(description)) {
+						_log.warn(
+							"Cannot determine description for line : " + line);
+					}
 
 					long badgeId = CounterLocalServiceUtil.increment(
 						Badge.class.getName());
 
 					Badge badge = BadgeLocalServiceUtil.createBadge(badgeId);
-
-					BadgeType badgeType =
-						BadgeTypeLocalServiceUtil.getBadgeType(badgeTypeId);
 
 					badge.setUserId(fromUserId);
 					badge.setAssignedDateId(dateId);
@@ -270,26 +306,19 @@ public class BadgeImportPortlet extends MVCPortlet {
 		}
 	}
 
-	private Integer _getLoyaltyYear(String loyalty) {
-		String[] loyaltyParts = StringUtil.split(loyalty, StringPool.SPACE);
+	private boolean _isBadgeTypeProcessed(long userId, long badgeTypeId) {
+		List<Badge> userBadges = BadgeLocalServiceUtil.getBadgesOfUser(userId);
 
-		Integer year = 0;
-
-		for (String loyaltyPart : loyaltyParts) {
-			if (loyaltyPart.endsWith(StringPool.PLUS)) {
-				loyaltyPart = loyaltyPart.substring(
-					0, loyaltyPart.length() - 1);
+		for (Badge userBadge : userBadges) {
+			if (userBadge.getBadgeTypeId() == badgeTypeId) {
+				return true;
 			}
-
-			if (GetterUtil.getInteger(loyaltyPart) > 0) {
-				year = GetterUtil.getInteger(loyaltyPart);
-			}
-
-			break;
 		}
 
-		return year;
+		return false;
 	}
+
+	private static final int _LOYALTY = 1;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		BadgeImportPortlet.class);

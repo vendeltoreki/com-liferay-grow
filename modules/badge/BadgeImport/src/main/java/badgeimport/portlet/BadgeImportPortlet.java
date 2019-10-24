@@ -176,6 +176,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 
 			line = bufferedReader.readLine();
 
+			badgeImport:
 			while ((line = bufferedReader.readLine()) != null) {
 				try {
 					String[] fields = StringUtil.split(
@@ -214,12 +215,28 @@ public class BadgeImportPortlet extends MVCPortlet {
 						continue;
 					}
 
+					long badgeTypeId = badgeTypeMap.get(year);
+
+					List<Badge> userBadges = 
+						BadgeLocalServiceUtil.getBadgesOfUser(user.getUserId());
+
+					for (Badge userBadge : userBadges) {
+						if (userBadge.getBadgeTypeId() == badgeTypeId) {
+							_log.info(
+								"Stopping import because loyalty badges were" +
+									"already generated");
+
+							break badgeImport;
+						}
+					}
+
 					long badgeId = CounterLocalServiceUtil.increment(
 						Badge.class.getName());
 
-					long badgeTypeId = badgeTypeMap.get(year);
-
 					Badge badge = BadgeLocalServiceUtil.createBadge(badgeId);
+
+					BadgeType badgeType =
+						BadgeTypeLocalServiceUtil.getBadgeType(badgeTypeId);
 
 					badge.setUserId(fromUserId);
 					badge.setAssignedDateId(dateId);
@@ -233,6 +250,10 @@ public class BadgeImportPortlet extends MVCPortlet {
 					badge.setUuid(String.valueOf(UUID.randomUUID()));
 
 					BadgeLocalServiceUtil.addBadge(badge, false);
+
+					_log.info(
+						"Created " + badgeType.getType() + "badge for " +
+							user.getEmailAddress());
 				}
 				catch (Exception e) {
 					_log.error(e.getMessage(), e);

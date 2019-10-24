@@ -40,6 +40,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import java.text.SimpleDateFormat;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -88,45 +90,19 @@ public class BadgeImportPortlet extends MVCPortlet {
 			themeDisplay.getUser(), _FIRST_ARTICLE);
 	}
 
-	private long _getFirstArticleBadgeCreationDateId(
-		String dateString, long defaultDateId) {
-
-		long dateId = defaultDateId;
-
-		String errorMessage = "Cannot determine date id for: " + dateString;
+	private Date _getFirstArticleBadgeCreationDate(String dateString) {
+		Date date = new Date();
 
 		try {
-			dateString = StringUtil.split(StringPool.SPACE)[0];
+			dateString = StringUtil.split(dateString, StringPool.SPACE)[0];
 
-			String[] dateParts = StringUtil.split(StringPool.FORWARD_SLASH);
-
-			int year = GetterUtil.getInteger(dateParts[2]);
-			int month = GetterUtil.getInteger(dateParts[1]);
-			int day = GetterUtil.getInteger(dateParts[0]);
-
-			if ((year <= 0) || (month <= 0) || (day <= 0)) {
-				_log.error(errorMessage);
-
-				return dateId;
-			}
-
-			Date date = new Date(year, month, day, 0, 0);
-
-			Calendar cal = Calendar.getInstance();
-
-			cal.setTime(date);
-
-			dateId = LDateLocalServiceUtil.getDateId(
-				cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1,
-				cal.get(Calendar.DAY_OF_MONTH));
+			date = new SimpleDateFormat("dd/MM/yy").parse(dateString);
 		}
 		catch (Exception e) {
-			_log.error(errorMessage);
-
-			return dateId;
+			_log.error("Cannot determine date id for: " + dateString, e);
 		}
 
-		return dateId;
+		return date;
 	}
 
 	private String _getFirstArticleBadgeDescription() {
@@ -259,10 +235,10 @@ public class BadgeImportPortlet extends MVCPortlet {
 		long fromUserId = fromUser.getUserId();
 		String fromUserName = fromUser.getFullName();
 
-		Date now = new Date();
+		Date createDate = new Date();
 		Calendar cal = Calendar.getInstance();
 
-		cal.setTime(now);
+		cal.setTime(createDate);
 
 		long dateId = LDateLocalServiceUtil.getDateId(
 			cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1,
@@ -313,8 +289,8 @@ public class BadgeImportPortlet extends MVCPortlet {
 
 						description = _getFirstArticleBadgeDescription();
 
-						dateId = _getFirstArticleBadgeCreationDateId(
-							fields[1], dateId);
+						createDate = _getFirstArticleBadgeCreationDate(
+							fields[1]);
 					}
 
 					BadgeType badgeType =
@@ -348,7 +324,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 					badge.setAssignedDateId(dateId);
 					badge.setBadgeTypeId(badgeTypeId);
 					badge.setCompanyId(companyId);
-					badge.setCreateDate(now);
+					badge.setCreateDate(createDate);
 					badge.setDescription(description);
 					badge.setGroupId(user.getGroupId());
 					badge.setToUserId(user.getUserId());

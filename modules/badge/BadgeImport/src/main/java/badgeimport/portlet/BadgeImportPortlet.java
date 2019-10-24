@@ -98,17 +98,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 					continue;
 				}
 
-				String[] titleParts = StringUtil.split(title, StringPool.SPACE);
-
-				Integer year = 0;
-
-				for (String titlePart : titleParts) {
-					if (GetterUtil.getInteger(titlePart) > 0) {
-						year = GetterUtil.getInteger(titlePart);
-					}
-
-					break;
-				}
+				Integer year = _getLoyaltyYear(title);
 
 				if (year <= 0) {
 					_log.error(
@@ -189,8 +179,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 					userEmailAddress = fields[0];
 					loyalty = fields[1];
 
-					int year = GetterUtil.getInteger(
-						StringUtil.split(loyalty, StringPool.SPACE)[0]);
+					int year = _getLoyaltyYear(loyalty);
 
 					if (year <= 0) {
 						_log.error(
@@ -217,7 +206,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 
 					long badgeTypeId = badgeTypeMap.get(year);
 
-					List<Badge> userBadges = 
+					/*List<Badge> userBadges = 
 						BadgeLocalServiceUtil.getBadgesOfUser(user.getUserId());
 
 					for (Badge userBadge : userBadges) {
@@ -228,7 +217,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 
 							break badgeImport;
 						}
-					}
+					}*/
 
 					long badgeId = CounterLocalServiceUtil.increment(
 						Badge.class.getName());
@@ -279,6 +268,27 @@ public class BadgeImportPortlet extends MVCPortlet {
 				}
 			}
 		}
+	}
+
+	private Integer _getLoyaltyYear(String loyalty) {
+		String[] loyaltyParts = StringUtil.split(loyalty, StringPool.SPACE);
+
+		Integer year = 0;
+
+		for (String loyaltyPart : loyaltyParts) {
+			if (loyaltyPart.endsWith(StringPool.PLUS)) {
+				loyaltyPart = loyaltyPart.substring(
+					0, loyaltyPart.length() - 1);
+			}
+
+			if (GetterUtil.getInteger(loyaltyPart) > 0) {
+				year = GetterUtil.getInteger(loyaltyPart);
+			}
+
+			break;
+		}
+
+		return year;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

@@ -194,8 +194,16 @@ public class BadgeImportPortlet extends MVCPortlet {
 						"You have been a member of the Liferay Family for " +
 							"more than " + year + " years!";
 
-					user = UserLocalServiceUtil.getUserByEmailAddress(
+					user = UserLocalServiceUtil.fetchUserByEmailAddress(
 						companyId, userEmailAddress);
+
+					if (user == null) {
+						_log.warn(
+							"Coudn't find user with email address " +
+								userEmailAddress);
+
+						continue;
+					}
 
 					long badgeId = CounterLocalServiceUtil.increment(
 						Badge.class.getName());
@@ -218,7 +226,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 					BadgeLocalServiceUtil.addBadge(badge, false);
 				}
 				catch (Exception e) {
-					System.out.println(e.getMessage());
+					_log.error(e.getMessage(), e);
 				}
 			}
 		}

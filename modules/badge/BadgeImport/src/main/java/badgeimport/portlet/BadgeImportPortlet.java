@@ -82,6 +82,38 @@ public class BadgeImportPortlet extends MVCPortlet {
 		_importFromCSV(
 			"Loyalty_Badge_input.csv", _getLoyaltyBadgeTypeMap(),
 			themeDisplay.getUser(), _LOYALTY);
+
+		_importFromCSV(
+			"1st_grow_article_badge_input.csv", _getFirstArticleBadgeTypeMap(),
+			themeDisplay.getUser(), _FIRST_ARTICLE);
+	}
+
+	private String _getFirstArticleBadgeDescription() {
+		return "Congratulations, you've created your first article!";
+	}
+
+	private int _getFirstArticleBadgeTypeId(
+		Map<Integer, Integer> badgeTypeMap) {
+
+		return badgeTypeMap.get(1);
+	}
+
+	private Map<Integer, Integer> _getFirstArticleBadgeTypeMap() {
+		HashMap<Integer, Integer> firstArticleBadgeTypeMap = new HashMap<>();
+
+		List<BadgeType> badgeTypes =
+			BadgeTypeLocalServiceUtil.getAllBadgeTypes();
+
+		for (BadgeType badgeType : badgeTypes) {
+			String title = badgeType.getType();
+
+			if (title.equalsIgnoreCase("1st GROW Article")) {
+				firstArticleBadgeTypeMap.put(
+					1, GetterUtil.getInteger(badgeType.getBadgeTypeId()));
+			}
+		}
+
+		return firstArticleBadgeTypeMap;
 	}
 
 	private String _getLoyaltyBadgeDescription(String loyalty) {
@@ -91,7 +123,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 
 		if (year > 0) {
 			description =
-				"You have been a member of the Liferay Family formore than " +
+				"You've been a member of the Liferay Family formore than " +
 					year + " years!";
 		}
 
@@ -235,6 +267,11 @@ public class BadgeImportPortlet extends MVCPortlet {
 
 						description = _getLoyaltyBadgeDescription(fields[1]);
 					}
+					else if (importType == _FIRST_ARTICLE) {
+						badgeTypeId = _getFirstArticleBadgeTypeId(badgeTypeMap);
+
+						description = _getFirstArticleBadgeDescription();
+					}
 
 					BadgeType badgeType =
 						BadgeTypeLocalServiceUtil.fetchBadgeType(badgeTypeId);
@@ -317,6 +354,8 @@ public class BadgeImportPortlet extends MVCPortlet {
 
 		return false;
 	}
+
+	private static final int _FIRST_ARTICLE = 2;
 
 	private static final int _LOYALTY = 1;
 

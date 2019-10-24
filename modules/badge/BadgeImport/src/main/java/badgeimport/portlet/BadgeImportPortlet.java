@@ -88,6 +88,47 @@ public class BadgeImportPortlet extends MVCPortlet {
 			themeDisplay.getUser(), _FIRST_ARTICLE);
 	}
 
+	private long _getFirstArticleBadgeCreationDateId(
+		String dateString, long defaultDateId) {
+
+		long dateId = defaultDateId;
+
+		String errorMessage = "Cannot determine date id for: " + dateString;
+
+		try {
+			dateString = StringUtil.split(StringPool.SPACE)[0];
+
+			String[] dateParts = StringUtil.split(StringPool.FORWARD_SLASH);
+
+			int year = GetterUtil.getInteger(dateParts[2]);
+			int month = GetterUtil.getInteger(dateParts[1]);
+			int day = GetterUtil.getInteger(dateParts[0]);
+
+			if ((year <= 0) || (month <= 0) || (day <= 0)) {
+				_log.error(errorMessage);
+
+				return dateId;
+			}
+
+			Date date = new Date(year, month, day, 0, 0);
+
+			Calendar cal = Calendar.getInstance();
+
+			cal.setTime(date);
+
+			dateId = LDateLocalServiceUtil.getDateId(
+				cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1,
+				cal.get(Calendar.DAY_OF_MONTH));
+		}
+		catch (Exception e) {
+			_log.error(errorMessage);
+
+			return dateId;
+		}
+
+		return dateId;
+	}
+
 	private String _getFirstArticleBadgeDescription() {
 		return "Congratulations, you've created your first article!";
 	}
@@ -271,6 +312,9 @@ public class BadgeImportPortlet extends MVCPortlet {
 						badgeTypeId = _getFirstArticleBadgeTypeId(badgeTypeMap);
 
 						description = _getFirstArticleBadgeDescription();
+
+						dateId = _getFirstArticleBadgeCreationDateId(
+							fields[1], dateId);
 					}
 
 					BadgeType badgeType =

@@ -183,6 +183,9 @@ public interface BadgeTypeLocalService extends BaseLocalService,
 	* Never reference this class directly. Always use {@link BadgeTypeLocalServiceUtil} to access the badge type local service.
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<BadgeType> getAllBadgeTypes();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<BadgeType> getAvailableBadgeTypes();
 
 	/**

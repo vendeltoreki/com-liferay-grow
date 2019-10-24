@@ -54,7 +54,13 @@ String userName = "";
 	<div class="row">
 		<div class="col-sm-1">
 		<img class="badge-image" src="<%= aggregator.getImage() %>" />
-			<span class="badge badge-danger"> <%= (aggregator.getCount() > 99) ? "99+" : aggregator.getCount() %></span>
+			<%	
+				if (aggregator.getCount() > 1) {
+			%>
+				<span class="badge badge-danger"> <%= (aggregator.getCount() > 99) ? "99+" : aggregator.getCount() %></span>
+			<%		}
+			%>
+
 			</div>
 			<div class="col-sm-6">
 			<p class="badge-type"><%= aggregator.getName() %></p>

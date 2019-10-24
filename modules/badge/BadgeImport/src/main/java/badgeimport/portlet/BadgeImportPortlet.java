@@ -22,13 +22,15 @@ import com.liferay.grow.gamification.model.BadgeType;
 import com.liferay.grow.gamification.service.BadgeLocalServiceUtil;
 import com.liferay.grow.gamification.service.BadgeTypeLocalServiceUtil;
 import com.liferay.grow.gamification.service.LDateLocalServiceUtil;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
@@ -84,23 +86,43 @@ public class BadgeImportPortlet extends MVCPortlet {
 		HashMap<Integer, Integer> loyaltyBadgeTypeMap = new HashMap<>();
 
 		List<BadgeType> badgeTypes =
-			BadgeTypeLocalServiceUtil.getAvailableBadgeTypes();
+			BadgeTypeLocalServiceUtil.getAllBadgeTypes();
 
 		for (BadgeType badgeType : badgeTypes) {
 			try {
 				String title = badgeType.getType();
 
-				if (!title.contains("Loyalty")) {
+				title = title.toLowerCase();
+
+				if (!title.contains("loyalty")) {
 					continue;
 				}
 
-				Integer year = GetterUtil.getInteger(title.charAt(0));
-				Integer badgeTypeId = GetterUtil.getInteger(
-					badgeType.getBadgeTypeId());
+				String[] titleParts = StringUtil.split(title, StringPool.SPACE);
 
-				loyaltyBadgeTypeMap.put(year, badgeTypeId);
+				Integer year = 0;
+
+				for (String titlePart : titleParts) {
+					if (GetterUtil.getInteger(titlePart) > 0) {
+						year = GetterUtil.getInteger(titlePart);
+					}
+
+					break;
+				}
+
+				if (year <= 0) {
+					_log.error(
+						"Cannot determine the year for loyalty badge type: " +
+							badgeType.getType());
+
+					continue;
+				}
+
+				loyaltyBadgeTypeMap.put(
+					year, GetterUtil.getInteger(badgeType.getBadgeTypeId()));
 			}
 			catch (Exception e) {
+				_log.error(e);
 			}
 		}
 
@@ -220,5 +242,8 @@ public class BadgeImportPortlet extends MVCPortlet {
 			}
 		}
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		BadgeImportPortlet.class);
 
 }

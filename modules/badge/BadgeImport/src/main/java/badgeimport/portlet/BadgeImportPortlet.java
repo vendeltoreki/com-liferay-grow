@@ -188,7 +188,16 @@ public class BadgeImportPortlet extends MVCPortlet {
 					userEmailAddress = fields[0];
 					loyalty = fields[1];
 
-					int year = loyalty.charAt(0);
+					int year = GetterUtil.getInteger(
+						StringUtil.split(loyalty, StringPool.SPACE)[0]);
+
+					if (year <= 0) {
+						_log.error(
+							"Coudn't determine the year number for line: " +
+								line);
+
+						continue;
+					}
 
 					String description =
 						"You have been a member of the Liferay Family for " +

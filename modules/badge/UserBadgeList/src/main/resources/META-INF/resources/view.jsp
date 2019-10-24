@@ -24,7 +24,7 @@ else if (request.getParameter("userId") != null) {
 List<BadgeType> badgeTypes = (List<BadgeType>)request.getAttribute(UserBadgeListPortletKeys.BADGE_TYPES);
 List<User> users = (List<User>)request.getAttribute(UserBadgeListPortletKeys.USER_LIST);
 User selectedUser = null;
-System.out.println("userId:" + userId);
+
 if (userId > 0) {
 	selectedUser = UserLocalServiceUtil.fetchUser(userId);
 }

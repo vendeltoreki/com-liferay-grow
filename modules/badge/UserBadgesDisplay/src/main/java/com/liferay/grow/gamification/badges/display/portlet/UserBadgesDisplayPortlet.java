@@ -71,8 +71,6 @@ public class UserBadgesDisplayPortlet extends MVCPortlet {
 		long badgeId = _counterLocalService.increment(Badge.class.getName());
 		String description = actionRequest.getParameter("description");
 
-		System.out.println(description);
-
 		try {
 			User fromUser = (User)actionRequest.getAttribute(WebKeys.USER);
 			User user = _userLocalService.getUser(userId);

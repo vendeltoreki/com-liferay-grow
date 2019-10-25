@@ -25,7 +25,7 @@ create table gamification_BadgeType (
 	assignableTo DATE null,
 	fileEntryId LONG,
 	system BOOLEAN,
-	templateHTML VARCHAR(75) null
+	templateHTML STRING null
 );
 
 create table gamification_LDate (

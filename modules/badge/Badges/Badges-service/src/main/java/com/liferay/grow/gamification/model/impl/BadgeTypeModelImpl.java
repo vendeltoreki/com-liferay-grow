@@ -102,7 +102,7 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		TABLE_COLUMNS_MAP.put("templateHTML", Types.VARCHAR);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table gamification_BadgeType (badgeTypeId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,type_ VARCHAR(75) null,assignableFrom DATE null,assignableTo DATE null,fileEntryId LONG,system BOOLEAN,templateHTML VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table gamification_BadgeType (badgeTypeId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,type_ VARCHAR(75) null,assignableFrom DATE null,assignableTo DATE null,fileEntryId LONG,system BOOLEAN,templateHTML STRING null)";
 	public static final String TABLE_SQL_DROP = "drop table gamification_BadgeType";
 	public static final String ORDER_BY_JPQL = " ORDER BY badgeType.badgeTypeId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY gamification_BadgeType.badgeTypeId ASC";

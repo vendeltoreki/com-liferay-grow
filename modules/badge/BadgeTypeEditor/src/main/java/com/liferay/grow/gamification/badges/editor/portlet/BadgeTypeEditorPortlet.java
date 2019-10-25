@@ -63,13 +63,13 @@ public class BadgeTypeEditorPortlet extends MVCPortlet {
 		String type = actionRequest.getParameter(
 			BadgeTypeEditorPortletKeys.TYPE);
 		String system = actionRequest.getParameter(
-				BadgeTypeEditorPortletKeys.SYSTEM);
+			BadgeTypeEditorPortletKeys.SYSTEM);
 		String availableFrom = actionRequest.getParameter(
 			BadgeTypeEditorPortletKeys.AVAILABLE_FROM);
 		String availableTo = actionRequest.getParameter(
 			BadgeTypeEditorPortletKeys.AVAILABLE_TO);
 		String templateHTML = actionRequest.getParameter(
-				BadgeTypeEditorPortletKeys.TEMPLATE_HTML);
+			BadgeTypeEditorPortletKeys.TEMPLATE_HTML);
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 		String fileName = "";

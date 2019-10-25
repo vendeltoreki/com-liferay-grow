@@ -17,9 +17,9 @@ public class BadgeTypeEditorPortletKeys {
 
 	public static final String SYSTEM = "system";
 
-	public static final String TYPE = "type";
-
 	public static final String TEMPLATE_HTML = "templateHTML";
+
+	public static final String TYPE = "type";
 
 	public static final String BadgeTypeEditor = "badgetypeeditor";
 

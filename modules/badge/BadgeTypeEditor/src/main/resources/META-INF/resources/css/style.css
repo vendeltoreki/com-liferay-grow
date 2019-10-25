@@ -24,8 +24,8 @@ img.badge-image {
 	display: block;
 }
 .modal-dialog {
-	position: unset;
 	max-width: 50% !important;
+	position: unset;
 }
 
 div.flex {

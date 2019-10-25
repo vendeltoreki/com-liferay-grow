@@ -148,7 +148,13 @@ public class BadgeImportPortlet extends MVCPortlet {
 		if (year > 0) {
 			description =
 				"You've been a member of the Liferay Family for more than " +
-					year + " years!";
+					year + " year";
+
+			if (year > 1) {
+				description += "s";
+			}
+
+			description += "!";
 		}
 
 		return description;

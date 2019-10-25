@@ -20,4 +20,5 @@
 
 <aui:form action="<%= importBadgesURL %>" method="post" name="fm">
 	<aui:input name="" type="submit" value="Import Badges" />
+	<aui:input checked="true" label="dryRun" name="dryRun" type="checkbox" />
 </aui:form>

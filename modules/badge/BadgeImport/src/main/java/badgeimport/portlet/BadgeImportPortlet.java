@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -81,13 +82,19 @@ public class BadgeImportPortlet extends MVCPortlet {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
+		boolean dryRun = ParamUtil.getBoolean(actionRequest, "dryRun", false);
+
+		_log.info("Starting badges import...");
+
 		_importFromCSV(
 			"Loyalty_Badge_input.csv", _getLoyaltyBadgeTypeMap(),
-			themeDisplay.getUser(), _LOYALTY);
+			themeDisplay.getUser(), _LOYALTY, dryRun);
 
 		_importFromCSV(
 			"1st_grow_article_badge_input.csv", _getFirstArticleBadgeTypeMap(),
-			themeDisplay.getUser(), _FIRST_ARTICLE);
+			themeDisplay.getUser(), _FIRST_ARTICLE, dryRun);
+
+		_log.info("Badges import is finished");
 	}
 
 	private Date _getFirstArticleBadgeCreationDate(String dateString) {
@@ -140,7 +147,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 
 		if (year > 0) {
 			description =
-				"You've been a member of the Liferay Family formore than " +
+				"You've been a member of the Liferay Family for more than " +
 					year + " years!";
 		}
 
@@ -227,7 +234,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 
 	private void _importFromCSV(
 			String fileName, Map<Integer, Integer> badgeTypeMap, User fromUser,
-			int importType)
+			int importType, boolean dryRun)
 		throws Exception {
 
 		long companyId = CompanyThreadLocal.getCompanyId();
@@ -302,7 +309,9 @@ public class BadgeImportPortlet extends MVCPortlet {
 						continue;
 					}
 
-					if (_isBadgeTypeProcessed(user.getUserId(), badgeTypeId)) {
+					if (!dryRun &&
+						_isBadgeTypeProcessed(user.getUserId(), badgeTypeId)) {
+
 						_log.info(
 							"Stopping import because badge type " +
 								badgeTypeId + " was already processed");
@@ -313,6 +322,14 @@ public class BadgeImportPortlet extends MVCPortlet {
 					if (Validator.isNull(description)) {
 						_log.warn(
 							"Cannot determine description for line : " + line);
+					}
+
+					if (dryRun) {
+						_log.info(
+							"Dry run: " + badgeType.getType() + "badge for " +
+								user.getEmailAddress());
+
+						continue;
 					}
 
 					long badgeId = CounterLocalServiceUtil.increment(

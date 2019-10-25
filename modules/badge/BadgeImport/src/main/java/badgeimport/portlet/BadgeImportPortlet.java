@@ -97,7 +97,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 		_log.info("Badges import is finished");
 	}
 
-	private Date _getFirstArticleBadgeCreationDate(String dateString) {
+	private Date _getBadgeCreationDate(String dateString) {
 		Date date = new Date();
 
 		try {
@@ -290,14 +290,15 @@ public class BadgeImportPortlet extends MVCPortlet {
 							fields[1], badgeTypeMap);
 
 						description = _getLoyaltyBadgeDescription(fields[1]);
+
+						createDate = _getBadgeCreationDate(fields[2]);
 					}
 					else if (importType == _FIRST_ARTICLE) {
 						badgeTypeId = _getFirstArticleBadgeTypeId(badgeTypeMap);
 
 						description = _getFirstArticleBadgeDescription();
 
-						createDate = _getFirstArticleBadgeCreationDate(
-							fields[1]);
+						createDate = _getBadgeCreationDate(fields[1]);
 					}
 
 					BadgeType badgeType =

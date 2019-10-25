@@ -270,6 +270,21 @@ public interface BadgeTypeModel extends BaseModel<BadgeType>, GroupedModel,
 	 */
 	public void setSystem(boolean system);
 
+	/**
+	 * Returns the template html of this badge type.
+	 *
+	 * @return the template html of this badge type
+	 */
+	@AutoEscape
+	public String getTemplateHTML();
+
+	/**
+	 * Sets the template html of this badge type.
+	 *
+	 * @param templateHTML the template html of this badge type
+	 */
+	public void setTemplateHTML(String templateHTML);
+
 	@Override
 	public boolean isNew();
 

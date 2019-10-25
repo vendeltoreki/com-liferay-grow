@@ -46,6 +46,7 @@ public class BadgeTypeSoap implements Serializable {
 		soapModel.setAssignableTo(model.getAssignableTo());
 		soapModel.setFileEntryId(model.getFileEntryId());
 		soapModel.setSystem(model.isSystem());
+		soapModel.setTemplateHTML(model.getTemplateHTML());
 
 		return soapModel;
 	}
@@ -198,6 +199,14 @@ public class BadgeTypeSoap implements Serializable {
 		_system = system;
 	}
 
+	public String getTemplateHTML() {
+		return _templateHTML;
+	}
+
+	public void setTemplateHTML(String templateHTML) {
+		_templateHTML = templateHTML;
+	}
+
 	private long _badgeTypeId;
 	private long _groupId;
 	private long _companyId;
@@ -210,4 +219,5 @@ public class BadgeTypeSoap implements Serializable {
 	private Date _assignableTo;
 	private long _fileEntryId;
 	private boolean _system;
+	private String _templateHTML;
 }

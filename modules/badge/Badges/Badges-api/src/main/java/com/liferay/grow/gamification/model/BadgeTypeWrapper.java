@@ -69,6 +69,7 @@ public class BadgeTypeWrapper implements BadgeType, ModelWrapper<BadgeType> {
 		attributes.put("assignableTo", getAssignableTo());
 		attributes.put("fileEntryId", getFileEntryId());
 		attributes.put("system", isSystem());
+		attributes.put("templateHTML", getTemplateHTML());
 
 		return attributes;
 	}
@@ -145,6 +146,12 @@ public class BadgeTypeWrapper implements BadgeType, ModelWrapper<BadgeType> {
 
 		if (system != null) {
 			setSystem(system);
+		}
+
+		String templateHTML = (String)attributes.get("templateHTML");
+
+		if (templateHTML != null) {
+			setTemplateHTML(templateHTML);
 		}
 	}
 
@@ -266,6 +273,16 @@ public class BadgeTypeWrapper implements BadgeType, ModelWrapper<BadgeType> {
 	@Override
 	public boolean getSystem() {
 		return _badgeType.getSystem();
+	}
+
+	/**
+	* Returns the template html of this badge type.
+	*
+	* @return the template html of this badge type
+	*/
+	@Override
+	public String getTemplateHTML() {
+		return _badgeType.getTemplateHTML();
 	}
 
 	/**
@@ -472,6 +489,16 @@ public class BadgeTypeWrapper implements BadgeType, ModelWrapper<BadgeType> {
 	@Override
 	public void setSystem(boolean system) {
 		_badgeType.setSystem(system);
+	}
+
+	/**
+	* Sets the template html of this badge type.
+	*
+	* @param templateHTML the template html of this badge type
+	*/
+	@Override
+	public void setTemplateHTML(String templateHTML) {
+		_badgeType.setTemplateHTML(templateHTML);
 	}
 
 	/**

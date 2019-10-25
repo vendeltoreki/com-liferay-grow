@@ -81,7 +81,8 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 			{ "assignableFrom", Types.TIMESTAMP },
 			{ "assignableTo", Types.TIMESTAMP },
 			{ "fileEntryId", Types.BIGINT },
-			{ "system", Types.BOOLEAN }
+			{ "system", Types.BOOLEAN },
+			{ "templateHTML", Types.VARCHAR }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -98,9 +99,10 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		TABLE_COLUMNS_MAP.put("assignableTo", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("fileEntryId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("system", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("templateHTML", Types.VARCHAR);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table gamification_BadgeType (badgeTypeId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,type_ VARCHAR(75) null,assignableFrom DATE null,assignableTo DATE null,fileEntryId LONG,system BOOLEAN)";
+	public static final String TABLE_SQL_CREATE = "create table gamification_BadgeType (badgeTypeId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,type_ VARCHAR(75) null,assignableFrom DATE null,assignableTo DATE null,fileEntryId LONG,system BOOLEAN,templateHTML VARCHAR(75) null)";
 	public static final String TABLE_SQL_DROP = "drop table gamification_BadgeType";
 	public static final String ORDER_BY_JPQL = " ORDER BY badgeType.badgeTypeId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY gamification_BadgeType.badgeTypeId ASC";
@@ -145,6 +147,7 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		model.setAssignableTo(soapModel.getAssignableTo());
 		model.setFileEntryId(soapModel.getFileEntryId());
 		model.setSystem(soapModel.isSystem());
+		model.setTemplateHTML(soapModel.getTemplateHTML());
 
 		return model;
 	}
@@ -221,6 +224,7 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		attributes.put("assignableTo", getAssignableTo());
 		attributes.put("fileEntryId", getFileEntryId());
 		attributes.put("system", isSystem());
+		attributes.put("templateHTML", getTemplateHTML());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -300,6 +304,12 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 
 		if (system != null) {
 			setSystem(system);
+		}
+
+		String templateHTML = (String)attributes.get("templateHTML");
+
+		if (templateHTML != null) {
+			setTemplateHTML(templateHTML);
 		}
 	}
 
@@ -505,6 +515,22 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		_system = system;
 	}
 
+	@JSON
+	@Override
+	public String getTemplateHTML() {
+		if (_templateHTML == null) {
+			return "";
+		}
+		else {
+			return _templateHTML;
+		}
+	}
+
+	@Override
+	public void setTemplateHTML(String templateHTML) {
+		_templateHTML = templateHTML;
+	}
+
 	public long getColumnBitmask() {
 		return _columnBitmask;
 	}
@@ -548,6 +574,7 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		badgeTypeImpl.setAssignableTo(getAssignableTo());
 		badgeTypeImpl.setFileEntryId(getFileEntryId());
 		badgeTypeImpl.setSystem(isSystem());
+		badgeTypeImpl.setTemplateHTML(getTemplateHTML());
 
 		badgeTypeImpl.resetOriginalValues();
 
@@ -691,12 +718,20 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 
 		badgeTypeCacheModel.system = isSystem();
 
+		badgeTypeCacheModel.templateHTML = getTemplateHTML();
+
+		String templateHTML = badgeTypeCacheModel.templateHTML;
+
+		if ((templateHTML != null) && (templateHTML.length() == 0)) {
+			badgeTypeCacheModel.templateHTML = null;
+		}
+
 		return badgeTypeCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(27);
 
 		sb.append("{badgeTypeId=");
 		sb.append(getBadgeTypeId());
@@ -722,6 +757,8 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		sb.append(getFileEntryId());
 		sb.append(", system=");
 		sb.append(isSystem());
+		sb.append(", templateHTML=");
+		sb.append(getTemplateHTML());
 		sb.append("}");
 
 		return sb.toString();
@@ -729,7 +766,7 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(40);
+		StringBundler sb = new StringBundler(43);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.grow.gamification.model.BadgeType");
@@ -783,6 +820,10 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 			"<column><column-name>system</column-name><column-value><![CDATA[");
 		sb.append(isSystem());
 		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>templateHTML</column-name><column-value><![CDATA[");
+		sb.append(getTemplateHTML());
+		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -810,6 +851,7 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 	private Date _originalAssignableTo;
 	private long _fileEntryId;
 	private boolean _system;
+	private String _templateHTML;
 	private long _columnBitmask;
 	private BadgeType _escapedModel;
 }

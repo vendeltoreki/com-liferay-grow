@@ -18,7 +18,11 @@
 
 <portlet:actionURL name="importBadges" var="importBadgesURL" />
 
-<aui:form action="<%= importBadgesURL %>" method="post" name="fm">
+<aui:form action="<%= importBadgesURL %>" enctype="multipart/form-data" method="post" name="fm">
+	<aui:input label="Please select a CSV file" name="file" type="file" />
 	<aui:input name="" type="submit" value="Import Badges" />
 	<aui:input checked="true" label="dryRun" name="dryRun" type="checkbox" />
+
+	<liferay-ui:error exception="<%= FileNameException.class %>" message="the-file-has-to-be-a-comma-separated-list-csv" />
+	<liferay-ui:error exception="<%= NoSuchFileException.class %>" message="no-file-has-been-chosen" />
 </aui:form>

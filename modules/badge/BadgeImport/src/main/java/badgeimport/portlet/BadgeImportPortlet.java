@@ -17,21 +17,24 @@ package badgeimport.portlet;
 import badgeimport.constants.BadgeImportPortletKeys;
 
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
+import com.liferay.document.library.kernel.exception.FileNameException;
+import com.liferay.document.library.kernel.exception.NoSuchFileException;
 import com.liferay.grow.gamification.model.Badge;
 import com.liferay.grow.gamification.model.BadgeType;
 import com.liferay.grow.gamification.service.BadgeLocalServiceUtil;
 import com.liferay.grow.gamification.service.BadgeTypeLocalServiceUtil;
 import com.liferay.grow.gamification.service.LDateLocalServiceUtil;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -54,6 +57,11 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.Portlet;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.portlet.PortletFileUpload;
+
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -62,7 +70,7 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	immediate = true,
 	property = {
-		"com.liferay.portlet.display-category=category.sample",
+		"com.liferay.portlet.display-category=category.gamification",
 		"com.liferay.portlet.instanceable=true",
 		"javax.portlet.display-name=BadgeImport Portlet",
 		"javax.portlet.init-param.template-path=/",
@@ -84,23 +92,60 @@ public class BadgeImportPortlet extends MVCPortlet {
 
 		boolean dryRun = ParamUtil.getBoolean(actionRequest, "dryRun", false);
 
-		_log.info("Starting badges import...");
+		try {
+			Map<Integer, Integer> firstBadgeTypeMap = _getFirstBadgeTypeIdMap();
 
-		_importFromCSV(
-			"Loyalty_Badge_input.csv", _getLoyaltyBadgeTypeIdMap(),
-			themeDisplay.getUser(), _LOYALTY, dryRun);
+			FileItemFactory factory = new DiskFileItemFactory();
 
-		Map<Integer, Integer> firstBadgeTypeMap = _getFirstBadgeTypeIdMap();
+			PortletFileUpload upload = new PortletFileUpload(factory);
 
-		_importFromCSV(
-			"1st_grow_article_badge_input.csv", firstBadgeTypeMap,
-			themeDisplay.getUser(), _FIRST_ARTICLE, dryRun);
+			List<FileItem> fileItems = upload.parseRequest(actionRequest);
 
-		_importFromCSV(
-			"1st_completed_ticket_badge_input.csv", firstBadgeTypeMap,
-			themeDisplay.getUser(), _FIRST_CLOSED_TICKET_, dryRun);
+			for (FileItem fileItem : fileItems) {
+				if (!fileItem.isFormField()) {
+					String fileName = fileItem.getName();
 
-		_log.info("Badges import is finished");
+					if (StringUtil.equals(fileName, StringPool.BLANK)) {
+						throw new NoSuchFileException();
+					}
+
+					if (!fileName.matches("([^\\s]+(\\.(?i)(csv|CSV))$)")) {
+						throw new FileNameException();
+					}
+
+					_log.info("Starting badges import...");
+
+					if (StringUtil.containsIgnoreCase(
+							fileName, "loyalty_badge", StringPool.UNDERLINE)) {
+
+						_importFromCSV(
+							fileItem, _getLoyaltyBadgeTypeIdMap(),
+							themeDisplay.getUser(), _LOYALTY, dryRun);
+					}
+					else if (StringUtil.containsIgnoreCase(
+								fileName, "grow_article_badge",
+								StringPool.UNDERLINE)) {
+
+						_importFromCSV(
+							fileItem, firstBadgeTypeMap, themeDisplay.getUser(),
+							_FIRST_ARTICLE, dryRun);
+					}
+					else if (StringUtil.containsIgnoreCase(
+								fileName, "completed_ticket_badge",
+								StringPool.UNDERLINE)) {
+
+						_importFromCSV(
+							fileItem, firstBadgeTypeMap, themeDisplay.getUser(),
+							_FIRST_CLOSED_TICKET_, dryRun);
+					}
+
+					_log.info("Badges import is finished");
+				}
+			}
+		}
+		catch (Exception e) {
+			SessionErrors.add(actionRequest, e.getClass());
+		}
 	}
 
 	private Date _getBadgeCreationDate(String dateString) {
@@ -109,7 +154,11 @@ public class BadgeImportPortlet extends MVCPortlet {
 		try {
 			dateString = StringUtil.split(dateString, StringPool.SPACE)[0];
 
-			date = new SimpleDateFormat("dd/MM/yy").parse(dateString);
+			date = new SimpleDateFormat(
+				"dd/MM/yy"
+			).parse(
+				dateString
+			);
 		}
 		catch (Exception e) {
 			_log.error("Cannot determine date id for: " + dateString, e);
@@ -248,15 +297,9 @@ public class BadgeImportPortlet extends MVCPortlet {
 		return year;
 	}
 
-	private InputStream _getStream(String fileName) throws Exception {
-		Class<?> clazz = getClass();
-
-		return clazz.getResourceAsStream("dependencies/" + fileName);
-	}
-
 	private void _importFromCSV(
-			String fileName, Map<Integer, Integer> badgeTypeMap, User fromUser,
-			int importType, boolean dryRun)
+			FileItem fileItem, Map<Integer, Integer> badgeTypeMap,
+			User fromUser, int importType, boolean dryRun)
 		throws Exception {
 
 		long companyId = CompanyThreadLocal.getCompanyId();
@@ -277,7 +320,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 		BufferedReader bufferedReader = null;
 
 		try {
-			inputStream = _getStream(fileName);
+			inputStream = fileItem.getInputStream();
 
 			bufferedReader = new BufferedReader(
 				new InputStreamReader(inputStream));

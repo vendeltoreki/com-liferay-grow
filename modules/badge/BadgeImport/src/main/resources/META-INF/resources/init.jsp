@@ -23,6 +23,9 @@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
+<%@ page import="com.liferay.document.library.kernel.exception.FileNameException" %><%@
+page import="com.liferay.document.library.kernel.exception.NoSuchFileException" %>
+
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />

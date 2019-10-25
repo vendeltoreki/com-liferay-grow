@@ -102,6 +102,10 @@ page import="com.liferay.portal.kernel.util.DateUtil" %>
 							</div>
 
 							<div class="form-group">
+								<aui:input class="form-control" label="Email Template" name="templateHTML" type="textarea" value="" />
+							</div>
+
+							<div class="form-group">
 								<aui:input class="form-control" name="availableFrom" type="date" value="" />
 							</div>
 

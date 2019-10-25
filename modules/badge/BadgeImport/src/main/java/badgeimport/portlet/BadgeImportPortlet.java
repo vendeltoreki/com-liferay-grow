@@ -87,12 +87,18 @@ public class BadgeImportPortlet extends MVCPortlet {
 		_log.info("Starting badges import...");
 
 		_importFromCSV(
-			"Loyalty_Badge_input.csv", _getLoyaltyBadgeTypeMap(),
+			"Loyalty_Badge_input.csv", _getLoyaltyBadgeTypeIdMap(),
 			themeDisplay.getUser(), _LOYALTY, dryRun);
 
+		Map<Integer, Integer> firstBadgeTypeMap = _getFirstBadgeTypeIdMap();
+
 		_importFromCSV(
-			"1st_grow_article_badge_input.csv", _getFirstArticleBadgeTypeMap(),
+			"1st_grow_article_badge_input.csv", firstBadgeTypeMap,
 			themeDisplay.getUser(), _FIRST_ARTICLE, dryRun);
+
+		_importFromCSV(
+			"1st_completed_ticket_badge_input.csv", firstBadgeTypeMap,
+			themeDisplay.getUser(), _FIRST_CLOSED_TICKET_, dryRun);
 
 		_log.info("Badges import is finished");
 	}
@@ -113,16 +119,16 @@ public class BadgeImportPortlet extends MVCPortlet {
 	}
 
 	private String _getFirstArticleBadgeDescription() {
-		return "Congratulations, you've created your first article!";
+		return "Congratulations, you've created your first grow article!";
 	}
 
-	private int _getFirstArticleBadgeTypeId(
-		Map<Integer, Integer> badgeTypeMap) {
+	private int _getFirstBadgeTypeId(
+		int type, Map<Integer, Integer> badgeTypeMap) {
 
-		return badgeTypeMap.get(1);
+		return badgeTypeMap.get(type);
 	}
 
-	private Map<Integer, Integer> _getFirstArticleBadgeTypeMap() {
+	private Map<Integer, Integer> _getFirstBadgeTypeIdMap() {
 		HashMap<Integer, Integer> firstArticleBadgeTypeMap = new HashMap<>();
 
 		List<BadgeType> badgeTypes =
@@ -133,11 +139,21 @@ public class BadgeImportPortlet extends MVCPortlet {
 
 			if (title.equalsIgnoreCase("1st GROW Article")) {
 				firstArticleBadgeTypeMap.put(
-					1, GetterUtil.getInteger(badgeType.getBadgeTypeId()));
+					(Integer)_FIRST_ARTICLE,
+					GetterUtil.getInteger(badgeType.getBadgeTypeId()));
+			}
+			else if (title.equalsIgnoreCase("1st Closed Ticket")) {
+				firstArticleBadgeTypeMap.put(
+					(Integer)_FIRST_CLOSED_TICKET_,
+					GetterUtil.getInteger(badgeType.getBadgeTypeId()));
 			}
 		}
 
 		return firstArticleBadgeTypeMap;
+	}
+
+	private String _getFirstClosedTicketBadgeDescription() {
+		return "Congratulations, you've completed your first ticket!";
 	}
 
 	private String _getLoyaltyBadgeDescription(String loyalty) {
@@ -170,7 +186,7 @@ public class BadgeImportPortlet extends MVCPortlet {
 		return badgeTypeId;
 	}
 
-	private Map<Integer, Integer> _getLoyaltyBadgeTypeMap() {
+	private Map<Integer, Integer> _getLoyaltyBadgeTypeIdMap() {
 		HashMap<Integer, Integer> loyaltyBadgeTypeMap = new HashMap<>();
 
 		List<BadgeType> badgeTypes =
@@ -300,11 +316,20 @@ public class BadgeImportPortlet extends MVCPortlet {
 						createDate = _getBadgeCreationDate(fields[2]);
 					}
 					else if (importType == _FIRST_ARTICLE) {
-						badgeTypeId = _getFirstArticleBadgeTypeId(badgeTypeMap);
+						badgeTypeId = _getFirstBadgeTypeId(
+							_FIRST_ARTICLE, badgeTypeMap);
 
 						description = _getFirstArticleBadgeDescription();
 
 						createDate = _getBadgeCreationDate(fields[1]);
+					}
+					else if (importType == _FIRST_CLOSED_TICKET_) {
+						badgeTypeId = _getFirstBadgeTypeId(
+							_FIRST_CLOSED_TICKET_, badgeTypeMap);
+
+						description = _getFirstClosedTicketBadgeDescription();
+
+						createDate = _getBadgeCreationDate(fields[2]);
 					}
 
 					BadgeType badgeType =
@@ -400,6 +425,8 @@ public class BadgeImportPortlet extends MVCPortlet {
 	}
 
 	private static final int _FIRST_ARTICLE = 2;
+
+	private static final int _FIRST_CLOSED_TICKET_ = 3;
 
 	private static final int _LOYALTY = 1;
 

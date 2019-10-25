@@ -61,6 +61,9 @@ page import="com.liferay.portal.kernel.util.DateUtil" %>
 							</c:if>
 						</liferay-ui:search-container-column-text>
 						<liferay-ui:search-container-column-text property="system" />
+						<div class="form-group">
+							<textarea class="form-control" name="_badgetypeeditor_templateHTML"></textarea>
+						</div>
 					</liferay-ui:search-container-row>
 				<liferay-ui:search-iterator />
 			</liferay-ui:search-container>

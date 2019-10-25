@@ -68,6 +68,8 @@ public class BadgeTypeEditorPortlet extends MVCPortlet {
 			BadgeTypeEditorPortletKeys.AVAILABLE_FROM);
 		String availableTo = actionRequest.getParameter(
 			BadgeTypeEditorPortletKeys.AVAILABLE_TO);
+		String templateHTML = actionRequest.getParameter(
+				BadgeTypeEditorPortletKeys.TEMPLATE_HTML);
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 		String fileName = "";
@@ -136,6 +138,7 @@ public class BadgeTypeEditorPortlet extends MVCPortlet {
 			badgeType.setType(type);
 			badgeType.setUserId(user.getUserId());
 			badgeType.setUserName(user.getFullName());
+			badgeType.setTemplateHTML(templateHTML);
 
 			_badgeTypeLocalService.addBadgeType(badgeType);
 		}

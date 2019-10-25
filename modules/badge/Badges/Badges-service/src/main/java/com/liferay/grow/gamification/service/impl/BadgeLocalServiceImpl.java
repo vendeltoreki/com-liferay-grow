@@ -128,10 +128,10 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 	private MailMessage _getMailMessage(Badge badge) throws PortalException {
 		MailMessage mailMessage = new MailMessage();
 
-		String content = _BADGE_EMAIL_BODY;
-
 		BadgeType badgeType = badgeTypeLocalService.getBadgeType(
 			badge.getBadgeTypeId());
+
+		String content = badgeType.getTemplateHTML();
 
 		String downloadUrl = _getImageLink(badge);
 
@@ -329,15 +329,6 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 			_log.error(pe);
 		}
 	}
-
-	private static final String _BADGE_EMAIL_BODY = "<center><table style=\"border-radius: 10px;\" bgcolor=\"#ffffff\" \n" +
-			"    width=\"90%\" cellspacing=\"2\" cellpadding=\"2\" border=\"0\"><tbody><tr align=\"center\">\n" +
-			"    <td valign=\"top\">Good news! You've just received a ${badgeType} from ${colleague}!</td>\n" +
-			"    </tr><tr align=\"center\"><td valign=\"top\"><img src=\"${badgeImageLink}\"\n" +
-			"    alt=\"Badge image\" height=\"300\" width=\"300\">\n" +
-			"    </td></tr><tr align=\"center\"><td valign=\"top\">Congratulations!</td></tr><tr align=\"center\">\n" +
-			"    <td valign=\"top\">Reason you received this badge for : ${reason}</td></tr></tbody></table>\n" +
-			"    </center>";
 
 	private static final String _BADGE_EMAIL_SENDER_ADDRESS =
 		"admin@liferay.com";

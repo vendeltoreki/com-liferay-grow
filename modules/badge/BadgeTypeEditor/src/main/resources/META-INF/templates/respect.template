@@ -1,0 +1,22 @@
+<div style="margin-left: auto;margin-right: auto;border: solid 1px #bebebe;background-color: #fefefe;width: 600px;height: 600px;border-radius: 10px;padding: 20px;">
+    <div>
+        <h1 style="text-align: center;font-family: sans-serif;font-size: 20px;font-weight: bold;padding-bottom: 20px;">Wow,</h1>
+    </div>
+    <div>
+        <p style="text-align: center;font-family: Arial, Helvetica, sans-serif;font-size: 16px;"><b><a style="text-decoration: none; font-weight: bold;color: black;font-family: Arial, Helvetica, sans-serif;font-size: 16px;" href="https://grow.liferay.com/web/${fromScreenName}">${user}</a></b> have sent you a Respect badge, because you are awesome.</p>
+    </div>
+    <div class="block" style="padding-top: 30px;background-color: #fbfbfb;border: solid 1px #bebebe;width: 192px;position: relative;margin-top: 40px;margin-left: auto;margin-right: auto;">
+        <div id="badge" style="text-align: center;height: 192px;">
+            <a href="https://grow.liferay.com/web/${screenName}?p_p_id=userbadgelist" style="text-decoration: none;color: white;">
+                <img src="${badgeImageLink}" height="192px" id="imgid">
+            <!-- img src="https://grow.liferay.com/documents/portlet_file_entry/20147/BADGE200%20-%20Respect.png/22420c6b-806b-5da7-91f8-0edfc66c87b7?status=0" height="192px" id="imgid" -->
+            </a>
+        </div>
+        <div class="button" style="font-family: Arial, Helvetica, sans-serif;font-size: 16px;text-align: center;width: 100%;border-top: solid 1px #bebebe;margin-top: 20px;background-color: #4a6f91;padding-top: 10px;padding-bottom: 10px;">
+            <a href="https://grow.liferay.com/web/${screenName}?p_p_id=userbadgelist" style="text-decoration: none;color: white;">My Badges</a>
+        </div>
+    </div>
+    <div>
+        <p style="text-align: center;font-family: Arial, Helvetica, sans-serif;font-size: 16px;"><b>${user}</b> wrote : ${description}<br><br>Hats off from the GROW team too!<br><br>You can learn more about gamification in <a href="https://grow.liferay.com/share/Gamification+in+GROW" style="text-decoration: none; font-weight: bold; color: black;font-family: Arial, Helvetica, sans-serif;font-size: 16px;text-align: center;">GROW</a></p>
+    </div>
+</div>

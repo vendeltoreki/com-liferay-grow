@@ -19,8 +19,8 @@ Connection conn = null;
 
 long companyId = 20118;
 long groupId = 20147;
-long thankyou = 501;
-long respect = 502;
+long thankyou = 2;
+long respect = 3;
 
 try {
 	conn = DataAccess.getConnection();

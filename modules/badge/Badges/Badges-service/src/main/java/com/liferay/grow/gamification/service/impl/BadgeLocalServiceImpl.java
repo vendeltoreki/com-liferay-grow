@@ -94,6 +94,11 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		return badge;
 	}
 
+	@Override
+	public List<Badge> getBadges() {
+		return badgePersistence.findAll();
+	}
+
 	/**
 	 * NOTE FOR DEVELOPERS:
 	 *

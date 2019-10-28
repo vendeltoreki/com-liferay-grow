@@ -137,6 +137,7 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 			badge.getBadgeTypeId());
 
 		User toUser = userLocalService.getUserById(badge.getToUserId());
+		User fromUser = userLocalService.getUserById(badge.getUserId());
 
 		String content = badgeType.getTemplateHTML();
 
@@ -155,6 +156,8 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 			content, "${reason}", badge.getDescription());
 		content = StringUtil.replace(
 			content, "${screenName}", toUser.getScreenName());
+		content = StringUtil.replace(
+			content, "${fromScreenName}", fromUser.getScreenName());
 		mailMessage.setBody(content);
 
 		return mailMessage;

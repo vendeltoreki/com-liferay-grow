@@ -158,6 +158,8 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 			content, "${screenName}", toUser.getScreenName());
 		content = StringUtil.replace(
 			content, "${fromScreenName}", fromUser.getScreenName());
+		content = StringUtil.replace(
+			content, "${user}", fromUser.getFullName());
 		mailMessage.setBody(content);
 
 		return mailMessage;

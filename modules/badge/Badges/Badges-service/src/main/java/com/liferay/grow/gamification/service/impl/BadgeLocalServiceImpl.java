@@ -153,7 +153,7 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		content = StringUtil.replace(
 			content, "${colleague}", badge.getUserName());
 		content = StringUtil.replace(
-			content, "${reason}", badge.getDescription());
+			content, "${description}", badge.getDescription());
 		content = StringUtil.replace(
 			content, "${screenName}", toUser.getScreenName());
 		content = StringUtil.replace(

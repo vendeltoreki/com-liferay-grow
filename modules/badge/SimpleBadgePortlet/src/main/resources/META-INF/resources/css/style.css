@@ -14,7 +14,7 @@ img.badge-image {
 	top: 20px;
 }
 
-.dropdown-toggle::after {
+#portlet_simplebadge.dropdown-toggle::after {
 	border-left: .3em solid transparent;
 	border-right: .3em solid transparent;
 	border-top: .3em solid;

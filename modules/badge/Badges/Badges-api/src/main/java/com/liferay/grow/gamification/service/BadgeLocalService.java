@@ -210,6 +210,9 @@ public interface BadgeLocalService extends BaseLocalService,
 	public Badge getBadgeByUuidAndGroupId(String uuid, long groupId)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Badge> getBadges();
+
 	/**
 	* Returns a range of all the badges.
 	*

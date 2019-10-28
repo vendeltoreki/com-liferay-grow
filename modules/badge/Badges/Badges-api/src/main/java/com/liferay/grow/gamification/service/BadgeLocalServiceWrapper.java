@@ -231,6 +231,11 @@ public class BadgeLocalServiceWrapper implements BadgeLocalService,
 		return _badgeLocalService.getBadgeByUuidAndGroupId(uuid, groupId);
 	}
 
+	@Override
+	public java.util.List<com.liferay.grow.gamification.model.Badge> getBadges() {
+		return _badgeLocalService.getBadges();
+	}
+
 	/**
 	* Returns a range of all the badges.
 	*

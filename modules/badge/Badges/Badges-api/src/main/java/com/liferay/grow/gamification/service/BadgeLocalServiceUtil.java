@@ -229,6 +229,10 @@ public class BadgeLocalServiceUtil {
 		return getService().getBadgeByUuidAndGroupId(uuid, groupId);
 	}
 
+	public static java.util.List<com.liferay.grow.gamification.model.Badge> getBadges() {
+		return getService().getBadges();
+	}
+
 	/**
 	* Returns a range of all the badges.
 	*

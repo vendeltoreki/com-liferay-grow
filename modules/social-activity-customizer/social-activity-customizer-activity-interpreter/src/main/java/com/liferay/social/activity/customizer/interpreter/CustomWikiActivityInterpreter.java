@@ -106,11 +106,9 @@ public class CustomWikiActivityInterpreter
 			return null;
 		}
 
-		Group group = _groupLocalService.fetchFriendlyURLGroup(
-			serviceContext.getCompanyId(), "/guest");
+		// Share page plid
 
-		long plid = _layoutLocalService.getDefaultPlid(
-			group.getGroupId(), true);
+		long plid = 34778;
 
 		WikiPage page = _wikiPageLocalService.getPage(classPK);
 

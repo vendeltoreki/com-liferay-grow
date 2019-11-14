@@ -6,7 +6,6 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserNotificationEvent;
 import com.liferay.portal.kernel.notifications.BaseUserNotificationHandler;
 import com.liferay.portal.kernel.notifications.UserNotificationFeedEntry;
@@ -64,15 +63,6 @@ public class BadgeNotificationHandler extends BaseUserNotificationHandler {
 			ServiceContext serviceContext)
 		throws Exception {
 
-		String userName = _UKNOWN_USER;
-
-		User user = _userLocalService.fetchUser(
-			userNotificationEvent.getUserId());
-
-		if (Validator.isNotNull(user)) {
-			userName = user.getFullName();
-		}
-
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
 			userNotificationEvent.getPayload());
 
@@ -81,6 +71,9 @@ public class BadgeNotificationHandler extends BaseUserNotificationHandler {
 
 		String reason = jsonObject.getString(
 			BadgeNotificationPortletKeys.BADGE_COMMENT);
+
+		String userName = jsonObject.getString(
+			BadgeNotificationPortletKeys.BADGE_SENDER);
 
 		if (Validator.isNull(reason)) {
 			reason = "";

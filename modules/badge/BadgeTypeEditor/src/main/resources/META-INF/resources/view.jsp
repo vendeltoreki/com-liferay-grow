@@ -75,7 +75,9 @@ page import="com.liferay.portal.kernel.util.DateUtil" %>
 	</div>
 </div>
 
-<portlet:actionURL name="addBadgeType" var="addBadgeTypeURL" />
+<portlet:actionURL name="addBadgeType" var="addBadgeTypeURL" >
+	<portlet:param name="redirect" value="<%= themeDisplay.getURLCurrent() %>" />
+</portlet:actionURL>
 
 <c:if test="${themeDisplay.isSignedIn() == true}">
 	<div aria-hidden="true" class="modal" id="badgeTypeModal" role="dialog" style="display:none; z-index" tabindex="-1">

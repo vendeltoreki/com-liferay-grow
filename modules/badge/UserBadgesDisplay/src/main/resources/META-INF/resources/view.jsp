@@ -12,7 +12,9 @@ long userId = 0;
 String userName = "";
 %>
 
-<portlet:actionURL name="addBadge" var="addBadgeURL" />
+<portlet:actionURL name="addBadge" var="addBadgeURL">
+	<portlet:param name="redirect" value="<%= themeDisplay.getURLCurrent() %>" />
+</portlet:actionURL>
 
 <div class="modal" id="badgeModal" tabindex="-1" role="dialog" aria-hidden="true" style="display:none; z-index">
 	<div class="flex">

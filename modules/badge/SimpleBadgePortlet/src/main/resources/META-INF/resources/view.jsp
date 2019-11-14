@@ -10,7 +10,9 @@ List<BadgeType> badgeTypes = (List<BadgeType>)request.getAttribute("BADGE_TYPES"
 List<User> users = (List<User>)request.getAttribute("USER_LIST");
 %>
 <% if (themeDisplay.isSignedIn())  { %>
-<portlet:actionURL name="addBadge" var="addBadgeURL" />
+<portlet:actionURL name="addBadge" var="addBadgeURL" >
+	<portlet:param name="redirect" value="<%= themeDisplay.getURLCurrent() %>" />
+</portlet:actionURL>
 
 <div class="container">
 	<div class="row custom">

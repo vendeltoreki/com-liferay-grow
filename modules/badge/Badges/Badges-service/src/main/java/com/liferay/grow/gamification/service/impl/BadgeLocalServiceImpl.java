@@ -272,6 +272,8 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		payloadJSON.put(BadgeNotificationPortletKeys.BADGE_TYPE, badgeType);
 		payloadJSON.put(
 			BadgeNotificationPortletKeys.BADGE_COMMENT, badge.getDescription());
+		payloadJSON.put(
+				BadgeNotificationPortletKeys.BADGE_SENDER, badge.getUserName());
 
 		UserNotificationEvent userNotificationEvent =
 			UserNotificationEventLocalServiceUtil.createUserNotificationEvent(

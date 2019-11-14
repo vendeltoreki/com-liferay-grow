@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Grow Badge Notification Portlet
 Bundle-SymbolicName: com.liferay.grow.gamificaiton.badges.notification
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Export-Package:\
 	com.liferay.grow.gamificaiton.badges.notification.constants,\
 	com.liferay.grow.gamification.badges.notification,\

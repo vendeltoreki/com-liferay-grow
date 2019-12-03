@@ -75,32 +75,11 @@ public class LDatePersistenceImpl extends BasePersistenceImpl<LDate>
 		".List1";
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION = FINDER_CLASS_NAME_ENTITY +
 		".List2";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_ALL = new FinderPath(LDateModelImpl.ENTITY_CACHE_ENABLED,
-			LDateModelImpl.FINDER_CACHE_ENABLED, LDateImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0]);
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL = new FinderPath(LDateModelImpl.ENTITY_CACHE_ENABLED,
-			LDateModelImpl.FINDER_CACHE_ENABLED, LDateImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0]);
-	public static final FinderPath FINDER_PATH_COUNT_ALL = new FinderPath(LDateModelImpl.ENTITY_CACHE_ENABLED,
-			LDateModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll", new String[0]);
-	public static final FinderPath FINDER_PATH_FETCH_BY_Y_M_D = new FinderPath(LDateModelImpl.ENTITY_CACHE_ENABLED,
-			LDateModelImpl.FINDER_CACHE_ENABLED, LDateImpl.class,
-			FINDER_CLASS_NAME_ENTITY, "fetchByY_M_D",
-			new String[] {
-				Integer.class.getName(), Integer.class.getName(),
-				Integer.class.getName()
-			},
-			LDateModelImpl.YEAR_COLUMN_BITMASK |
-			LDateModelImpl.MONTH_COLUMN_BITMASK |
-			LDateModelImpl.DAY_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_Y_M_D = new FinderPath(LDateModelImpl.ENTITY_CACHE_ENABLED,
-			LDateModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByY_M_D",
-			new String[] {
-				Integer.class.getName(), Integer.class.getName(),
-				Integer.class.getName()
-			});
+	private FinderPath _finderPathWithPaginationFindAll;
+	private FinderPath _finderPathWithoutPaginationFindAll;
+	private FinderPath _finderPathCountAll;
+	private FinderPath _finderPathFetchByY_M_D;
+	private FinderPath _finderPathCountByY_M_D;
 
 	/**
 	 * Returns the l date where year = &#63; and month = &#63; and day = &#63; or throws a {@link NoSuchLDateException} if it could not be found.
@@ -172,8 +151,8 @@ public class LDatePersistenceImpl extends BasePersistenceImpl<LDate>
 		Object result = null;
 
 		if (retrieveFromCache) {
-			result = finderCache.getResult(FINDER_PATH_FETCH_BY_Y_M_D,
-					finderArgs, this);
+			result = finderCache.getResult(_finderPathFetchByY_M_D, finderArgs,
+					this);
 		}
 
 		if (result instanceof LDate) {
@@ -216,8 +195,8 @@ public class LDatePersistenceImpl extends BasePersistenceImpl<LDate>
 				List<LDate> list = q.list();
 
 				if (list.isEmpty()) {
-					finderCache.putResult(FINDER_PATH_FETCH_BY_Y_M_D,
-						finderArgs, list);
+					finderCache.putResult(_finderPathFetchByY_M_D, finderArgs,
+						list);
 				}
 				else {
 					if (list.size() > 1) {
@@ -239,7 +218,7 @@ public class LDatePersistenceImpl extends BasePersistenceImpl<LDate>
 				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(FINDER_PATH_FETCH_BY_Y_M_D, finderArgs);
+				finderCache.removeResult(_finderPathFetchByY_M_D, finderArgs);
 
 				throw processException(e);
 			}
@@ -282,7 +261,7 @@ public class LDatePersistenceImpl extends BasePersistenceImpl<LDate>
 	 */
 	@Override
 	public int countByY_M_D(int year, int month, int day) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_Y_M_D;
+		FinderPath finderPath = _finderPathCountByY_M_D;
 
 		Object[] finderArgs = new Object[] { year, month, day };
 
@@ -351,7 +330,7 @@ public class LDatePersistenceImpl extends BasePersistenceImpl<LDate>
 		entityCache.putResult(LDateModelImpl.ENTITY_CACHE_ENABLED,
 			LDateImpl.class, lDate.getPrimaryKey(), lDate);
 
-		finderCache.putResult(FINDER_PATH_FETCH_BY_Y_M_D,
+		finderCache.putResult(_finderPathFetchByY_M_D,
 			new Object[] { lDate.getYear(), lDate.getMonth(), lDate.getDay() },
 			lDate);
 
@@ -429,9 +408,9 @@ public class LDatePersistenceImpl extends BasePersistenceImpl<LDate>
 				lDateModelImpl.getDay()
 			};
 
-		finderCache.putResult(FINDER_PATH_COUNT_BY_Y_M_D, args,
-			Long.valueOf(1), false);
-		finderCache.putResult(FINDER_PATH_FETCH_BY_Y_M_D, args, lDateModelImpl,
+		finderCache.putResult(_finderPathCountByY_M_D, args, Long.valueOf(1),
+			false);
+		finderCache.putResult(_finderPathFetchByY_M_D, args, lDateModelImpl,
 			false);
 	}
 
@@ -443,20 +422,20 @@ public class LDatePersistenceImpl extends BasePersistenceImpl<LDate>
 					lDateModelImpl.getDay()
 				};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_Y_M_D, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_Y_M_D, args);
+			finderCache.removeResult(_finderPathCountByY_M_D, args);
+			finderCache.removeResult(_finderPathFetchByY_M_D, args);
 		}
 
 		if ((lDateModelImpl.getColumnBitmask() &
-				FINDER_PATH_FETCH_BY_Y_M_D.getColumnBitmask()) != 0) {
+				_finderPathFetchByY_M_D.getColumnBitmask()) != 0) {
 			Object[] args = new Object[] {
 					lDateModelImpl.getOriginalYear(),
 					lDateModelImpl.getOriginalMonth(),
 					lDateModelImpl.getOriginalDay()
 				};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_Y_M_D, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_Y_M_D, args);
+			finderCache.removeResult(_finderPathCountByY_M_D, args);
+			finderCache.removeResult(_finderPathFetchByY_M_D, args);
 		}
 	}
 
@@ -606,8 +585,8 @@ public class LDatePersistenceImpl extends BasePersistenceImpl<LDate>
 		}
 		else
 		 if (isNew) {
-			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
+			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
+			finderCache.removeResult(_finderPathWithoutPaginationFindAll,
 				FINDER_ARGS_EMPTY);
 		}
 
@@ -877,11 +856,11 @@ public class LDatePersistenceImpl extends BasePersistenceImpl<LDate>
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 				(orderByComparator == null)) {
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL;
+			finderPath = _finderPathWithoutPaginationFindAll;
 			finderArgs = FINDER_ARGS_EMPTY;
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_ALL;
+			finderPath = _finderPathWithPaginationFindAll;
 			finderArgs = new Object[] { start, end, orderByComparator };
 		}
 
@@ -970,7 +949,7 @@ public class LDatePersistenceImpl extends BasePersistenceImpl<LDate>
 	 */
 	@Override
 	public int countAll() {
-		Long count = (Long)finderCache.getResult(FINDER_PATH_COUNT_ALL,
+		Long count = (Long)finderCache.getResult(_finderPathCountAll,
 				FINDER_ARGS_EMPTY, this);
 
 		if (count == null) {
@@ -983,12 +962,11 @@ public class LDatePersistenceImpl extends BasePersistenceImpl<LDate>
 
 				count = (Long)q.uniqueResult();
 
-				finderCache.putResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY,
+				finderCache.putResult(_finderPathCountAll, FINDER_ARGS_EMPTY,
 					count);
 			}
 			catch (Exception e) {
-				finderCache.removeResult(FINDER_PATH_COUNT_ALL,
-					FINDER_ARGS_EMPTY);
+				finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
 
 				throw processException(e);
 			}
@@ -1009,6 +987,38 @@ public class LDatePersistenceImpl extends BasePersistenceImpl<LDate>
 	 * Initializes the l date persistence.
 	 */
 	public void afterPropertiesSet() {
+		_finderPathWithPaginationFindAll = new FinderPath(LDateModelImpl.ENTITY_CACHE_ENABLED,
+				LDateModelImpl.FINDER_CACHE_ENABLED, LDateImpl.class,
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0]);
+
+		_finderPathWithoutPaginationFindAll = new FinderPath(LDateModelImpl.ENTITY_CACHE_ENABLED,
+				LDateModelImpl.FINDER_CACHE_ENABLED, LDateImpl.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll",
+				new String[0]);
+
+		_finderPathCountAll = new FinderPath(LDateModelImpl.ENTITY_CACHE_ENABLED,
+				LDateModelImpl.FINDER_CACHE_ENABLED, Long.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
+				new String[0]);
+
+		_finderPathFetchByY_M_D = new FinderPath(LDateModelImpl.ENTITY_CACHE_ENABLED,
+				LDateModelImpl.FINDER_CACHE_ENABLED, LDateImpl.class,
+				FINDER_CLASS_NAME_ENTITY, "fetchByY_M_D",
+				new String[] {
+					Integer.class.getName(), Integer.class.getName(),
+					Integer.class.getName()
+				},
+				LDateModelImpl.YEAR_COLUMN_BITMASK |
+				LDateModelImpl.MONTH_COLUMN_BITMASK |
+				LDateModelImpl.DAY_COLUMN_BITMASK);
+
+		_finderPathCountByY_M_D = new FinderPath(LDateModelImpl.ENTITY_CACHE_ENABLED,
+				LDateModelImpl.FINDER_CACHE_ENABLED, Long.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByY_M_D",
+				new String[] {
+					Integer.class.getName(), Integer.class.getName(),
+					Integer.class.getName()
+				});
 	}
 
 	public void destroy() {

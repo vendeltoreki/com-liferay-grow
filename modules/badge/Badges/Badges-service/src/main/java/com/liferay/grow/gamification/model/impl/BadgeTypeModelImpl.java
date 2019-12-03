@@ -41,10 +41,14 @@ import java.io.Serializable;
 import java.sql.Types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * The base model implementation for the BadgeType service. Represents a row in the &quot;gamification_BadgeType&quot; database table, with each column mapped to a property of this class.
@@ -212,19 +216,15 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("badgeTypeId", getBadgeTypeId());
-		attributes.put("groupId", getGroupId());
-		attributes.put("companyId", getCompanyId());
-		attributes.put("userId", getUserId());
-		attributes.put("userName", getUserName());
-		attributes.put("createDate", getCreateDate());
-		attributes.put("modifiedDate", getModifiedDate());
-		attributes.put("type", getType());
-		attributes.put("assignableFrom", getAssignableFrom());
-		attributes.put("assignableTo", getAssignableTo());
-		attributes.put("fileEntryId", getFileEntryId());
-		attributes.put("system", isSystem());
-		attributes.put("templateHTML", getTemplateHTML());
+		Map<String, Function<BadgeType, Object>> attributeGetterFunctions = getAttributeGetterFunctions();
+
+		for (Map.Entry<String, Function<BadgeType, Object>> entry : attributeGetterFunctions.entrySet()) {
+			String attributeName = entry.getKey();
+			Function<BadgeType, Object> attributeGetterFunction = entry.getValue();
+
+			attributes.put(attributeName,
+				attributeGetterFunction.apply((BadgeType)this));
+		}
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -234,83 +234,300 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long badgeTypeId = (Long)attributes.get("badgeTypeId");
+		Map<String, BiConsumer<BadgeType, Object>> attributeSetterBiConsumers = getAttributeSetterBiConsumers();
 
-		if (badgeTypeId != null) {
-			setBadgeTypeId(badgeTypeId);
+		for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+			String attributeName = entry.getKey();
+
+			BiConsumer<BadgeType, Object> attributeSetterBiConsumer = attributeSetterBiConsumers.get(attributeName);
+
+			if (attributeSetterBiConsumer != null) {
+				attributeSetterBiConsumer.accept((BadgeType)this,
+					entry.getValue());
+			}
 		}
+	}
 
-		Long groupId = (Long)attributes.get("groupId");
+	public Map<String, Function<BadgeType, Object>> getAttributeGetterFunctions() {
+		return _attributeGetterFunctions;
+	}
 
-		if (groupId != null) {
-			setGroupId(groupId);
-		}
+	public Map<String, BiConsumer<BadgeType, Object>> getAttributeSetterBiConsumers() {
+		return _attributeSetterBiConsumers;
+	}
 
-		Long companyId = (Long)attributes.get("companyId");
+	private static final Map<String, Function<BadgeType, Object>> _attributeGetterFunctions;
+	private static final Map<String, BiConsumer<BadgeType, Object>> _attributeSetterBiConsumers;
 
-		if (companyId != null) {
-			setCompanyId(companyId);
-		}
+	static {
+		Map<String, Function<BadgeType, Object>> attributeGetterFunctions = new LinkedHashMap<String, Function<BadgeType, Object>>();
+		Map<String, BiConsumer<BadgeType, ?>> attributeSetterBiConsumers = new LinkedHashMap<String, BiConsumer<BadgeType, ?>>();
 
-		Long userId = (Long)attributes.get("userId");
 
-		if (userId != null) {
-			setUserId(userId);
-		}
+		attributeGetterFunctions.put(
+			"badgeTypeId",
+			new Function<BadgeType, Object>() {
 
-		String userName = (String)attributes.get("userName");
+				@Override
+				public Object apply(BadgeType badgeType) {
+					return badgeType.getBadgeTypeId();
+				}
 
-		if (userName != null) {
-			setUserName(userName);
-		}
+			});
+		attributeSetterBiConsumers.put(
+			"badgeTypeId",
+			new BiConsumer<BadgeType, Object>() {
 
-		Date createDate = (Date)attributes.get("createDate");
+				@Override
+				public void accept(BadgeType badgeType, Object badgeTypeId) {
+					badgeType.setBadgeTypeId((Long)badgeTypeId);
+				}
 
-		if (createDate != null) {
-			setCreateDate(createDate);
-		}
+			});
+		attributeGetterFunctions.put(
+			"groupId",
+			new Function<BadgeType, Object>() {
 
-		Date modifiedDate = (Date)attributes.get("modifiedDate");
+				@Override
+				public Object apply(BadgeType badgeType) {
+					return badgeType.getGroupId();
+				}
 
-		if (modifiedDate != null) {
-			setModifiedDate(modifiedDate);
-		}
+			});
+		attributeSetterBiConsumers.put(
+			"groupId",
+			new BiConsumer<BadgeType, Object>() {
 
-		String type = (String)attributes.get("type");
+				@Override
+				public void accept(BadgeType badgeType, Object groupId) {
+					badgeType.setGroupId((Long)groupId);
+				}
 
-		if (type != null) {
-			setType(type);
-		}
+			});
+		attributeGetterFunctions.put(
+			"companyId",
+			new Function<BadgeType, Object>() {
 
-		Date assignableFrom = (Date)attributes.get("assignableFrom");
+				@Override
+				public Object apply(BadgeType badgeType) {
+					return badgeType.getCompanyId();
+				}
 
-		if (assignableFrom != null) {
-			setAssignableFrom(assignableFrom);
-		}
+			});
+		attributeSetterBiConsumers.put(
+			"companyId",
+			new BiConsumer<BadgeType, Object>() {
 
-		Date assignableTo = (Date)attributes.get("assignableTo");
+				@Override
+				public void accept(BadgeType badgeType, Object companyId) {
+					badgeType.setCompanyId((Long)companyId);
+				}
 
-		if (assignableTo != null) {
-			setAssignableTo(assignableTo);
-		}
+			});
+		attributeGetterFunctions.put(
+			"userId",
+			new Function<BadgeType, Object>() {
 
-		Long fileEntryId = (Long)attributes.get("fileEntryId");
+				@Override
+				public Object apply(BadgeType badgeType) {
+					return badgeType.getUserId();
+				}
 
-		if (fileEntryId != null) {
-			setFileEntryId(fileEntryId);
-		}
+			});
+		attributeSetterBiConsumers.put(
+			"userId",
+			new BiConsumer<BadgeType, Object>() {
 
-		Boolean system = (Boolean)attributes.get("system");
+				@Override
+				public void accept(BadgeType badgeType, Object userId) {
+					badgeType.setUserId((Long)userId);
+				}
 
-		if (system != null) {
-			setSystem(system);
-		}
+			});
+		attributeGetterFunctions.put(
+			"userName",
+			new Function<BadgeType, Object>() {
 
-		String templateHTML = (String)attributes.get("templateHTML");
+				@Override
+				public Object apply(BadgeType badgeType) {
+					return badgeType.getUserName();
+				}
 
-		if (templateHTML != null) {
-			setTemplateHTML(templateHTML);
-		}
+			});
+		attributeSetterBiConsumers.put(
+			"userName",
+			new BiConsumer<BadgeType, Object>() {
+
+				@Override
+				public void accept(BadgeType badgeType, Object userName) {
+					badgeType.setUserName((String)userName);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"createDate",
+			new Function<BadgeType, Object>() {
+
+				@Override
+				public Object apply(BadgeType badgeType) {
+					return badgeType.getCreateDate();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"createDate",
+			new BiConsumer<BadgeType, Object>() {
+
+				@Override
+				public void accept(BadgeType badgeType, Object createDate) {
+					badgeType.setCreateDate((Date)createDate);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"modifiedDate",
+			new Function<BadgeType, Object>() {
+
+				@Override
+				public Object apply(BadgeType badgeType) {
+					return badgeType.getModifiedDate();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"modifiedDate",
+			new BiConsumer<BadgeType, Object>() {
+
+				@Override
+				public void accept(BadgeType badgeType, Object modifiedDate) {
+					badgeType.setModifiedDate((Date)modifiedDate);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"type",
+			new Function<BadgeType, Object>() {
+
+				@Override
+				public Object apply(BadgeType badgeType) {
+					return badgeType.getType();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"type",
+			new BiConsumer<BadgeType, Object>() {
+
+				@Override
+				public void accept(BadgeType badgeType, Object type) {
+					badgeType.setType((String)type);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"assignableFrom",
+			new Function<BadgeType, Object>() {
+
+				@Override
+				public Object apply(BadgeType badgeType) {
+					return badgeType.getAssignableFrom();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"assignableFrom",
+			new BiConsumer<BadgeType, Object>() {
+
+				@Override
+				public void accept(BadgeType badgeType, Object assignableFrom) {
+					badgeType.setAssignableFrom((Date)assignableFrom);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"assignableTo",
+			new Function<BadgeType, Object>() {
+
+				@Override
+				public Object apply(BadgeType badgeType) {
+					return badgeType.getAssignableTo();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"assignableTo",
+			new BiConsumer<BadgeType, Object>() {
+
+				@Override
+				public void accept(BadgeType badgeType, Object assignableTo) {
+					badgeType.setAssignableTo((Date)assignableTo);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"fileEntryId",
+			new Function<BadgeType, Object>() {
+
+				@Override
+				public Object apply(BadgeType badgeType) {
+					return badgeType.getFileEntryId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"fileEntryId",
+			new BiConsumer<BadgeType, Object>() {
+
+				@Override
+				public void accept(BadgeType badgeType, Object fileEntryId) {
+					badgeType.setFileEntryId((Long)fileEntryId);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"system",
+			new Function<BadgeType, Object>() {
+
+				@Override
+				public Object apply(BadgeType badgeType) {
+					return badgeType.getSystem();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"system",
+			new BiConsumer<BadgeType, Object>() {
+
+				@Override
+				public void accept(BadgeType badgeType, Object system) {
+					badgeType.setSystem((Boolean)system);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"templateHTML",
+			new Function<BadgeType, Object>() {
+
+				@Override
+				public Object apply(BadgeType badgeType) {
+					return badgeType.getTemplateHTML();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"templateHTML",
+			new BiConsumer<BadgeType, Object>() {
+
+				@Override
+				public void accept(BadgeType badgeType, Object templateHTML) {
+					badgeType.setTemplateHTML((String)templateHTML);
+				}
+
+			});
+
+
+		_attributeGetterFunctions = Collections.unmodifiableMap(attributeGetterFunctions);
+		_attributeSetterBiConsumers = Collections.unmodifiableMap((Map)attributeSetterBiConsumers);
 	}
 
 	@JSON
@@ -731,34 +948,27 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(27);
+		Map<String, Function<BadgeType, Object>> attributeGetterFunctions = getAttributeGetterFunctions();
 
-		sb.append("{badgeTypeId=");
-		sb.append(getBadgeTypeId());
-		sb.append(", groupId=");
-		sb.append(getGroupId());
-		sb.append(", companyId=");
-		sb.append(getCompanyId());
-		sb.append(", userId=");
-		sb.append(getUserId());
-		sb.append(", userName=");
-		sb.append(getUserName());
-		sb.append(", createDate=");
-		sb.append(getCreateDate());
-		sb.append(", modifiedDate=");
-		sb.append(getModifiedDate());
-		sb.append(", type=");
-		sb.append(getType());
-		sb.append(", assignableFrom=");
-		sb.append(getAssignableFrom());
-		sb.append(", assignableTo=");
-		sb.append(getAssignableTo());
-		sb.append(", fileEntryId=");
-		sb.append(getFileEntryId());
-		sb.append(", system=");
-		sb.append(isSystem());
-		sb.append(", templateHTML=");
-		sb.append(getTemplateHTML());
+		StringBundler sb = new StringBundler((4 * attributeGetterFunctions.size()) +
+				2);
+
+		sb.append("{");
+
+		for (Map.Entry<String, Function<BadgeType, Object>> entry : attributeGetterFunctions.entrySet()) {
+			String attributeName = entry.getKey();
+			Function<BadgeType, Object> attributeGetterFunction = entry.getValue();
+
+			sb.append(attributeName);
+			sb.append("=");
+			sb.append(attributeGetterFunction.apply((BadgeType)this));
+			sb.append(", ");
+		}
+
+		if (sb.index() > 1) {
+			sb.setIndex(sb.index() - 1);
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -766,64 +976,25 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(43);
+		Map<String, Function<BadgeType, Object>> attributeGetterFunctions = getAttributeGetterFunctions();
+
+		StringBundler sb = new StringBundler((5 * attributeGetterFunctions.size()) +
+				4);
 
 		sb.append("<model><model-name>");
-		sb.append("com.liferay.grow.gamification.model.BadgeType");
+		sb.append(getModelClassName());
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>badgeTypeId</column-name><column-value><![CDATA[");
-		sb.append(getBadgeTypeId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>groupId</column-name><column-value><![CDATA[");
-		sb.append(getGroupId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>companyId</column-name><column-value><![CDATA[");
-		sb.append(getCompanyId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>userId</column-name><column-value><![CDATA[");
-		sb.append(getUserId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>userName</column-name><column-value><![CDATA[");
-		sb.append(getUserName());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>createDate</column-name><column-value><![CDATA[");
-		sb.append(getCreateDate());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>modifiedDate</column-name><column-value><![CDATA[");
-		sb.append(getModifiedDate());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>type</column-name><column-value><![CDATA[");
-		sb.append(getType());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>assignableFrom</column-name><column-value><![CDATA[");
-		sb.append(getAssignableFrom());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>assignableTo</column-name><column-value><![CDATA[");
-		sb.append(getAssignableTo());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>fileEntryId</column-name><column-value><![CDATA[");
-		sb.append(getFileEntryId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>system</column-name><column-value><![CDATA[");
-		sb.append(isSystem());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>templateHTML</column-name><column-value><![CDATA[");
-		sb.append(getTemplateHTML());
-		sb.append("]]></column-value></column>");
+		for (Map.Entry<String, Function<BadgeType, Object>> entry : attributeGetterFunctions.entrySet()) {
+			String attributeName = entry.getKey();
+			Function<BadgeType, Object> attributeGetterFunction = entry.getValue();
+
+			sb.append("<column><column-name>");
+			sb.append(attributeName);
+			sb.append("</column-name><column-value><![CDATA[");
+			sb.append(attributeGetterFunction.apply((BadgeType)this));
+			sb.append("]]></column-value></column>");
+		}
 
 		sb.append("</model>");
 

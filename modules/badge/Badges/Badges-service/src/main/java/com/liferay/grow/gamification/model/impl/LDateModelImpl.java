@@ -38,9 +38,13 @@ import java.io.Serializable;
 import java.sql.Types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * The base model implementation for the LDate service. Represents a row in the &quot;gamification_LDate&quot; database table, with each column mapped to a property of this class.
@@ -196,15 +200,15 @@ public class LDateModelImpl extends BaseModelImpl<LDate> implements LDateModel {
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("dateId", getDateId());
-		attributes.put("year", getYear());
-		attributes.put("month", getMonth());
-		attributes.put("monthName", getMonthName());
-		attributes.put("day", getDay());
-		attributes.put("dayOfYear", getDayOfYear());
-		attributes.put("week", getWeek());
-		attributes.put("weekDay", getWeekDay());
-		attributes.put("quarter", getQuarter());
+		Map<String, Function<LDate, Object>> attributeGetterFunctions = getAttributeGetterFunctions();
+
+		for (Map.Entry<String, Function<LDate, Object>> entry : attributeGetterFunctions.entrySet()) {
+			String attributeName = entry.getKey();
+			Function<LDate, Object> attributeGetterFunction = entry.getValue();
+
+			attributes.put(attributeName,
+				attributeGetterFunction.apply((LDate)this));
+		}
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -214,59 +218,219 @@ public class LDateModelImpl extends BaseModelImpl<LDate> implements LDateModel {
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long dateId = (Long)attributes.get("dateId");
+		Map<String, BiConsumer<LDate, Object>> attributeSetterBiConsumers = getAttributeSetterBiConsumers();
 
-		if (dateId != null) {
-			setDateId(dateId);
+		for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+			String attributeName = entry.getKey();
+
+			BiConsumer<LDate, Object> attributeSetterBiConsumer = attributeSetterBiConsumers.get(attributeName);
+
+			if (attributeSetterBiConsumer != null) {
+				attributeSetterBiConsumer.accept((LDate)this, entry.getValue());
+			}
 		}
+	}
 
-		Integer year = (Integer)attributes.get("year");
+	public Map<String, Function<LDate, Object>> getAttributeGetterFunctions() {
+		return _attributeGetterFunctions;
+	}
 
-		if (year != null) {
-			setYear(year);
-		}
+	public Map<String, BiConsumer<LDate, Object>> getAttributeSetterBiConsumers() {
+		return _attributeSetterBiConsumers;
+	}
 
-		Integer month = (Integer)attributes.get("month");
+	private static final Map<String, Function<LDate, Object>> _attributeGetterFunctions;
+	private static final Map<String, BiConsumer<LDate, Object>> _attributeSetterBiConsumers;
 
-		if (month != null) {
-			setMonth(month);
-		}
+	static {
+		Map<String, Function<LDate, Object>> attributeGetterFunctions = new LinkedHashMap<String, Function<LDate, Object>>();
+		Map<String, BiConsumer<LDate, ?>> attributeSetterBiConsumers = new LinkedHashMap<String, BiConsumer<LDate, ?>>();
 
-		String monthName = (String)attributes.get("monthName");
 
-		if (monthName != null) {
-			setMonthName(monthName);
-		}
+		attributeGetterFunctions.put(
+			"dateId",
+			new Function<LDate, Object>() {
 
-		Integer day = (Integer)attributes.get("day");
+				@Override
+				public Object apply(LDate lDate) {
+					return lDate.getDateId();
+				}
 
-		if (day != null) {
-			setDay(day);
-		}
+			});
+		attributeSetterBiConsumers.put(
+			"dateId",
+			new BiConsumer<LDate, Object>() {
 
-		Integer dayOfYear = (Integer)attributes.get("dayOfYear");
+				@Override
+				public void accept(LDate lDate, Object dateId) {
+					lDate.setDateId((Long)dateId);
+				}
 
-		if (dayOfYear != null) {
-			setDayOfYear(dayOfYear);
-		}
+			});
+		attributeGetterFunctions.put(
+			"year",
+			new Function<LDate, Object>() {
 
-		Integer week = (Integer)attributes.get("week");
+				@Override
+				public Object apply(LDate lDate) {
+					return lDate.getYear();
+				}
 
-		if (week != null) {
-			setWeek(week);
-		}
+			});
+		attributeSetterBiConsumers.put(
+			"year",
+			new BiConsumer<LDate, Object>() {
 
-		String weekDay = (String)attributes.get("weekDay");
+				@Override
+				public void accept(LDate lDate, Object year) {
+					lDate.setYear((Integer)year);
+				}
 
-		if (weekDay != null) {
-			setWeekDay(weekDay);
-		}
+			});
+		attributeGetterFunctions.put(
+			"month",
+			new Function<LDate, Object>() {
 
-		String quarter = (String)attributes.get("quarter");
+				@Override
+				public Object apply(LDate lDate) {
+					return lDate.getMonth();
+				}
 
-		if (quarter != null) {
-			setQuarter(quarter);
-		}
+			});
+		attributeSetterBiConsumers.put(
+			"month",
+			new BiConsumer<LDate, Object>() {
+
+				@Override
+				public void accept(LDate lDate, Object month) {
+					lDate.setMonth((Integer)month);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"monthName",
+			new Function<LDate, Object>() {
+
+				@Override
+				public Object apply(LDate lDate) {
+					return lDate.getMonthName();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"monthName",
+			new BiConsumer<LDate, Object>() {
+
+				@Override
+				public void accept(LDate lDate, Object monthName) {
+					lDate.setMonthName((String)monthName);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"day",
+			new Function<LDate, Object>() {
+
+				@Override
+				public Object apply(LDate lDate) {
+					return lDate.getDay();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"day",
+			new BiConsumer<LDate, Object>() {
+
+				@Override
+				public void accept(LDate lDate, Object day) {
+					lDate.setDay((Integer)day);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"dayOfYear",
+			new Function<LDate, Object>() {
+
+				@Override
+				public Object apply(LDate lDate) {
+					return lDate.getDayOfYear();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"dayOfYear",
+			new BiConsumer<LDate, Object>() {
+
+				@Override
+				public void accept(LDate lDate, Object dayOfYear) {
+					lDate.setDayOfYear((Integer)dayOfYear);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"week",
+			new Function<LDate, Object>() {
+
+				@Override
+				public Object apply(LDate lDate) {
+					return lDate.getWeek();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"week",
+			new BiConsumer<LDate, Object>() {
+
+				@Override
+				public void accept(LDate lDate, Object week) {
+					lDate.setWeek((Integer)week);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"weekDay",
+			new Function<LDate, Object>() {
+
+				@Override
+				public Object apply(LDate lDate) {
+					return lDate.getWeekDay();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"weekDay",
+			new BiConsumer<LDate, Object>() {
+
+				@Override
+				public void accept(LDate lDate, Object weekDay) {
+					lDate.setWeekDay((String)weekDay);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"quarter",
+			new Function<LDate, Object>() {
+
+				@Override
+				public Object apply(LDate lDate) {
+					return lDate.getQuarter();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"quarter",
+			new BiConsumer<LDate, Object>() {
+
+				@Override
+				public void accept(LDate lDate, Object quarter) {
+					lDate.setQuarter((String)quarter);
+				}
+
+			});
+
+
+		_attributeGetterFunctions = Collections.unmodifiableMap(attributeGetterFunctions);
+		_attributeSetterBiConsumers = Collections.unmodifiableMap((Map)attributeSetterBiConsumers);
 	}
 
 	@JSON
@@ -581,26 +745,27 @@ public class LDateModelImpl extends BaseModelImpl<LDate> implements LDateModel {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(19);
+		Map<String, Function<LDate, Object>> attributeGetterFunctions = getAttributeGetterFunctions();
 
-		sb.append("{dateId=");
-		sb.append(getDateId());
-		sb.append(", year=");
-		sb.append(getYear());
-		sb.append(", month=");
-		sb.append(getMonth());
-		sb.append(", monthName=");
-		sb.append(getMonthName());
-		sb.append(", day=");
-		sb.append(getDay());
-		sb.append(", dayOfYear=");
-		sb.append(getDayOfYear());
-		sb.append(", week=");
-		sb.append(getWeek());
-		sb.append(", weekDay=");
-		sb.append(getWeekDay());
-		sb.append(", quarter=");
-		sb.append(getQuarter());
+		StringBundler sb = new StringBundler((4 * attributeGetterFunctions.size()) +
+				2);
+
+		sb.append("{");
+
+		for (Map.Entry<String, Function<LDate, Object>> entry : attributeGetterFunctions.entrySet()) {
+			String attributeName = entry.getKey();
+			Function<LDate, Object> attributeGetterFunction = entry.getValue();
+
+			sb.append(attributeName);
+			sb.append("=");
+			sb.append(attributeGetterFunction.apply((LDate)this));
+			sb.append(", ");
+		}
+
+		if (sb.index() > 1) {
+			sb.setIndex(sb.index() - 1);
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -608,48 +773,25 @@ public class LDateModelImpl extends BaseModelImpl<LDate> implements LDateModel {
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(31);
+		Map<String, Function<LDate, Object>> attributeGetterFunctions = getAttributeGetterFunctions();
+
+		StringBundler sb = new StringBundler((5 * attributeGetterFunctions.size()) +
+				4);
 
 		sb.append("<model><model-name>");
-		sb.append("com.liferay.grow.gamification.model.LDate");
+		sb.append(getModelClassName());
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>dateId</column-name><column-value><![CDATA[");
-		sb.append(getDateId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>year</column-name><column-value><![CDATA[");
-		sb.append(getYear());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>month</column-name><column-value><![CDATA[");
-		sb.append(getMonth());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>monthName</column-name><column-value><![CDATA[");
-		sb.append(getMonthName());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>day</column-name><column-value><![CDATA[");
-		sb.append(getDay());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>dayOfYear</column-name><column-value><![CDATA[");
-		sb.append(getDayOfYear());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>week</column-name><column-value><![CDATA[");
-		sb.append(getWeek());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>weekDay</column-name><column-value><![CDATA[");
-		sb.append(getWeekDay());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>quarter</column-name><column-value><![CDATA[");
-		sb.append(getQuarter());
-		sb.append("]]></column-value></column>");
+		for (Map.Entry<String, Function<LDate, Object>> entry : attributeGetterFunctions.entrySet()) {
+			String attributeName = entry.getKey();
+			Function<LDate, Object> attributeGetterFunction = entry.getValue();
+
+			sb.append("<column><column-name>");
+			sb.append(attributeName);
+			sb.append("</column-name><column-value><![CDATA[");
+			sb.append(attributeGetterFunction.apply((LDate)this));
+			sb.append("]]></column-value></column>");
+		}
 
 		sb.append("</model>");
 

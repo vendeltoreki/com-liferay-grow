@@ -81,34 +81,12 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		".List1";
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION = FINDER_CLASS_NAME_ENTITY +
 		".List2";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_ALL = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0]);
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0]);
-	public static final FinderPath FINDER_PATH_COUNT_ALL = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll", new String[0]);
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
-			new String[] {
-				String.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
-			new String[] { String.class.getName() },
-			BadgeModelImpl.UUID_COLUMN_BITMASK |
-			BadgeModelImpl.ASSIGNEDDATEID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_UUID = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
-			new String[] { String.class.getName() });
+	private FinderPath _finderPathWithPaginationFindAll;
+	private FinderPath _finderPathWithoutPaginationFindAll;
+	private FinderPath _finderPathCountAll;
+	private FinderPath _finderPathWithPaginationFindByUuid;
+	private FinderPath _finderPathWithoutPaginationFindByUuid;
+	private FinderPath _finderPathCountByUuid;
 
 	/**
 	 * Returns all the badges where uuid = &#63;.
@@ -174,6 +152,8 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 	@Override
 	public List<Badge> findByUuid(String uuid, int start, int end,
 		OrderByComparator<Badge> orderByComparator, boolean retrieveFromCache) {
+		uuid = Objects.toString(uuid, "");
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
@@ -181,11 +161,11 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 				(orderByComparator == null)) {
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID;
+			finderPath = _finderPathWithoutPaginationFindByUuid;
 			finderArgs = new Object[] { uuid };
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID;
+			finderPath = _finderPathWithPaginationFindByUuid;
 			finderArgs = new Object[] { uuid, start, end, orderByComparator };
 		}
 
@@ -197,7 +177,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Badge badge : list) {
-					if (!Objects.equals(uuid, badge.getUuid())) {
+					if (!uuid.equals(badge.getUuid())) {
 						list = null;
 
 						break;
@@ -221,10 +201,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_UUID_3);
 			}
 			else {
@@ -401,6 +378,8 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 	@Override
 	public Badge[] findByUuid_PrevAndNext(long badgeId, String uuid,
 		OrderByComparator<Badge> orderByComparator) throws NoSuchBadgeException {
+		uuid = Objects.toString(uuid, "");
+
 		Badge badge = findByPrimaryKey(badgeId);
 
 		Session session = null;
@@ -446,10 +425,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 
 		boolean bindUuid = false;
 
-		if (uuid == null) {
-			query.append(_FINDER_COLUMN_UUID_UUID_1);
-		}
-		else if (uuid.equals("")) {
+		if (uuid.isEmpty()) {
 			query.append(_FINDER_COLUMN_UUID_UUID_3);
 		}
 		else {
@@ -531,10 +507,9 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		}
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(badge);
-
-			for (Object value : values) {
-				qPos.add(value);
+			for (Object orderByConditionValue : orderByComparator.getOrderByConditionValues(
+					badge)) {
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -569,7 +544,9 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 	 */
 	@Override
 	public int countByUuid(String uuid) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID;
+		uuid = Objects.toString(uuid, "");
+
+		FinderPath finderPath = _finderPathCountByUuid;
 
 		Object[] finderArgs = new Object[] { uuid };
 
@@ -582,10 +559,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_UUID_3);
 			}
 			else {
@@ -626,19 +600,10 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_1 = "badge.uuid IS NULL";
 	private static final String _FINDER_COLUMN_UUID_UUID_2 = "badge.uuid = ?";
 	private static final String _FINDER_COLUMN_UUID_UUID_3 = "(badge.uuid IS NULL OR badge.uuid = '')";
-	public static final FinderPath FINDER_PATH_FETCH_BY_UUID_G = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
-			FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
-			new String[] { String.class.getName(), Long.class.getName() },
-			BadgeModelImpl.UUID_COLUMN_BITMASK |
-			BadgeModelImpl.GROUPID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_UUID_G = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUUID_G",
-			new String[] { String.class.getName(), Long.class.getName() });
+	private FinderPath _finderPathFetchByUUID_G;
+	private FinderPath _finderPathCountByUUID_G;
 
 	/**
 	 * Returns the badge where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchBadgeException} if it could not be found.
@@ -699,12 +664,14 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 	@Override
 	public Badge fetchByUUID_G(String uuid, long groupId,
 		boolean retrieveFromCache) {
+		uuid = Objects.toString(uuid, "");
+
 		Object[] finderArgs = new Object[] { uuid, groupId };
 
 		Object result = null;
 
 		if (retrieveFromCache) {
-			result = finderCache.getResult(FINDER_PATH_FETCH_BY_UUID_G,
+			result = finderCache.getResult(_finderPathFetchByUUID_G,
 					finderArgs, this);
 		}
 
@@ -724,10 +691,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_G_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_3);
 			}
 			else {
@@ -758,8 +722,8 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 				List<Badge> list = q.list();
 
 				if (list.isEmpty()) {
-					finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G,
-						finderArgs, list);
+					finderCache.putResult(_finderPathFetchByUUID_G, finderArgs,
+						list);
 				}
 				else {
 					Badge badge = list.get(0);
@@ -770,7 +734,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, finderArgs);
+				finderCache.removeResult(_finderPathFetchByUUID_G, finderArgs);
 
 				throw processException(e);
 			}
@@ -811,7 +775,9 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 	 */
 	@Override
 	public int countByUUID_G(String uuid, long groupId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID_G;
+		uuid = Objects.toString(uuid, "");
+
+		FinderPath finderPath = _finderPathCountByUUID_G;
 
 		Object[] finderArgs = new Object[] { uuid, groupId };
 
@@ -824,10 +790,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_G_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_3);
 			}
 			else {
@@ -872,31 +835,12 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_UUID_G_UUID_1 = "badge.uuid IS NULL AND ";
 	private static final String _FINDER_COLUMN_UUID_G_UUID_2 = "badge.uuid = ? AND ";
 	private static final String _FINDER_COLUMN_UUID_G_UUID_3 = "(badge.uuid IS NULL OR badge.uuid = '') AND ";
 	private static final String _FINDER_COLUMN_UUID_G_GROUPID_2 = "badge.groupId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID_C = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
-			new String[] {
-				String.class.getName(), Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C =
-		new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
-			new String[] { String.class.getName(), Long.class.getName() },
-			BadgeModelImpl.UUID_COLUMN_BITMASK |
-			BadgeModelImpl.COMPANYID_COLUMN_BITMASK |
-			BadgeModelImpl.ASSIGNEDDATEID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_UUID_C = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
-			new String[] { String.class.getName(), Long.class.getName() });
+	private FinderPath _finderPathWithPaginationFindByUuid_C;
+	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
+	private FinderPath _finderPathCountByUuid_C;
 
 	/**
 	 * Returns all the badges where uuid = &#63; and companyId = &#63;.
@@ -969,6 +913,8 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 	public List<Badge> findByUuid_C(String uuid, long companyId, int start,
 		int end, OrderByComparator<Badge> orderByComparator,
 		boolean retrieveFromCache) {
+		uuid = Objects.toString(uuid, "");
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
@@ -976,11 +922,11 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 				(orderByComparator == null)) {
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C;
+			finderPath = _finderPathWithoutPaginationFindByUuid_C;
 			finderArgs = new Object[] { uuid, companyId };
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID_C;
+			finderPath = _finderPathWithPaginationFindByUuid_C;
 			finderArgs = new Object[] {
 					uuid, companyId,
 					
@@ -996,7 +942,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Badge badge : list) {
-					if (!Objects.equals(uuid, badge.getUuid()) ||
+					if (!uuid.equals(badge.getUuid()) ||
 							(companyId != badge.getCompanyId())) {
 						list = null;
 
@@ -1021,10 +967,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_C_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 			}
 			else {
@@ -1218,6 +1161,8 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 	public Badge[] findByUuid_C_PrevAndNext(long badgeId, String uuid,
 		long companyId, OrderByComparator<Badge> orderByComparator)
 		throws NoSuchBadgeException {
+		uuid = Objects.toString(uuid, "");
+
 		Badge badge = findByPrimaryKey(badgeId);
 
 		Session session = null;
@@ -1263,10 +1208,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 
 		boolean bindUuid = false;
 
-		if (uuid == null) {
-			query.append(_FINDER_COLUMN_UUID_C_UUID_1);
-		}
-		else if (uuid.equals("")) {
+		if (uuid.isEmpty()) {
 			query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 		}
 		else {
@@ -1352,10 +1294,9 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		qPos.add(companyId);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(badge);
-
-			for (Object value : values) {
-				qPos.add(value);
+			for (Object orderByConditionValue : orderByComparator.getOrderByConditionValues(
+					badge)) {
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -1392,7 +1333,9 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID_C;
+		uuid = Objects.toString(uuid, "");
+
+		FinderPath finderPath = _finderPathCountByUuid_C;
 
 		Object[] finderArgs = new Object[] { uuid, companyId };
 
@@ -1405,10 +1348,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_C_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 			}
 			else {
@@ -1453,31 +1393,12 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_UUID_C_UUID_1 = "badge.uuid IS NULL AND ";
 	private static final String _FINDER_COLUMN_UUID_C_UUID_2 = "badge.uuid = ? AND ";
 	private static final String _FINDER_COLUMN_UUID_C_UUID_3 = "(badge.uuid IS NULL OR badge.uuid = '') AND ";
 	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 = "badge.companyId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_BADGETYPE =
-		new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findBybadgeType",
-			new String[] {
-				Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_BADGETYPE =
-		new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findBybadgeType",
-			new String[] { Long.class.getName() },
-			BadgeModelImpl.BADGETYPEID_COLUMN_BITMASK |
-			BadgeModelImpl.ASSIGNEDDATEID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_BADGETYPE = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countBybadgeType",
-			new String[] { Long.class.getName() });
+	private FinderPath _finderPathWithPaginationFindBybadgeType;
+	private FinderPath _finderPathWithoutPaginationFindBybadgeType;
+	private FinderPath _finderPathCountBybadgeType;
 
 	/**
 	 * Returns all the badges where badgeTypeId = &#63;.
@@ -1551,11 +1472,11 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 				(orderByComparator == null)) {
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_BADGETYPE;
+			finderPath = _finderPathWithoutPaginationFindBybadgeType;
 			finderArgs = new Object[] { badgeTypeId };
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_BADGETYPE;
+			finderPath = _finderPathWithPaginationFindBybadgeType;
 			finderArgs = new Object[] { badgeTypeId, start, end, orderByComparator };
 		}
 
@@ -1874,10 +1795,9 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		qPos.add(badgeTypeId);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(badge);
-
-			for (Object value : values) {
-				qPos.add(value);
+			for (Object orderByConditionValue : orderByComparator.getOrderByConditionValues(
+					badge)) {
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -1912,7 +1832,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 	 */
 	@Override
 	public int countBybadgeType(long badgeTypeId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_BADGETYPE;
+		FinderPath finderPath = _finderPathCountBybadgeType;
 
 		Object[] finderArgs = new Object[] { badgeTypeId };
 
@@ -1956,26 +1876,9 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 	}
 
 	private static final String _FINDER_COLUMN_BADGETYPE_BADGETYPEID_2 = "badge.badgeTypeId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_USERID = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByuserId",
-			new String[] {
-				Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID =
-		new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByuserId",
-			new String[] { Long.class.getName() },
-			BadgeModelImpl.USERID_COLUMN_BITMASK |
-			BadgeModelImpl.ASSIGNEDDATEID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_USERID = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByuserId",
-			new String[] { Long.class.getName() });
+	private FinderPath _finderPathWithPaginationFindByuserId;
+	private FinderPath _finderPathWithoutPaginationFindByuserId;
+	private FinderPath _finderPathCountByuserId;
 
 	/**
 	 * Returns all the badges where userId = &#63;.
@@ -2048,11 +1951,11 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 				(orderByComparator == null)) {
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID;
+			finderPath = _finderPathWithoutPaginationFindByuserId;
 			finderArgs = new Object[] { userId };
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_USERID;
+			finderPath = _finderPathWithPaginationFindByuserId;
 			finderArgs = new Object[] { userId, start, end, orderByComparator };
 		}
 
@@ -2371,10 +2274,9 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		qPos.add(userId);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(badge);
-
-			for (Object value : values) {
-				qPos.add(value);
+			for (Object orderByConditionValue : orderByComparator.getOrderByConditionValues(
+					badge)) {
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -2409,7 +2311,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 	 */
 	@Override
 	public int countByuserId(long userId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_USERID;
+		FinderPath finderPath = _finderPathCountByuserId;
 
 		Object[] finderArgs = new Object[] { userId };
 
@@ -2453,26 +2355,9 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 	}
 
 	private static final String _FINDER_COLUMN_USERID_USERID_2 = "badge.userId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_TOUSERID = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findBytoUserId",
-			new String[] {
-				Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_TOUSERID =
-		new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findBytoUserId",
-			new String[] { Long.class.getName() },
-			BadgeModelImpl.TOUSERID_COLUMN_BITMASK |
-			BadgeModelImpl.ASSIGNEDDATEID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_TOUSERID = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
-			BadgeModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countBytoUserId",
-			new String[] { Long.class.getName() });
+	private FinderPath _finderPathWithPaginationFindBytoUserId;
+	private FinderPath _finderPathWithoutPaginationFindBytoUserId;
+	private FinderPath _finderPathCountBytoUserId;
 
 	/**
 	 * Returns all the badges where toUserId = &#63;.
@@ -2546,11 +2431,11 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 				(orderByComparator == null)) {
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_TOUSERID;
+			finderPath = _finderPathWithoutPaginationFindBytoUserId;
 			finderArgs = new Object[] { toUserId };
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_TOUSERID;
+			finderPath = _finderPathWithPaginationFindBytoUserId;
 			finderArgs = new Object[] { toUserId, start, end, orderByComparator };
 		}
 
@@ -2869,10 +2754,9 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		qPos.add(toUserId);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(badge);
-
-			for (Object value : values) {
-				qPos.add(value);
+			for (Object orderByConditionValue : orderByComparator.getOrderByConditionValues(
+					badge)) {
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -2907,7 +2791,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 	 */
 	@Override
 	public int countBytoUserId(long toUserId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_TOUSERID;
+		FinderPath finderPath = _finderPathCountBytoUserId;
 
 		Object[] finderArgs = new Object[] { toUserId };
 
@@ -2984,7 +2868,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		entityCache.putResult(BadgeModelImpl.ENTITY_CACHE_ENABLED,
 			BadgeImpl.class, badge.getPrimaryKey(), badge);
 
-		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G,
+		finderCache.putResult(_finderPathFetchByUUID_G,
 			new Object[] { badge.getUuid(), badge.getGroupId() }, badge);
 
 		badge.resetOriginalValues();
@@ -3060,10 +2944,10 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 				badgeModelImpl.getUuid(), badgeModelImpl.getGroupId()
 			};
 
-		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-			Long.valueOf(1), false);
-		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-			badgeModelImpl, false);
+		finderCache.putResult(_finderPathCountByUUID_G, args, Long.valueOf(1),
+			false);
+		finderCache.putResult(_finderPathFetchByUUID_G, args, badgeModelImpl,
+			false);
 	}
 
 	protected void clearUniqueFindersCache(BadgeModelImpl badgeModelImpl,
@@ -3073,19 +2957,19 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 					badgeModelImpl.getUuid(), badgeModelImpl.getGroupId()
 				};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+			finderCache.removeResult(_finderPathCountByUUID_G, args);
+			finderCache.removeResult(_finderPathFetchByUUID_G, args);
 		}
 
 		if ((badgeModelImpl.getColumnBitmask() &
-				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
+				_finderPathFetchByUUID_G.getColumnBitmask()) != 0) {
 			Object[] args = new Object[] {
 					badgeModelImpl.getOriginalUuid(),
 					badgeModelImpl.getOriginalGroupId()
 				};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+			finderCache.removeResult(_finderPathCountByUUID_G, args);
+			finderCache.removeResult(_finderPathFetchByUUID_G, args);
 		}
 	}
 
@@ -3249,123 +3133,123 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		 if (isNew) {
 			Object[] args = new Object[] { badgeModelImpl.getUuid() };
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
+			finderCache.removeResult(_finderPathCountByUuid, args);
+			finderCache.removeResult(_finderPathWithoutPaginationFindByUuid,
 				args);
 
 			args = new Object[] {
 					badgeModelImpl.getUuid(), badgeModelImpl.getCompanyId()
 				};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
+			finderCache.removeResult(_finderPathCountByUuid_C, args);
+			finderCache.removeResult(_finderPathWithoutPaginationFindByUuid_C,
 				args);
 
 			args = new Object[] { badgeModelImpl.getBadgeTypeId() };
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_BADGETYPE, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_BADGETYPE,
+			finderCache.removeResult(_finderPathCountBybadgeType, args);
+			finderCache.removeResult(_finderPathWithoutPaginationFindBybadgeType,
 				args);
 
 			args = new Object[] { badgeModelImpl.getUserId() };
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_USERID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID,
+			finderCache.removeResult(_finderPathCountByuserId, args);
+			finderCache.removeResult(_finderPathWithoutPaginationFindByuserId,
 				args);
 
 			args = new Object[] { badgeModelImpl.getToUserId() };
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_TOUSERID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_TOUSERID,
+			finderCache.removeResult(_finderPathCountBytoUserId, args);
+			finderCache.removeResult(_finderPathWithoutPaginationFindBytoUserId,
 				args);
 
-			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
+			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
+			finderCache.removeResult(_finderPathWithoutPaginationFindAll,
 				FINDER_ARGS_EMPTY);
 		}
 
 		else {
 			if ((badgeModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID.getColumnBitmask()) != 0) {
+					_finderPathWithoutPaginationFindByUuid.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] { badgeModelImpl.getOriginalUuid() };
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
+				finderCache.removeResult(_finderPathCountByUuid, args);
+				finderCache.removeResult(_finderPathWithoutPaginationFindByUuid,
 					args);
 
 				args = new Object[] { badgeModelImpl.getUuid() };
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
+				finderCache.removeResult(_finderPathCountByUuid, args);
+				finderCache.removeResult(_finderPathWithoutPaginationFindByUuid,
 					args);
 			}
 
 			if ((badgeModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C.getColumnBitmask()) != 0) {
+					_finderPathWithoutPaginationFindByUuid_C.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
 						badgeModelImpl.getOriginalUuid(),
 						badgeModelImpl.getOriginalCompanyId()
 					};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
+				finderCache.removeResult(_finderPathCountByUuid_C, args);
+				finderCache.removeResult(_finderPathWithoutPaginationFindByUuid_C,
 					args);
 
 				args = new Object[] {
 						badgeModelImpl.getUuid(), badgeModelImpl.getCompanyId()
 					};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
+				finderCache.removeResult(_finderPathCountByUuid_C, args);
+				finderCache.removeResult(_finderPathWithoutPaginationFindByUuid_C,
 					args);
 			}
 
 			if ((badgeModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_BADGETYPE.getColumnBitmask()) != 0) {
+					_finderPathWithoutPaginationFindBybadgeType.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
 						badgeModelImpl.getOriginalBadgeTypeId()
 					};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_BADGETYPE, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_BADGETYPE,
+				finderCache.removeResult(_finderPathCountBybadgeType, args);
+				finderCache.removeResult(_finderPathWithoutPaginationFindBybadgeType,
 					args);
 
 				args = new Object[] { badgeModelImpl.getBadgeTypeId() };
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_BADGETYPE, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_BADGETYPE,
+				finderCache.removeResult(_finderPathCountBybadgeType, args);
+				finderCache.removeResult(_finderPathWithoutPaginationFindBybadgeType,
 					args);
 			}
 
 			if ((badgeModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID.getColumnBitmask()) != 0) {
+					_finderPathWithoutPaginationFindByuserId.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] { badgeModelImpl.getOriginalUserId() };
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_USERID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID,
+				finderCache.removeResult(_finderPathCountByuserId, args);
+				finderCache.removeResult(_finderPathWithoutPaginationFindByuserId,
 					args);
 
 				args = new Object[] { badgeModelImpl.getUserId() };
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_USERID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID,
+				finderCache.removeResult(_finderPathCountByuserId, args);
+				finderCache.removeResult(_finderPathWithoutPaginationFindByuserId,
 					args);
 			}
 
 			if ((badgeModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_TOUSERID.getColumnBitmask()) != 0) {
+					_finderPathWithoutPaginationFindBytoUserId.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
 						badgeModelImpl.getOriginalToUserId()
 					};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_TOUSERID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_TOUSERID,
+				finderCache.removeResult(_finderPathCountBytoUserId, args);
+				finderCache.removeResult(_finderPathWithoutPaginationFindBytoUserId,
 					args);
 
 				args = new Object[] { badgeModelImpl.getToUserId() };
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_TOUSERID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_TOUSERID,
+				finderCache.removeResult(_finderPathCountBytoUserId, args);
+				finderCache.removeResult(_finderPathWithoutPaginationFindBytoUserId,
 					args);
 			}
 		}
@@ -3636,11 +3520,11 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 				(orderByComparator == null)) {
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL;
+			finderPath = _finderPathWithoutPaginationFindAll;
 			finderArgs = FINDER_ARGS_EMPTY;
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_ALL;
+			finderPath = _finderPathWithPaginationFindAll;
 			finderArgs = new Object[] { start, end, orderByComparator };
 		}
 
@@ -3729,7 +3613,7 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 	 */
 	@Override
 	public int countAll() {
-		Long count = (Long)finderCache.getResult(FINDER_PATH_COUNT_ALL,
+		Long count = (Long)finderCache.getResult(_finderPathCountAll,
 				FINDER_ARGS_EMPTY, this);
 
 		if (count == null) {
@@ -3742,12 +3626,11 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 
 				count = (Long)q.uniqueResult();
 
-				finderCache.putResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY,
+				finderCache.putResult(_finderPathCountAll, FINDER_ARGS_EMPTY,
 					count);
 			}
 			catch (Exception e) {
-				finderCache.removeResult(FINDER_PATH_COUNT_ALL,
-					FINDER_ARGS_EMPTY);
+				finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
 
 				throw processException(e);
 			}
@@ -3773,6 +3656,142 @@ public class BadgePersistenceImpl extends BasePersistenceImpl<Badge>
 	 * Initializes the badge persistence.
 	 */
 	public void afterPropertiesSet() {
+		_finderPathWithPaginationFindAll = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0]);
+
+		_finderPathWithoutPaginationFindAll = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll",
+				new String[0]);
+
+		_finderPathCountAll = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, Long.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
+				new String[0]);
+
+		_finderPathWithPaginationFindByUuid = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
+				new String[] {
+					String.class.getName(),
+					
+				Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				});
+
+		_finderPathWithoutPaginationFindByUuid = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
+				new String[] { String.class.getName() },
+				BadgeModelImpl.UUID_COLUMN_BITMASK |
+				BadgeModelImpl.ASSIGNEDDATEID_COLUMN_BITMASK);
+
+		_finderPathCountByUuid = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, Long.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
+				new String[] { String.class.getName() });
+
+		_finderPathFetchByUUID_G = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
+				FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
+				new String[] { String.class.getName(), Long.class.getName() },
+				BadgeModelImpl.UUID_COLUMN_BITMASK |
+				BadgeModelImpl.GROUPID_COLUMN_BITMASK);
+
+		_finderPathCountByUUID_G = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, Long.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUUID_G",
+				new String[] { String.class.getName(), Long.class.getName() });
+
+		_finderPathWithPaginationFindByUuid_C = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
+				new String[] {
+					String.class.getName(), Long.class.getName(),
+					
+				Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				});
+
+		_finderPathWithoutPaginationFindByUuid_C = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
+				new String[] { String.class.getName(), Long.class.getName() },
+				BadgeModelImpl.UUID_COLUMN_BITMASK |
+				BadgeModelImpl.COMPANYID_COLUMN_BITMASK |
+				BadgeModelImpl.ASSIGNEDDATEID_COLUMN_BITMASK);
+
+		_finderPathCountByUuid_C = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, Long.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
+				new String[] { String.class.getName(), Long.class.getName() });
+
+		_finderPathWithPaginationFindBybadgeType = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findBybadgeType",
+				new String[] {
+					Long.class.getName(),
+					
+				Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				});
+
+		_finderPathWithoutPaginationFindBybadgeType = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findBybadgeType",
+				new String[] { Long.class.getName() },
+				BadgeModelImpl.BADGETYPEID_COLUMN_BITMASK |
+				BadgeModelImpl.ASSIGNEDDATEID_COLUMN_BITMASK);
+
+		_finderPathCountBybadgeType = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, Long.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countBybadgeType",
+				new String[] { Long.class.getName() });
+
+		_finderPathWithPaginationFindByuserId = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByuserId",
+				new String[] {
+					Long.class.getName(),
+					
+				Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				});
+
+		_finderPathWithoutPaginationFindByuserId = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByuserId",
+				new String[] { Long.class.getName() },
+				BadgeModelImpl.USERID_COLUMN_BITMASK |
+				BadgeModelImpl.ASSIGNEDDATEID_COLUMN_BITMASK);
+
+		_finderPathCountByuserId = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, Long.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByuserId",
+				new String[] { Long.class.getName() });
+
+		_finderPathWithPaginationFindBytoUserId = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findBytoUserId",
+				new String[] {
+					Long.class.getName(),
+					
+				Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				});
+
+		_finderPathWithoutPaginationFindBytoUserId = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, BadgeImpl.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findBytoUserId",
+				new String[] { Long.class.getName() },
+				BadgeModelImpl.TOUSERID_COLUMN_BITMASK |
+				BadgeModelImpl.ASSIGNEDDATEID_COLUMN_BITMASK);
+
+		_finderPathCountBytoUserId = new FinderPath(BadgeModelImpl.ENTITY_CACHE_ENABLED,
+				BadgeModelImpl.FINDER_CACHE_ENABLED, Long.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countBytoUserId",
+				new String[] { Long.class.getName() });
 	}
 
 	public void destroy() {

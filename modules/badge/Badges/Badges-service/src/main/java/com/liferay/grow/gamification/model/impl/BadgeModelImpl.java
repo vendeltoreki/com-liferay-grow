@@ -41,10 +41,14 @@ import java.io.Serializable;
 import java.sql.Types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * The base model implementation for the Badge service. Represents a row in the &quot;gamification_Badge&quot; database table, with each column mapped to a property of this class.
@@ -209,17 +213,15 @@ public class BadgeModelImpl extends BaseModelImpl<Badge> implements BadgeModel {
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("uuid", getUuid());
-		attributes.put("badgeId", getBadgeId());
-		attributes.put("groupId", getGroupId());
-		attributes.put("companyId", getCompanyId());
-		attributes.put("userId", getUserId());
-		attributes.put("userName", getUserName());
-		attributes.put("createDate", getCreateDate());
-		attributes.put("badgeTypeId", getBadgeTypeId());
-		attributes.put("toUserId", getToUserId());
-		attributes.put("description", getDescription());
-		attributes.put("assignedDateId", getAssignedDateId());
+		Map<String, Function<Badge, Object>> attributeGetterFunctions = getAttributeGetterFunctions();
+
+		for (Map.Entry<String, Function<Badge, Object>> entry : attributeGetterFunctions.entrySet()) {
+			String attributeName = entry.getKey();
+			Function<Badge, Object> attributeGetterFunction = entry.getValue();
+
+			attributes.put(attributeName,
+				attributeGetterFunction.apply((Badge)this));
+		}
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -229,71 +231,259 @@ public class BadgeModelImpl extends BaseModelImpl<Badge> implements BadgeModel {
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		String uuid = (String)attributes.get("uuid");
+		Map<String, BiConsumer<Badge, Object>> attributeSetterBiConsumers = getAttributeSetterBiConsumers();
 
-		if (uuid != null) {
-			setUuid(uuid);
+		for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+			String attributeName = entry.getKey();
+
+			BiConsumer<Badge, Object> attributeSetterBiConsumer = attributeSetterBiConsumers.get(attributeName);
+
+			if (attributeSetterBiConsumer != null) {
+				attributeSetterBiConsumer.accept((Badge)this, entry.getValue());
+			}
 		}
+	}
 
-		Long badgeId = (Long)attributes.get("badgeId");
+	public Map<String, Function<Badge, Object>> getAttributeGetterFunctions() {
+		return _attributeGetterFunctions;
+	}
 
-		if (badgeId != null) {
-			setBadgeId(badgeId);
-		}
+	public Map<String, BiConsumer<Badge, Object>> getAttributeSetterBiConsumers() {
+		return _attributeSetterBiConsumers;
+	}
 
-		Long groupId = (Long)attributes.get("groupId");
+	private static final Map<String, Function<Badge, Object>> _attributeGetterFunctions;
+	private static final Map<String, BiConsumer<Badge, Object>> _attributeSetterBiConsumers;
 
-		if (groupId != null) {
-			setGroupId(groupId);
-		}
+	static {
+		Map<String, Function<Badge, Object>> attributeGetterFunctions = new LinkedHashMap<String, Function<Badge, Object>>();
+		Map<String, BiConsumer<Badge, ?>> attributeSetterBiConsumers = new LinkedHashMap<String, BiConsumer<Badge, ?>>();
 
-		Long companyId = (Long)attributes.get("companyId");
 
-		if (companyId != null) {
-			setCompanyId(companyId);
-		}
+		attributeGetterFunctions.put(
+			"uuid",
+			new Function<Badge, Object>() {
 
-		Long userId = (Long)attributes.get("userId");
+				@Override
+				public Object apply(Badge badge) {
+					return badge.getUuid();
+				}
 
-		if (userId != null) {
-			setUserId(userId);
-		}
+			});
+		attributeSetterBiConsumers.put(
+			"uuid",
+			new BiConsumer<Badge, Object>() {
 
-		String userName = (String)attributes.get("userName");
+				@Override
+				public void accept(Badge badge, Object uuid) {
+					badge.setUuid((String)uuid);
+				}
 
-		if (userName != null) {
-			setUserName(userName);
-		}
+			});
+		attributeGetterFunctions.put(
+			"badgeId",
+			new Function<Badge, Object>() {
 
-		Date createDate = (Date)attributes.get("createDate");
+				@Override
+				public Object apply(Badge badge) {
+					return badge.getBadgeId();
+				}
 
-		if (createDate != null) {
-			setCreateDate(createDate);
-		}
+			});
+		attributeSetterBiConsumers.put(
+			"badgeId",
+			new BiConsumer<Badge, Object>() {
 
-		Long badgeTypeId = (Long)attributes.get("badgeTypeId");
+				@Override
+				public void accept(Badge badge, Object badgeId) {
+					badge.setBadgeId((Long)badgeId);
+				}
 
-		if (badgeTypeId != null) {
-			setBadgeTypeId(badgeTypeId);
-		}
+			});
+		attributeGetterFunctions.put(
+			"groupId",
+			new Function<Badge, Object>() {
 
-		Long toUserId = (Long)attributes.get("toUserId");
+				@Override
+				public Object apply(Badge badge) {
+					return badge.getGroupId();
+				}
 
-		if (toUserId != null) {
-			setToUserId(toUserId);
-		}
+			});
+		attributeSetterBiConsumers.put(
+			"groupId",
+			new BiConsumer<Badge, Object>() {
 
-		String description = (String)attributes.get("description");
+				@Override
+				public void accept(Badge badge, Object groupId) {
+					badge.setGroupId((Long)groupId);
+				}
 
-		if (description != null) {
-			setDescription(description);
-		}
+			});
+		attributeGetterFunctions.put(
+			"companyId",
+			new Function<Badge, Object>() {
 
-		Long assignedDateId = (Long)attributes.get("assignedDateId");
+				@Override
+				public Object apply(Badge badge) {
+					return badge.getCompanyId();
+				}
 
-		if (assignedDateId != null) {
-			setAssignedDateId(assignedDateId);
-		}
+			});
+		attributeSetterBiConsumers.put(
+			"companyId",
+			new BiConsumer<Badge, Object>() {
+
+				@Override
+				public void accept(Badge badge, Object companyId) {
+					badge.setCompanyId((Long)companyId);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"userId",
+			new Function<Badge, Object>() {
+
+				@Override
+				public Object apply(Badge badge) {
+					return badge.getUserId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"userId",
+			new BiConsumer<Badge, Object>() {
+
+				@Override
+				public void accept(Badge badge, Object userId) {
+					badge.setUserId((Long)userId);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"userName",
+			new Function<Badge, Object>() {
+
+				@Override
+				public Object apply(Badge badge) {
+					return badge.getUserName();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"userName",
+			new BiConsumer<Badge, Object>() {
+
+				@Override
+				public void accept(Badge badge, Object userName) {
+					badge.setUserName((String)userName);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"createDate",
+			new Function<Badge, Object>() {
+
+				@Override
+				public Object apply(Badge badge) {
+					return badge.getCreateDate();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"createDate",
+			new BiConsumer<Badge, Object>() {
+
+				@Override
+				public void accept(Badge badge, Object createDate) {
+					badge.setCreateDate((Date)createDate);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"badgeTypeId",
+			new Function<Badge, Object>() {
+
+				@Override
+				public Object apply(Badge badge) {
+					return badge.getBadgeTypeId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"badgeTypeId",
+			new BiConsumer<Badge, Object>() {
+
+				@Override
+				public void accept(Badge badge, Object badgeTypeId) {
+					badge.setBadgeTypeId((Long)badgeTypeId);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"toUserId",
+			new Function<Badge, Object>() {
+
+				@Override
+				public Object apply(Badge badge) {
+					return badge.getToUserId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"toUserId",
+			new BiConsumer<Badge, Object>() {
+
+				@Override
+				public void accept(Badge badge, Object toUserId) {
+					badge.setToUserId((Long)toUserId);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"description",
+			new Function<Badge, Object>() {
+
+				@Override
+				public Object apply(Badge badge) {
+					return badge.getDescription();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"description",
+			new BiConsumer<Badge, Object>() {
+
+				@Override
+				public void accept(Badge badge, Object description) {
+					badge.setDescription((String)description);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"assignedDateId",
+			new Function<Badge, Object>() {
+
+				@Override
+				public Object apply(Badge badge) {
+					return badge.getAssignedDateId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"assignedDateId",
+			new BiConsumer<Badge, Object>() {
+
+				@Override
+				public void accept(Badge badge, Object assignedDateId) {
+					badge.setAssignedDateId((Long)assignedDateId);
+				}
+
+			});
+
+
+		_attributeGetterFunctions = Collections.unmodifiableMap(attributeGetterFunctions);
+		_attributeSetterBiConsumers = Collections.unmodifiableMap((Map)attributeSetterBiConsumers);
 	}
 
 	@JSON
@@ -309,6 +499,8 @@ public class BadgeModelImpl extends BaseModelImpl<Badge> implements BadgeModel {
 
 	@Override
 	public void setUuid(String uuid) {
+		_columnBitmask |= UUID_COLUMN_BITMASK;
+
 		if (_originalUuid == null) {
 			_originalUuid = _uuid;
 		}
@@ -727,30 +919,27 @@ public class BadgeModelImpl extends BaseModelImpl<Badge> implements BadgeModel {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		Map<String, Function<Badge, Object>> attributeGetterFunctions = getAttributeGetterFunctions();
 
-		sb.append("{uuid=");
-		sb.append(getUuid());
-		sb.append(", badgeId=");
-		sb.append(getBadgeId());
-		sb.append(", groupId=");
-		sb.append(getGroupId());
-		sb.append(", companyId=");
-		sb.append(getCompanyId());
-		sb.append(", userId=");
-		sb.append(getUserId());
-		sb.append(", userName=");
-		sb.append(getUserName());
-		sb.append(", createDate=");
-		sb.append(getCreateDate());
-		sb.append(", badgeTypeId=");
-		sb.append(getBadgeTypeId());
-		sb.append(", toUserId=");
-		sb.append(getToUserId());
-		sb.append(", description=");
-		sb.append(getDescription());
-		sb.append(", assignedDateId=");
-		sb.append(getAssignedDateId());
+		StringBundler sb = new StringBundler((4 * attributeGetterFunctions.size()) +
+				2);
+
+		sb.append("{");
+
+		for (Map.Entry<String, Function<Badge, Object>> entry : attributeGetterFunctions.entrySet()) {
+			String attributeName = entry.getKey();
+			Function<Badge, Object> attributeGetterFunction = entry.getValue();
+
+			sb.append(attributeName);
+			sb.append("=");
+			sb.append(attributeGetterFunction.apply((Badge)this));
+			sb.append(", ");
+		}
+
+		if (sb.index() > 1) {
+			sb.setIndex(sb.index() - 1);
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -758,56 +947,25 @@ public class BadgeModelImpl extends BaseModelImpl<Badge> implements BadgeModel {
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(37);
+		Map<String, Function<Badge, Object>> attributeGetterFunctions = getAttributeGetterFunctions();
+
+		StringBundler sb = new StringBundler((5 * attributeGetterFunctions.size()) +
+				4);
 
 		sb.append("<model><model-name>");
-		sb.append("com.liferay.grow.gamification.model.Badge");
+		sb.append(getModelClassName());
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>uuid</column-name><column-value><![CDATA[");
-		sb.append(getUuid());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>badgeId</column-name><column-value><![CDATA[");
-		sb.append(getBadgeId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>groupId</column-name><column-value><![CDATA[");
-		sb.append(getGroupId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>companyId</column-name><column-value><![CDATA[");
-		sb.append(getCompanyId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>userId</column-name><column-value><![CDATA[");
-		sb.append(getUserId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>userName</column-name><column-value><![CDATA[");
-		sb.append(getUserName());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>createDate</column-name><column-value><![CDATA[");
-		sb.append(getCreateDate());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>badgeTypeId</column-name><column-value><![CDATA[");
-		sb.append(getBadgeTypeId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>toUserId</column-name><column-value><![CDATA[");
-		sb.append(getToUserId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>description</column-name><column-value><![CDATA[");
-		sb.append(getDescription());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>assignedDateId</column-name><column-value><![CDATA[");
-		sb.append(getAssignedDateId());
-		sb.append("]]></column-value></column>");
+		for (Map.Entry<String, Function<Badge, Object>> entry : attributeGetterFunctions.entrySet()) {
+			String attributeName = entry.getKey();
+			Function<Badge, Object> attributeGetterFunction = entry.getValue();
+
+			sb.append("<column><column-name>");
+			sb.append(attributeName);
+			sb.append("</column-name><column-value><![CDATA[");
+			sb.append(attributeGetterFunction.apply((Badge)this));
+			sb.append("]]></column-value></column>");
+		}
 
 		sb.append("</model>");
 

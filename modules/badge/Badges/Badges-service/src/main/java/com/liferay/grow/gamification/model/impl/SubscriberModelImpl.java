@@ -41,10 +41,14 @@ import java.io.Serializable;
 import java.sql.Types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * The base model implementation for the Subscriber service. Represents a row in the &quot;gamification_Subscriber&quot; database table, with each column mapped to a property of this class.
@@ -199,15 +203,15 @@ public class SubscriberModelImpl extends BaseModelImpl<Subscriber>
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("subscriberId", getSubscriberId());
-		attributes.put("groupId", getGroupId());
-		attributes.put("companyId", getCompanyId());
-		attributes.put("userId", getUserId());
-		attributes.put("userName", getUserName());
-		attributes.put("createDate", getCreateDate());
-		attributes.put("modifiedDate", getModifiedDate());
-		attributes.put("subscriberUserId", getSubscriberUserId());
-		attributes.put("badgeType", getBadgeType());
+		Map<String, Function<Subscriber, Object>> attributeGetterFunctions = getAttributeGetterFunctions();
+
+		for (Map.Entry<String, Function<Subscriber, Object>> entry : attributeGetterFunctions.entrySet()) {
+			String attributeName = entry.getKey();
+			Function<Subscriber, Object> attributeGetterFunction = entry.getValue();
+
+			attributes.put(attributeName,
+				attributeGetterFunction.apply((Subscriber)this));
+		}
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -217,59 +221,220 @@ public class SubscriberModelImpl extends BaseModelImpl<Subscriber>
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long subscriberId = (Long)attributes.get("subscriberId");
+		Map<String, BiConsumer<Subscriber, Object>> attributeSetterBiConsumers = getAttributeSetterBiConsumers();
 
-		if (subscriberId != null) {
-			setSubscriberId(subscriberId);
+		for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+			String attributeName = entry.getKey();
+
+			BiConsumer<Subscriber, Object> attributeSetterBiConsumer = attributeSetterBiConsumers.get(attributeName);
+
+			if (attributeSetterBiConsumer != null) {
+				attributeSetterBiConsumer.accept((Subscriber)this,
+					entry.getValue());
+			}
 		}
+	}
 
-		Long groupId = (Long)attributes.get("groupId");
+	public Map<String, Function<Subscriber, Object>> getAttributeGetterFunctions() {
+		return _attributeGetterFunctions;
+	}
 
-		if (groupId != null) {
-			setGroupId(groupId);
-		}
+	public Map<String, BiConsumer<Subscriber, Object>> getAttributeSetterBiConsumers() {
+		return _attributeSetterBiConsumers;
+	}
 
-		Long companyId = (Long)attributes.get("companyId");
+	private static final Map<String, Function<Subscriber, Object>> _attributeGetterFunctions;
+	private static final Map<String, BiConsumer<Subscriber, Object>> _attributeSetterBiConsumers;
 
-		if (companyId != null) {
-			setCompanyId(companyId);
-		}
+	static {
+		Map<String, Function<Subscriber, Object>> attributeGetterFunctions = new LinkedHashMap<String, Function<Subscriber, Object>>();
+		Map<String, BiConsumer<Subscriber, ?>> attributeSetterBiConsumers = new LinkedHashMap<String, BiConsumer<Subscriber, ?>>();
 
-		Long userId = (Long)attributes.get("userId");
 
-		if (userId != null) {
-			setUserId(userId);
-		}
+		attributeGetterFunctions.put(
+			"subscriberId",
+			new Function<Subscriber, Object>() {
 
-		String userName = (String)attributes.get("userName");
+				@Override
+				public Object apply(Subscriber subscriber) {
+					return subscriber.getSubscriberId();
+				}
 
-		if (userName != null) {
-			setUserName(userName);
-		}
+			});
+		attributeSetterBiConsumers.put(
+			"subscriberId",
+			new BiConsumer<Subscriber, Object>() {
 
-		Date createDate = (Date)attributes.get("createDate");
+				@Override
+				public void accept(Subscriber subscriber, Object subscriberId) {
+					subscriber.setSubscriberId((Long)subscriberId);
+				}
 
-		if (createDate != null) {
-			setCreateDate(createDate);
-		}
+			});
+		attributeGetterFunctions.put(
+			"groupId",
+			new Function<Subscriber, Object>() {
 
-		Date modifiedDate = (Date)attributes.get("modifiedDate");
+				@Override
+				public Object apply(Subscriber subscriber) {
+					return subscriber.getGroupId();
+				}
 
-		if (modifiedDate != null) {
-			setModifiedDate(modifiedDate);
-		}
+			});
+		attributeSetterBiConsumers.put(
+			"groupId",
+			new BiConsumer<Subscriber, Object>() {
 
-		Long subscriberUserId = (Long)attributes.get("subscriberUserId");
+				@Override
+				public void accept(Subscriber subscriber, Object groupId) {
+					subscriber.setGroupId((Long)groupId);
+				}
 
-		if (subscriberUserId != null) {
-			setSubscriberUserId(subscriberUserId);
-		}
+			});
+		attributeGetterFunctions.put(
+			"companyId",
+			new Function<Subscriber, Object>() {
 
-		Long badgeType = (Long)attributes.get("badgeType");
+				@Override
+				public Object apply(Subscriber subscriber) {
+					return subscriber.getCompanyId();
+				}
 
-		if (badgeType != null) {
-			setBadgeType(badgeType);
-		}
+			});
+		attributeSetterBiConsumers.put(
+			"companyId",
+			new BiConsumer<Subscriber, Object>() {
+
+				@Override
+				public void accept(Subscriber subscriber, Object companyId) {
+					subscriber.setCompanyId((Long)companyId);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"userId",
+			new Function<Subscriber, Object>() {
+
+				@Override
+				public Object apply(Subscriber subscriber) {
+					return subscriber.getUserId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"userId",
+			new BiConsumer<Subscriber, Object>() {
+
+				@Override
+				public void accept(Subscriber subscriber, Object userId) {
+					subscriber.setUserId((Long)userId);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"userName",
+			new Function<Subscriber, Object>() {
+
+				@Override
+				public Object apply(Subscriber subscriber) {
+					return subscriber.getUserName();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"userName",
+			new BiConsumer<Subscriber, Object>() {
+
+				@Override
+				public void accept(Subscriber subscriber, Object userName) {
+					subscriber.setUserName((String)userName);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"createDate",
+			new Function<Subscriber, Object>() {
+
+				@Override
+				public Object apply(Subscriber subscriber) {
+					return subscriber.getCreateDate();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"createDate",
+			new BiConsumer<Subscriber, Object>() {
+
+				@Override
+				public void accept(Subscriber subscriber, Object createDate) {
+					subscriber.setCreateDate((Date)createDate);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"modifiedDate",
+			new Function<Subscriber, Object>() {
+
+				@Override
+				public Object apply(Subscriber subscriber) {
+					return subscriber.getModifiedDate();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"modifiedDate",
+			new BiConsumer<Subscriber, Object>() {
+
+				@Override
+				public void accept(Subscriber subscriber, Object modifiedDate) {
+					subscriber.setModifiedDate((Date)modifiedDate);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"subscriberUserId",
+			new Function<Subscriber, Object>() {
+
+				@Override
+				public Object apply(Subscriber subscriber) {
+					return subscriber.getSubscriberUserId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"subscriberUserId",
+			new BiConsumer<Subscriber, Object>() {
+
+				@Override
+				public void accept(Subscriber subscriber, Object subscriberUserId) {
+					subscriber.setSubscriberUserId((Long)subscriberUserId);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"badgeType",
+			new Function<Subscriber, Object>() {
+
+				@Override
+				public Object apply(Subscriber subscriber) {
+					return subscriber.getBadgeType();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"badgeType",
+			new BiConsumer<Subscriber, Object>() {
+
+				@Override
+				public void accept(Subscriber subscriber, Object badgeType) {
+					subscriber.setBadgeType((Long)badgeType);
+				}
+
+			});
+
+
+		_attributeGetterFunctions = Collections.unmodifiableMap(attributeGetterFunctions);
+		_attributeSetterBiConsumers = Collections.unmodifiableMap((Map)attributeSetterBiConsumers);
 	}
 
 	@JSON
@@ -584,26 +749,27 @@ public class SubscriberModelImpl extends BaseModelImpl<Subscriber>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(19);
+		Map<String, Function<Subscriber, Object>> attributeGetterFunctions = getAttributeGetterFunctions();
 
-		sb.append("{subscriberId=");
-		sb.append(getSubscriberId());
-		sb.append(", groupId=");
-		sb.append(getGroupId());
-		sb.append(", companyId=");
-		sb.append(getCompanyId());
-		sb.append(", userId=");
-		sb.append(getUserId());
-		sb.append(", userName=");
-		sb.append(getUserName());
-		sb.append(", createDate=");
-		sb.append(getCreateDate());
-		sb.append(", modifiedDate=");
-		sb.append(getModifiedDate());
-		sb.append(", subscriberUserId=");
-		sb.append(getSubscriberUserId());
-		sb.append(", badgeType=");
-		sb.append(getBadgeType());
+		StringBundler sb = new StringBundler((4 * attributeGetterFunctions.size()) +
+				2);
+
+		sb.append("{");
+
+		for (Map.Entry<String, Function<Subscriber, Object>> entry : attributeGetterFunctions.entrySet()) {
+			String attributeName = entry.getKey();
+			Function<Subscriber, Object> attributeGetterFunction = entry.getValue();
+
+			sb.append(attributeName);
+			sb.append("=");
+			sb.append(attributeGetterFunction.apply((Subscriber)this));
+			sb.append(", ");
+		}
+
+		if (sb.index() > 1) {
+			sb.setIndex(sb.index() - 1);
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -611,48 +777,25 @@ public class SubscriberModelImpl extends BaseModelImpl<Subscriber>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(31);
+		Map<String, Function<Subscriber, Object>> attributeGetterFunctions = getAttributeGetterFunctions();
+
+		StringBundler sb = new StringBundler((5 * attributeGetterFunctions.size()) +
+				4);
 
 		sb.append("<model><model-name>");
-		sb.append("com.liferay.grow.gamification.model.Subscriber");
+		sb.append(getModelClassName());
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>subscriberId</column-name><column-value><![CDATA[");
-		sb.append(getSubscriberId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>groupId</column-name><column-value><![CDATA[");
-		sb.append(getGroupId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>companyId</column-name><column-value><![CDATA[");
-		sb.append(getCompanyId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>userId</column-name><column-value><![CDATA[");
-		sb.append(getUserId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>userName</column-name><column-value><![CDATA[");
-		sb.append(getUserName());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>createDate</column-name><column-value><![CDATA[");
-		sb.append(getCreateDate());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>modifiedDate</column-name><column-value><![CDATA[");
-		sb.append(getModifiedDate());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>subscriberUserId</column-name><column-value><![CDATA[");
-		sb.append(getSubscriberUserId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>badgeType</column-name><column-value><![CDATA[");
-		sb.append(getBadgeType());
-		sb.append("]]></column-value></column>");
+		for (Map.Entry<String, Function<Subscriber, Object>> entry : attributeGetterFunctions.entrySet()) {
+			String attributeName = entry.getKey();
+			Function<Subscriber, Object> attributeGetterFunction = entry.getValue();
+
+			sb.append("<column><column-name>");
+			sb.append(attributeName);
+			sb.append("</column-name><column-value><![CDATA[");
+			sb.append(attributeGetterFunction.apply((Subscriber)this));
+			sb.append("]]></column-value></column>");
+		}
 
 		sb.append("</model>");
 

@@ -21,6 +21,11 @@ import com.liferay.grow.gamification.model.LDate;
 
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
 
+import java.io.Serializable;
+
+import java.util.Map;
+import java.util.Set;
+
 /**
  * The persistence interface for the l date service.
  *
@@ -40,6 +45,9 @@ public interface LDatePersistence extends BasePersistence<LDate> {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link LDateUtil} to access the l date persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this interface.
 	 */
+	@Override
+	public Map<Serializable, LDate> fetchByPrimaryKeys(
+		Set<Serializable> primaryKeys);
 
 	/**
 	* Returns the l date where year = &#63; and month = &#63; and day = &#63; or throws a {@link NoSuchLDateException} if it could not be found.
@@ -145,10 +153,6 @@ public interface LDatePersistence extends BasePersistence<LDate> {
 	* @return the l date, or <code>null</code> if a l date with the primary key could not be found
 	*/
 	public LDate fetchByPrimaryKey(long dateId);
-
-	@Override
-	public java.util.Map<java.io.Serializable, LDate> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys);
 
 	/**
 	* Returns all the l dates.

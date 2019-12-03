@@ -21,6 +21,11 @@ import com.liferay.grow.gamification.model.Subscriber;
 
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
 
+import java.io.Serializable;
+
+import java.util.Map;
+import java.util.Set;
+
 /**
  * The persistence interface for the subscriber service.
  *
@@ -40,6 +45,9 @@ public interface SubscriberPersistence extends BasePersistence<Subscriber> {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link SubscriberUtil} to access the subscriber persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this interface.
 	 */
+	@Override
+	public Map<Serializable, Subscriber> fetchByPrimaryKeys(
+		Set<Serializable> primaryKeys);
 
 	/**
 	* Returns all the subscribers where subscriberUserId = &#63;.
@@ -224,10 +232,6 @@ public interface SubscriberPersistence extends BasePersistence<Subscriber> {
 	* @return the subscriber, or <code>null</code> if a subscriber with the primary key could not be found
 	*/
 	public Subscriber fetchByPrimaryKey(long subscriberId);
-
-	@Override
-	public java.util.Map<java.io.Serializable, Subscriber> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys);
 
 	/**
 	* Returns all the subscribers.

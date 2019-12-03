@@ -21,7 +21,11 @@ import com.liferay.grow.gamification.model.BadgeType;
 
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
 
+import java.io.Serializable;
+
 import java.util.Date;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The persistence interface for the badge type service.
@@ -42,6 +46,9 @@ public interface BadgeTypePersistence extends BasePersistence<BadgeType> {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link BadgeTypeUtil} to access the badge type persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this interface.
 	 */
+	@Override
+	public Map<Serializable, BadgeType> fetchByPrimaryKeys(
+		Set<Serializable> primaryKeys);
 
 	/**
 	* Returns all the badge types where assignableTo = &#63;.
@@ -313,10 +320,6 @@ public interface BadgeTypePersistence extends BasePersistence<BadgeType> {
 	*/
 	public BadgeType fetchByPrimaryKey(long badgeTypeId);
 
-	@Override
-	public java.util.Map<java.io.Serializable, BadgeType> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys);
-
 	/**
 	* Returns all the badge types.
 	*
@@ -382,5 +385,5 @@ public interface BadgeTypePersistence extends BasePersistence<BadgeType> {
 	public int countAll();
 
 	@Override
-	public java.util.Set<String> getBadColumnNames();
+	public Set<String> getBadColumnNames();
 }

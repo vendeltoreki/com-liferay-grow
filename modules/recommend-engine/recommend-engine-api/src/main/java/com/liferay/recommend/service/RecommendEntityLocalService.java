@@ -78,6 +78,7 @@ public interface RecommendEntityLocalService extends BaseLocalService,
 	* @param id the primary key for the new recommend entity
 	* @return the new recommend entity
 	*/
+	@Transactional(enabled = false)
 	public RecommendEntity createRecommendEntity(long id);
 
 	/**
@@ -108,6 +109,7 @@ public interface RecommendEntityLocalService extends BaseLocalService,
 	public RecommendEntity deleteRecommendEntity(
 		RecommendEntity recommendEntity);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public DynamicQuery dynamicQuery();
 
 	/**
@@ -116,6 +118,7 @@ public interface RecommendEntityLocalService extends BaseLocalService,
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
 	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery);
 
 	/**
@@ -130,6 +133,7 @@ public interface RecommendEntityLocalService extends BaseLocalService,
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
 	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end);
 
@@ -146,6 +150,7 @@ public interface RecommendEntityLocalService extends BaseLocalService,
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
 	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
 
@@ -155,6 +160,7 @@ public interface RecommendEntityLocalService extends BaseLocalService,
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows matching the dynamic query
 	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public long dynamicQueryCount(DynamicQuery dynamicQuery);
 
 	/**
@@ -164,6 +170,7 @@ public interface RecommendEntityLocalService extends BaseLocalService,
 	* @param projection the projection to apply to the query
 	* @return the number of rows matching the dynamic query
 	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
 		Projection projection);
 
@@ -181,7 +188,7 @@ public interface RecommendEntityLocalService extends BaseLocalService,
 	*
 	* @return the OSGi service identifier
 	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public String getOSGiServiceIdentifier();
 
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -221,11 +228,6 @@ public interface RecommendEntityLocalService extends BaseLocalService,
 	public RecommendEntity getRecommendEntity(long id)
 		throws PortalException;
 
-	/**
-	* NOTE FOR DEVELOPERS:
-	*
-	* Never reference this class directly. Always use {@link RecommendEntityLocalServiceUtil} to access the recommend entity local service.
-	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public JSONObject getTopMostViewed(int resultCount,
 		ServiceContext serviceContext);

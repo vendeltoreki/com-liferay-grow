@@ -72,7 +72,7 @@ public class RecommendEntityWrapper implements RecommendEntity,
 	}
 
 	@Override
-	public java.lang.Object clone() {
+	public Object clone() {
 		return new RecommendEntityWrapper((RecommendEntity)_recommendEntity.clone());
 	}
 
@@ -198,7 +198,7 @@ public class RecommendEntityWrapper implements RecommendEntity,
 	}
 
 	@Override
-	public java.lang.String toString() {
+	public String toString() {
 		return _recommendEntity.toString();
 	}
 
@@ -208,7 +208,7 @@ public class RecommendEntityWrapper implements RecommendEntity,
 	}
 
 	@Override
-	public java.lang.String toXmlString() {
+	public String toXmlString() {
 		return _recommendEntity.toXmlString();
 	}
 

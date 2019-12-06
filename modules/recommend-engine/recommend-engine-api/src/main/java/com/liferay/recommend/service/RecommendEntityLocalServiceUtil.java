@@ -16,7 +16,8 @@ package com.liferay.recommend.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.osgi.util.ServiceTrackerFactory;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -192,7 +193,7 @@ public class RecommendEntityLocalServiceUtil {
 	*
 	* @return the OSGi service identifier
 	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
+	public static String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
 	}
 
@@ -239,11 +240,6 @@ public class RecommendEntityLocalServiceUtil {
 		return getService().getRecommendEntity(id);
 	}
 
-	/**
-	* NOTE FOR DEVELOPERS:
-	*
-	* Never reference this class directly. Always use {@link RecommendEntityLocalServiceUtil} to access the recommend entity local service.
-	*/
 	public static com.liferay.portal.kernel.json.JSONObject getTopMostViewed(
 		int resultCount,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
@@ -273,6 +269,17 @@ public class RecommendEntityLocalServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	private static ServiceTracker<RecommendEntityLocalService, RecommendEntityLocalService> _serviceTracker =
-		ServiceTrackerFactory.open(RecommendEntityLocalService.class);
+	private static ServiceTracker<RecommendEntityLocalService, RecommendEntityLocalService> _serviceTracker;
+
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(RecommendEntityLocalService.class);
+
+		ServiceTracker<RecommendEntityLocalService, RecommendEntityLocalService> serviceTracker =
+			new ServiceTracker<RecommendEntityLocalService, RecommendEntityLocalService>(bundle.getBundleContext(),
+				RecommendEntityLocalService.class, null);
+
+		serviceTracker.open();
+
+		_serviceTracker = serviceTracker;
+	}
 }

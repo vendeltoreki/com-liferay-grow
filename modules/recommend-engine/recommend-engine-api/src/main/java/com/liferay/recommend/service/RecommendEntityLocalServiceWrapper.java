@@ -201,7 +201,7 @@ public class RecommendEntityLocalServiceWrapper
 	* @return the OSGi service identifier
 	*/
 	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
+	public String getOSGiServiceIdentifier() {
 		return _recommendEntityLocalService.getOSGiServiceIdentifier();
 	}
 
@@ -252,11 +252,6 @@ public class RecommendEntityLocalServiceWrapper
 		return _recommendEntityLocalService.getRecommendEntity(id);
 	}
 
-	/**
-	* NOTE FOR DEVELOPERS:
-	*
-	* Never reference this class directly. Always use {@link RecommendEntityLocalServiceUtil} to access the recommend entity local service.
-	*/
 	@Override
 	public com.liferay.portal.kernel.json.JSONObject getTopMostViewed(
 		int resultCount,

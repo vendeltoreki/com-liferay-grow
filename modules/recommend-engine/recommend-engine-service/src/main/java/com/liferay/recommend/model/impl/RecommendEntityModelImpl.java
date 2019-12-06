@@ -22,6 +22,7 @@ import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -80,10 +81,10 @@ public class RecommendEntityModelImpl extends BaseModelImpl<RecommendEntity>
 	public static final String DATA_SOURCE = "liferayDataSource";
 	public static final String SESSION_FACTORY = "liferaySessionFactory";
 	public static final String TX_MANAGER = "liferayTransactionManager";
-	public static final boolean ENTITY_CACHE_ENABLED = GetterUtil.getBoolean(com.liferay.recommend.service.util.ServiceProps.get(
+	public static final boolean ENTITY_CACHE_ENABLED = GetterUtil.getBoolean(com.liferay.recommend.com.liferay.grow.recommend.service.util.ServiceProps.get(
 				"value.object.entity.cache.enabled.com.liferay.recommend.model.RecommendEntity"),
 			true);
-	public static final boolean FINDER_CACHE_ENABLED = GetterUtil.getBoolean(com.liferay.recommend.service.util.ServiceProps.get(
+	public static final boolean FINDER_CACHE_ENABLED = GetterUtil.getBoolean(com.liferay.recommend.com.liferay.grow.recommend.service.util.ServiceProps.get(
 				"value.object.finder.cache.enabled.com.liferay.recommend.model.RecommendEntity"),
 			true);
 	public static final boolean COLUMN_BITMASK_ENABLED = false;
@@ -127,7 +128,7 @@ public class RecommendEntityModelImpl extends BaseModelImpl<RecommendEntity>
 		return models;
 	}
 
-	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.recommend.service.util.ServiceProps.get(
+	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.recommend.com.liferay.grow.recommend.service.util.ServiceProps.get(
 				"lock.expiration.time.com.liferay.recommend.model.RecommendEntity"));
 
 	public RecommendEntityModelImpl() {
@@ -300,6 +301,7 @@ public class RecommendEntityModelImpl extends BaseModelImpl<RecommendEntity>
 
 		sb.append("{id=");
 		sb.append(getId());
+		sb.append("}");
 
 		return sb.toString();
 	}
@@ -324,7 +326,7 @@ public class RecommendEntityModelImpl extends BaseModelImpl<RecommendEntity>
 
 	private static final ClassLoader _classLoader = RecommendEntity.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			RecommendEntity.class
+			RecommendEntity.class, ModelWrapper.class
 		};
 	private long _id;
 	private RecommendEntity _escapedModel;

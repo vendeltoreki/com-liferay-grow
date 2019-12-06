@@ -26,10 +26,8 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import com.liferay.recommend.exception.NoSuchRecommendEntityException;
@@ -91,8 +89,10 @@ public class RecommendEntityPersistenceImpl extends BasePersistenceImpl<Recommen
 		setModelClass(RecommendEntity.class);
 
 		try {
-			Field field = ReflectionUtil.getDeclaredField(BasePersistenceImpl.class,
+			Field field = BasePersistenceImpl.class.getDeclaredField(
 					"_dbColumnNames");
+
+			field.setAccessible(true);
 
 			Map<String, String> dbColumnNames = new HashMap<String, String>();
 
@@ -255,8 +255,6 @@ public class RecommendEntityPersistenceImpl extends BasePersistenceImpl<Recommen
 
 	@Override
 	protected RecommendEntity removeImpl(RecommendEntity recommendEntity) {
-		recommendEntity = toUnwrappedModel(recommendEntity);
-
 		Session session = null;
 
 		try {
@@ -287,8 +285,6 @@ public class RecommendEntityPersistenceImpl extends BasePersistenceImpl<Recommen
 
 	@Override
 	public RecommendEntity updateImpl(RecommendEntity recommendEntity) {
-		recommendEntity = toUnwrappedModel(recommendEntity);
-
 		boolean isNew = recommendEntity.isNew();
 
 		Session session = null;
@@ -327,21 +323,6 @@ public class RecommendEntityPersistenceImpl extends BasePersistenceImpl<Recommen
 		recommendEntity.resetOriginalValues();
 
 		return recommendEntity;
-	}
-
-	protected RecommendEntity toUnwrappedModel(RecommendEntity recommendEntity) {
-		if (recommendEntity instanceof RecommendEntityImpl) {
-			return recommendEntity;
-		}
-
-		RecommendEntityImpl recommendEntityImpl = new RecommendEntityImpl();
-
-		recommendEntityImpl.setNew(recommendEntity.isNew());
-		recommendEntityImpl.setPrimaryKey(recommendEntity.getPrimaryKey());
-
-		recommendEntityImpl.setId(recommendEntity.getId());
-
-		return recommendEntityImpl;
 	}
 
 	/**
@@ -495,12 +476,12 @@ public class RecommendEntityPersistenceImpl extends BasePersistenceImpl<Recommen
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
 			query.append((long)primaryKey);
 
-			query.append(StringPool.COMMA);
+			query.append(",");
 		}
 
 		query.setIndex(query.index() - 1);
 
-		query.append(StringPool.CLOSE_PARENTHESIS);
+		query.append(")");
 
 		String sql = query.toString();
 

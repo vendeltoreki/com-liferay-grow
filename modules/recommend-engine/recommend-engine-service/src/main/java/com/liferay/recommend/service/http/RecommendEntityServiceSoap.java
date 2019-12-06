@@ -70,7 +70,7 @@ public class RecommendEntityServiceSoap {
 	*
 	* Never reference this class directly. Always use {@link RecommendEntityServiceUtil} to access the recommend entity remote service.
 	*/
-	public static java.lang.String getTopMostViewed(int resultCount,
+	public static String getTopMostViewed(int resultCount,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
@@ -86,7 +86,7 @@ public class RecommendEntityServiceSoap {
 		}
 	}
 
-	public static java.lang.String getTopMostViewedRandomized(int resultCount,
+	public static String getTopMostViewedRandomized(int resultCount,
 		int sampleCount,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {

@@ -16,13 +16,14 @@ package com.liferay.recommend.service.persistence;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.osgi.util.ServiceTrackerFactory;
-
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.liferay.recommend.model.RecommendEntity;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -259,7 +260,7 @@ public class RecommendEntityUtil {
 		return getPersistence().countAll();
 	}
 
-	public static java.util.Set<java.lang.String> getBadColumnNames() {
+	public static java.util.Set<String> getBadColumnNames() {
 		return getPersistence().getBadColumnNames();
 	}
 
@@ -267,6 +268,17 @@ public class RecommendEntityUtil {
 		return _serviceTracker.getService();
 	}
 
-	private static ServiceTracker<RecommendEntityPersistence, RecommendEntityPersistence> _serviceTracker =
-		ServiceTrackerFactory.open(RecommendEntityPersistence.class);
+	private static ServiceTracker<RecommendEntityPersistence, RecommendEntityPersistence> _serviceTracker;
+
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(RecommendEntityPersistence.class);
+
+		ServiceTracker<RecommendEntityPersistence, RecommendEntityPersistence> serviceTracker =
+			new ServiceTracker<RecommendEntityPersistence, RecommendEntityPersistence>(bundle.getBundleContext(),
+				RecommendEntityPersistence.class, null);
+
+		serviceTracker.open();
+
+		_serviceTracker = serviceTracker;
+	}
 }

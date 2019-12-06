@@ -16,7 +16,8 @@ package com.liferay.recommend.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.osgi.util.ServiceTrackerFactory;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -47,7 +48,7 @@ public class RecommendEntityServiceUtil {
 	*
 	* @return the OSGi service identifier
 	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
+	public static String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
 	}
 
@@ -74,6 +75,17 @@ public class RecommendEntityServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	private static ServiceTracker<RecommendEntityService, RecommendEntityService> _serviceTracker =
-		ServiceTrackerFactory.open(RecommendEntityService.class);
+	private static ServiceTracker<RecommendEntityService, RecommendEntityService> _serviceTracker;
+
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(RecommendEntityService.class);
+
+		ServiceTracker<RecommendEntityService, RecommendEntityService> serviceTracker =
+			new ServiceTracker<RecommendEntityService, RecommendEntityService>(bundle.getBundleContext(),
+				RecommendEntityService.class, null);
+
+		serviceTracker.open();
+
+		_serviceTracker = serviceTracker;
+	}
 }

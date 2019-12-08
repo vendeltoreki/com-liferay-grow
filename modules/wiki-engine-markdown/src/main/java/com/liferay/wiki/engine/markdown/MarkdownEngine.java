@@ -68,8 +68,7 @@ public class MarkdownEngine extends BaseWikiEngine {
 	@Override
 	public String convert(
 			WikiPage page, PortletURL viewPageURL, PortletURL editPageURL,
-			String attachmentURLPrefix)
-		throws PageContentException {
+			String attachmentURLPrefix) {
 
 		Parser parser = _parserThreadLocal.get();
 		HtmlRenderer renderer = _rendererThreadLocal.get();

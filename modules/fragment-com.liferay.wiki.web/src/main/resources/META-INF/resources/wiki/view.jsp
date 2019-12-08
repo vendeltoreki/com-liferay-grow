@@ -36,7 +36,7 @@ if (followRedirect && (redirectPage != null)) {
 
 String title = wikiPage.getTitle();
 String parentTitle = wikiPage.getParentTitle();
-int attachmentsFileEntriesCount = wikiPage.getAttachmentsFileEntriesCount();
+List<WikiPage> childPages = wikiPage.getViewableChildPages();
 
 boolean preview = false;
 boolean print = ParamUtil.getString(request, "viewMode").equals(Constants.PRINT);
@@ -126,7 +126,7 @@ if (portletTitleBasedNavigation) {
 
 		<liferay-frontend:info-bar-buttons>
 			<liferay-frontend:info-bar-sidenav-toggler-button
-				icon="info-circle"
+				icon="info-circle-open"
 				label="info"
 			/>
 		</liferay-frontend:info-bar-buttons>
@@ -146,14 +146,16 @@ if (portletTitleBasedNavigation) {
 				<c:if test="<%= !portletTitleBasedNavigation %>">
 					<c:choose>
 						<c:when test="<%= print %>">
-							<div class="popup-print">
-								<liferay-ui:icon
-									iconCssClass="icon-print"
-									label="<%= true %>"
-									message="print"
-									url="javascript:print();"
-								/>
-							</div>
+							<aui:script>
+								print();
+
+								setTimeout(
+									function() {
+										window.close();
+									},
+									100
+								);
+							</aui:script>
 						</c:when>
 						<c:otherwise>
 							<aui:script>
@@ -163,12 +165,8 @@ if (portletTitleBasedNavigation) {
 							</aui:script>
 						</c:otherwise>
 					</c:choose>
-				</c:if>
 
-				<c:if test="<%= print %>">
-					<aui:script>
-						print();
-					</aui:script>
+					<liferay-util:include page="/wiki/top_links.jsp" servletContext="<%= application %>" />
 				</c:if>
 
 				<%
@@ -191,6 +189,7 @@ if (portletTitleBasedNavigation) {
 
 				contextObjects.put("assetEntry", layoutAssetEntry);
 				contextObjects.put("formattedContent", formattedContent);
+				contextObjects.put("viewURL", viewPageURL.toString());
 				contextObjects.put("wikiPortletInstanceConfiguration", wikiPortletInstanceConfiguration);
 
 				// Deprecated
@@ -229,8 +228,9 @@ if (portletTitleBasedNavigation) {
 								<c:if test="<%= followRedirect || (redirectPage == null) %>">
 									<c:if test="<%= Validator.isNotNull(formattedContent) && WikiNodePermission.contains(permissionChecker, node, ActionKeys.ADD_PAGE) %>">
 										<liferay-ui:icon
-											iconCssClass="icon-plus"
+											icon="plus"
 											label="<%= true %>"
+											markupView="lexicon"
 											message="add-child-page"
 											method="get"
 											url="<%= addPageURL.toString() %>"
@@ -239,8 +239,9 @@ if (portletTitleBasedNavigation) {
 
 									<c:if test="<%= WikiPagePermission.contains(permissionChecker, wikiPage, ActionKeys.UPDATE) %>">
 										<liferay-ui:icon
-											iconCssClass="icon-edit"
+											icon="pencil"
 											label="<%= true %>"
+											markupView="lexicon"
 											message="edit"
 											url="<%= editPageURL.toString() %>"
 										/>
@@ -255,16 +256,18 @@ if (portletTitleBasedNavigation) {
 								%>
 
 								<liferay-ui:icon
-									iconCssClass="icon-file-alt"
+									icon="document"
 									label="<%= true %>"
+									markupView="lexicon"
 									message="details"
 									method="get"
 									url="<%= viewPageDetailsURL.toString() %>"
 								/>
 
 								<liferay-ui:icon
-									iconCssClass="icon-print"
+									icon="print"
 									label="<%= true %>"
+									markupView="lexicon"
 									message="print"
 									url='<%= "javascript:" + renderResponse.getNamespace() + "printPage();" %>'
 								/>
@@ -306,7 +309,7 @@ if (portletTitleBasedNavigation) {
 							/>
 						</liferay-expando:custom-attributes-available>
 
-						<c:if test="<%= Validator.isNotNull(formattedContent) && (followRedirect || (redirectPage == null)) %>">
+						<c:if test="<%= followRedirect || (redirectPage == null) %>">
 							<div class="page-actions">
 								<div class="stats">
 
@@ -359,39 +362,7 @@ if (portletTitleBasedNavigation) {
 									</div>
 								</c:if>
 
-								<c:if test="<%= attachmentsFileEntriesCount > 0 %>">
-									<div class="page-attachments">
-										<h5><liferay-ui:message key="attachments" /></h5>
-
-										<div class="row">
-
-											<%
-											List<FileEntry> attachmentsFileEntries = wikiPage.getAttachmentsFileEntries();
-
-											DLMimeTypeDisplayContext dlMimeTypeDisplayContext = (DLMimeTypeDisplayContext)request.getAttribute(WikiWebKeys.DL_MIME_TYPE_DISPLAY_CONTEXT);
-
-											for (FileEntry fileEntry : attachmentsFileEntries) {
-												String rowURL = PortletFileRepositoryUtil.getDownloadPortletFileEntryURL(themeDisplay, fileEntry, "status=" + WorkflowConstants.STATUS_APPROVED);
-											%>
-
-												<div class="col-md-4">
-													<liferay-frontend:horizontal-card
-														text="<%= fileEntry.getTitle() %>"
-														url="<%= rowURL %>"
-													>
-														<liferay-frontend:horizontal-card-col>
-															<span class="icon-monospaced sticker <%= (dlMimeTypeDisplayContext != null) ? dlMimeTypeDisplayContext.getCssClassFileMimeType(fileEntry.getMimeType()) : "file-icon-color-0" %>"><%= StringUtil.shorten(StringUtil.upperCase(fileEntry.getExtension()), 3, StringPool.BLANK) %></span>
-														</liferay-frontend:horizontal-card-col>
-													</liferay-frontend:horizontal-card>
-												</div>
-
-											<%
-											}
-											%>
-
-										</div>
-									</div>
-								</c:if>
+								<liferay-util:include page="/wiki/view_attachments.jsp" servletContext="<%= application %>" />
 
 								<c:if test="<%= wikiPortletInstanceSettingsHelper.isEnableRelatedAssets() %>">
 									<div class="entry-links">
@@ -403,46 +374,20 @@ if (portletTitleBasedNavigation) {
 							</div>
 
 							<c:if test="<%= wikiPortletInstanceSettingsHelper.isEnableComments() %>">
-								<liferay-ui:panel-container
-									extended="<%= false %>"
-									markupView="lexicon"
-									persistState="<%= true %>"
-								>
-									<liferay-ui:panel
-										collapsible="<%= true %>"
-										extended="<%= true %>"
-										id='<%= liferayPortletResponse.getNamespace() + "wikiCommentsPanel" %>'
-										markupView="lexicon"
-										persistState="<%= true %>"
-										title="comments"
-									>
-										<liferay-comment:discussion
-											className="<%= WikiPage.class.getName() %>"
-											classPK="<%= wikiPage.getResourcePrimKey() %>"
-											formName="fm2"
-											ratingsEnabled="<%= wikiPortletInstanceSettingsHelper.isEnableCommentRatings() %>"
-											redirect="<%= currentURL %>"
-											userId="<%= wikiPage.getUserId() %>"
-										/>
-									</liferay-ui:panel>
-								</liferay-ui:panel-container>
+								<div id="<portlet:namespace />wikiCommentsPanel">
+									<liferay-comment:discussion
+										className="<%= WikiPage.class.getName() %>"
+										classPK="<%= wikiPage.getResourcePrimKey() %>"
+										formName="fm2"
+										ratingsEnabled="<%= wikiPortletInstanceSettingsHelper.isEnableCommentRatings() %>"
+										redirect="<%= currentURL %>"
+										userId="<%= wikiPage.getUserId() %>"
+									/>
+								</div>
 							</c:if>
 						</c:if>
 					</div>
 				</liferay-ddm:template-renderer>
-
-				<aui:script sandbox="<%= true %>">
-					var toc = $('#p_p_id<portlet:namespace /> .toc');
-
-					var index = toc.find('.toc-index');
-
-					toc.find('a.toc-trigger').on(
-						'click',
-						function(event) {
-							index.toggleClass('hide');
-						}
-					);
-				</aui:script>
 
 				<%
 				if (!wikiPage.getTitle().equals(wikiGroupServiceConfiguration.frontPageName())) {
@@ -478,5 +423,51 @@ if (portletTitleBasedNavigation) {
 				<liferay-util:dynamic-include key="com.liferay.wiki.web#/wiki/view.jsp#post" />
 			</div>
 		</div>
+
+		<c:if test="<%= Validator.isNotNull(formattedContent) && (followRedirect || (redirectPage == null)) && !childPages.isEmpty() %>">
+			<h4 class="text-default">
+				<liferay-ui:message arguments="<%= childPages.size() %>" key="child-pages-x" translateArguments="<%= false %>" />
+			</h4>
+
+			<div>
+				<ul class="list-group">
+
+					<%
+					for (WikiPage childPage : childPages) {
+					%>
+
+						<li class="list-group-item">
+							<h3>
+
+								<%
+								PortletURL rowURL = PortletURLUtil.clone(viewPageURL, renderResponse);
+
+								rowURL.setParameter("title", childPage.getTitle());
+								%>
+
+								<aui:a href="<%= rowURL.toString() %>"><%= childPage.getTitle() %></aui:a>
+							</h3>
+
+							<%
+							String childPageFormattedContent = null;
+
+							try {
+								childPageFormattedContent = WikiUtil.getFormattedContent(wikiEngineRenderer, renderRequest, renderResponse, childPage, viewPageURL, editPageURL, childPage.getTitle(), false);
+							}
+							catch (Exception e) {
+								childPageFormattedContent = childPage.getContent();
+							}
+							%>
+
+							<p class="text-default"><%= StringUtil.shorten(HtmlUtil.extractText(childPageFormattedContent), 200) %></p>
+						</li>
+
+					<%
+					}
+					%>
+
+				</ul>
+			</div>
+		</c:if>
 	</div>
 </div>

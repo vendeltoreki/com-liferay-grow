@@ -28,11 +28,7 @@ String title = BeanParamUtil.getString(wikiPage, request, "title");
 
 boolean editTitle = ParamUtil.getBoolean(request, "editTitle");
 
-PortalPreferences userPortalPreferences = PortletPreferencesFactoryUtil.getPortalPreferences(themeDisplay.getUserId(), true);
-
-String userFormat = userPortalPreferences.getValue(WikiPage.class.getName(), "format", wikiGroupServiceOverriddenConfiguration.defaultFormat());
-
-String selectedFormat = BeanParamUtil.getString(wikiPage, request, "format", userFormat);
+String selectedFormat = BeanParamUtil.getString(wikiPage, request, "format", wikiGroupServiceOverriddenConfiguration.defaultFormat());
 
 Collection<String> formats = wikiEngineRenderer.getFormats();
 
@@ -144,7 +140,6 @@ if (portletTitleBasedNavigation) {
 		<aui:input name="title" type="hidden" value="<%= title %>" />
 		<aui:input name="parentTitle" type="hidden" value="<%= parentTitle %>" />
 		<aui:input name="workflowAction" type="hidden" value="<%= WorkflowConstants.ACTION_SAVE_DRAFT %>" />
-		<aui:input name="minorEdit" type="hidden" />
 
 		<c:if test="<%= wikiPage != null %>">
 			<aui:input name="version" type="hidden" value="<%= wikiPage.getVersion() %>" />
@@ -217,7 +212,7 @@ if (portletTitleBasedNavigation) {
 							</c:otherwise>
 						</c:choose>
 
-						<div class="html-creole-body">
+						<div>
 
 							<%
 							try {
@@ -298,11 +293,11 @@ if (portletTitleBasedNavigation) {
 					</aui:fieldset>
 
 					<aui:fieldset collapsed="<%= true %>" collapsible="<%= true %>" label="configuration">
+						<aui:input name="summary" />
+
 						<c:if test="<%= (wikiPage == null) || wikiPage.isNew() || wikiPage.isApproved() %>">
 							<aui:model-context bean="<%= WikiPageLocalServiceUtil.createWikiPage(0) %>" model="<%= WikiPage.class %>" />
 						</c:if>
-
-						<aui:input label="Summary of the change" name="summary" />
 
 						<c:choose>
 							<c:when test="<%= !formats.isEmpty() %>">
@@ -332,6 +327,10 @@ if (portletTitleBasedNavigation) {
 								<aui:input name="format" type="hidden" value="<%= selectedFormat %>" />
 							</c:otherwise>
 						</c:choose>
+
+						<c:if test="<%= (wikiPage != null) && !wikiPage.isNew() %>">
+							<aui:input label="this-is-a-minor-edit" name="minorEdit" />
+						</c:if>
 					</aui:fieldset>
 
 					<c:if test="<%= wikiPage != null %>">
@@ -373,6 +372,12 @@ if (portletTitleBasedNavigation) {
 				</c:if>
 
 				<%
+				String saveButtonLabel = "save";
+
+				if ((wikiPage == null) || wikiPage.isDraft() || wikiPage.isApproved()) {
+					saveButtonLabel = "save-as-draft";
+				}
+
 				String publishButtonLabel = "publish";
 
 				if (WorkflowDefinitionLinkLocalServiceUtil.hasWorkflowDefinitionLink(themeDisplay.getCompanyId(), scopeGroupId, WikiPage.class.getName())) {
@@ -383,9 +388,7 @@ if (portletTitleBasedNavigation) {
 				<aui:button-row>
 					<aui:button disabled="<%= pending %>" name="publishButton" primary="<%= true %>" value="<%= publishButtonLabel %>" />
 
-					<c:if test="<%= (wikiPage != null) && !wikiPage.isNew() %>">
-						<aui:button disabled="<%= pending %>" name="publishButtonWithoutNotification" onClick='<%= renderResponse.getNamespace() + "publishPageWithoutNotification();" %>' primary="<%= false %>" value="Publish without notifying subscribers" />
-					</c:if>
+					<aui:button name="saveButton" primary="<%= false %>" type="submit" value="<%= saveButtonLabel %>" />
 
 					<aui:button href="<%= redirect %>" type="cancel" />
 				</aui:button-row>
@@ -394,40 +397,8 @@ if (portletTitleBasedNavigation) {
 	</aui:form>
 </div>
 
-<aui:script>
-	function <portlet:namespace />publishPageWithoutNotification() {
-		var form = AUI.$(document.<portlet:namespace />fm);
-
-		form.fm('workflowAction').val('<%= WorkflowConstants.ACTION_PUBLISH %>');
-
-		form.fm('minorEdit').val('<%= true %>');
-
-		<portlet:namespace />savePage();
-	}
-
-	function <portlet:namespace />savePage() {
-		var form = AUI.$(document.<portlet:namespace />fm);
-
-		form.fm('<%= Constants.CMD %>').val('<%= ((wikiPage == null) || wikiPage.isNew()) ? Constants.ADD : Constants.UPDATE %>');
-
-		var titleEditor = window.<portlet:namespace />titleEditor;
-
-		if (titleEditor) {
-			form.fm('title').val(titleEditor.getText());
-		}
-
-		var contentEditor = window.<portlet:namespace />contentEditor;
-
-		if (contentEditor) {
-			form.fm('content').val(contentEditor.getHTML());
-		}
-
-		submitForm(form);
-	}
-</aui:script>
-
-<aui:script require="wiki-web/wiki/js/WikiPortlet.es">
-	new wikiWebWikiJsWikiPortletEs.default(
+<aui:script require='<%= npmResolvedPackageName + "/wiki/js/WikiPortlet.es as WikiPortletJs" %>'>
+	new WikiPortletJs.default(
 		{
 			constants: {
 				'ACTION_PUBLISH': '<%= WorkflowConstants.ACTION_PUBLISH %>',

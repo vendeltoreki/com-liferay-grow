@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.mentions.web.internal.editor.configuration;
+package com.liferay.mentions.web.editor.configuration;
 
 import com.liferay.mentions.constants.MentionsPortletKeys;
 import com.liferay.mentions.matcher.MentionsMatcherUtil;

@@ -1,29 +1,28 @@
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
- * The contents of this file are subject to the terms of the Liferay Enterprise
- * Subscription License ("License"). You may not use this file except in
- * compliance with the License. You can obtain a copy of the License by
- * contacting Liferay, Inc. See the License for the specific language governing
- * permissions and limitations under the License, including but not limited to
- * distribution rights of the Software.
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
  *
- *
- *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  */
 
-package com.liferay.mentions.web.editor.configuration;
+package com.liferay.mentions.web.internal.editor.configuration;
 
 import com.liferay.mentions.constants.MentionsPortletKeys;
 import com.liferay.mentions.matcher.MentionsMatcherUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.editor.configuration.BaseEditorConfigContributor;
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Map;
@@ -31,7 +30,7 @@ import java.util.Map;
 import javax.portlet.PortletURL;
 
 /**
- * @author Sergio Gonz??lez
+ * @author Sergio González
  */
 public class BaseMentionsEditorConfigContributor
 	extends BaseEditorConfigContributor {
@@ -42,34 +41,18 @@ public class BaseMentionsEditorConfigContributor
 		ThemeDisplay themeDisplay,
 		RequestBackedPortletURLFactory requestBackedPortletURLFactory) {
 
-		JSONObject autoCompleteConfigJSONObject =
-			JSONFactoryUtil.createJSONObject();
+		JSONObject autoCompleteConfigJSONObject = JSONUtil.put(
+			"requestTemplate", "query={query}");
 
-		autoCompleteConfigJSONObject.put("requestTemplate", "query={query}");
-
-		JSONArray triggerJSONArray = JSONFactoryUtil.createJSONArray();
-
-		JSONObject triggerJSONObject = JSONFactoryUtil.createJSONObject();
-
-		triggerJSONObject.put(
+		JSONObject triggerJSONObject = JSONUtil.put(
 			"regExp",
 			"(?:\\strigger|^trigger)(" +
-				MentionsMatcherUtil.getScreenNameRegularExpression() + ")");
-		triggerJSONObject.put(
-			"resultFilters", "function(query, results) {return results;}");
-		triggerJSONObject.put("resultTextLocator", "screenName");
-		triggerJSONObject.put("term", "@");
-		triggerJSONObject.put("tplReplace", "{mention}");
-
-		StringBundler sb = new StringBundler(5);
-
-		sb.append("<div class=\"nameplate\"><div class=\"nameplate-field\">");
-		sb.append("<div class=\"user-icon\"><img class=\"img-circle\" ");
-		sb.append("src=\"{portraitURL}\" height=\"32px\" width=\"32px\">");
-		sb.append("</img></div></div><div class=\"nameplate-content\"><h4>");
-		sb.append("{fullName} <small>@{screenName}</small></h4></div></div>");
-
-		triggerJSONObject.put("tplResults", sb.toString());
+				MentionsMatcherUtil.getScreenNameRegularExpression() + ")"
+		).put(
+			"resultFilters", "function(query, results) {return results;}"
+		).put(
+			"resultTextLocator", "screenName"
+		);
 
 		PortletURL autoCompleteUserURL =
 			requestBackedPortletURLFactory.createResourceURL(
@@ -79,11 +62,27 @@ public class BaseMentionsEditorConfigContributor
 			autoCompleteUserURL.toString() + "&" +
 				PortalUtil.getPortletNamespace(MentionsPortletKeys.MENTIONS);
 
-		triggerJSONObject.put("source", source);
+		triggerJSONObject.put(
+			"source", source
+		).put(
+			"term", "@"
+		).put(
+			"tplReplace", "{mention}"
+		);
 
-		triggerJSONArray.put(triggerJSONObject);
+		String tplResults = StringBundler.concat(
+			"<div class=\"p-1 autofit-row autofit-row-center\">",
+			"<div class=\"autofit-col inline-item-before\">{portraitHTML}",
+			"</div><div class=\"autofit-col autofit-col-expand\">",
+			"<strong class=\"truncate-text\">{fullName}</strong>",
+			"<div class=\"autofit-col-expand\">",
+			"<small class=\"truncate-text\">@{screenName}</small></div></div>",
+			"</div>");
 
-		autoCompleteConfigJSONObject.put("trigger", triggerJSONArray);
+		triggerJSONObject.put("tplResults", tplResults);
+
+		autoCompleteConfigJSONObject.put(
+			"trigger", JSONUtil.put(triggerJSONObject));
 
 		jsonObject.put("autocomplete", autoCompleteConfigJSONObject);
 

@@ -14,12 +14,13 @@ const SPRITEMAP = Liferay.ThemeDisplay.getPathThemeImages();
 const PORTAL_URL = Liferay.ThemeDisplay.getCDNBaseURL();
 const GROUP_ID = Liferay.ThemeDisplay.getCompanyGroupId();
 const USER_ID = Liferay.ThemeDisplay.getUserId();
+const AUTH_TOKEN = Liferay.authToken;
 
 const CARDS_PER_COLUMN = 3;
 
 const API = PORTAL_URL + "/o/favourites"; 
-const GET_FAVOURITES_QUERY = API + "/getFavourites?groupId="+ GROUP_ID + "&userId=" + USER_ID;
-const REMOVE_FROM_MYFAVOURITES_QUERY = API + "/removeFavourite?groupId=" + GROUP_ID + "&userId=" + USER_ID + "&assetEntryId=";
+const GET_FAVOURITES_QUERY = API + "/getFavourites?p_auth=" + AUTH_TOKEN + "&groupId="+ GROUP_ID + "&userId=" + USER_ID;
+const REMOVE_FROM_MYFAVOURITES_QUERY = API + "/removeFavourite?p_auth=" + AUTH_TOKEN + "&groupId=" + GROUP_ID + "&userId=" + USER_ID + "&assetEntryId=";
 
 const RECOMMENDATION_TOGGLE_STAR_EVENT = 'recommendationToggleStarEvent';
 const FAVOURITES_TOGGLE_STAR_EVENT = 'favouritesToggleStarEvent';

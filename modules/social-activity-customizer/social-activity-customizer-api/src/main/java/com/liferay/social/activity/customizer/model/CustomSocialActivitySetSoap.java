@@ -14,8 +14,6 @@
 
 package com.liferay.social.activity.customizer.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -27,11 +25,13 @@ import java.util.List;
  * @author Brian Wing Shun Chan
  * @generated
  */
-@ProviderType
 public class CustomSocialActivitySetSoap implements Serializable {
+
 	public static CustomSocialActivitySetSoap toSoapModel(
 		CustomSocialActivitySet model) {
-		CustomSocialActivitySetSoap soapModel = new CustomSocialActivitySetSoap();
+
+		CustomSocialActivitySetSoap soapModel =
+			new CustomSocialActivitySetSoap();
 
 		soapModel.setId(model.getId());
 
@@ -40,7 +40,9 @@ public class CustomSocialActivitySetSoap implements Serializable {
 
 	public static CustomSocialActivitySetSoap[] toSoapModels(
 		CustomSocialActivitySet[] models) {
-		CustomSocialActivitySetSoap[] soapModels = new CustomSocialActivitySetSoap[models.length];
+
+		CustomSocialActivitySetSoap[] soapModels =
+			new CustomSocialActivitySetSoap[models.length];
 
 		for (int i = 0; i < models.length; i++) {
 			soapModels[i] = toSoapModel(models[i]);
@@ -51,10 +53,13 @@ public class CustomSocialActivitySetSoap implements Serializable {
 
 	public static CustomSocialActivitySetSoap[][] toSoapModels(
 		CustomSocialActivitySet[][] models) {
+
 		CustomSocialActivitySetSoap[][] soapModels = null;
 
 		if (models.length > 0) {
-			soapModels = new CustomSocialActivitySetSoap[models.length][models[0].length];
+			soapModels =
+				new CustomSocialActivitySetSoap
+					[models.length][models[0].length];
 		}
 		else {
 			soapModels = new CustomSocialActivitySetSoap[0][0];
@@ -69,13 +74,16 @@ public class CustomSocialActivitySetSoap implements Serializable {
 
 	public static CustomSocialActivitySetSoap[] toSoapModels(
 		List<CustomSocialActivitySet> models) {
-		List<CustomSocialActivitySetSoap> soapModels = new ArrayList<CustomSocialActivitySetSoap>(models.size());
+
+		List<CustomSocialActivitySetSoap> soapModels =
+			new ArrayList<CustomSocialActivitySetSoap>(models.size());
 
 		for (CustomSocialActivitySet model : models) {
 			soapModels.add(toSoapModel(model));
 		}
 
-		return soapModels.toArray(new CustomSocialActivitySetSoap[soapModels.size()]);
+		return soapModels.toArray(
+			new CustomSocialActivitySetSoap[soapModels.size()]);
 	}
 
 	public CustomSocialActivitySetSoap() {
@@ -98,4 +106,5 @@ public class CustomSocialActivitySetSoap implements Serializable {
 	}
 
 	private long _id;
+
 }

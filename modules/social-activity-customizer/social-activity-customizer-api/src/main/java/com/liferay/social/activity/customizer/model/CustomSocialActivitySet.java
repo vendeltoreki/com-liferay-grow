@@ -14,31 +14,34 @@
 
 package com.liferay.social.activity.customizer.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.Accessor;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model interface for the CustomSocialActivitySet service. Represents a row in the &quot;sac_CustomSocialActivitySet&quot; database table, with each column mapped to a property of this class.
  *
  * @author Brian Wing Shun Chan
  * @see CustomSocialActivitySetModel
- * @see com.liferay.social.activity.customizer.model.impl.CustomSocialActivitySetImpl
- * @see com.liferay.social.activity.customizer.model.impl.CustomSocialActivitySetModelImpl
  * @generated
  */
-@ImplementationClassName("com.liferay.social.activity.customizer.model.impl.CustomSocialActivitySetImpl")
+@ImplementationClassName(
+	"com.liferay.social.activity.customizer.model.impl.CustomSocialActivitySetImpl"
+)
 @ProviderType
-public interface CustomSocialActivitySet extends CustomSocialActivitySetModel,
-	PersistedModel {
-	/*
+public interface CustomSocialActivitySet
+	extends CustomSocialActivitySetModel, PersistedModel {
+
+	/**
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify this interface directly. Add methods to {@link com.liferay.social.activity.customizer.model.impl.CustomSocialActivitySetImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify this interface directly. Add methods to <code>com.liferay.social.activity.customizer.model.impl.CustomSocialActivitySetImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public static final Accessor<CustomSocialActivitySet, Long> ID_ACCESSOR = new Accessor<CustomSocialActivitySet, Long>() {
+	public static final Accessor<CustomSocialActivitySet, Long> ID_ACCESSOR =
+		new Accessor<CustomSocialActivitySet, Long>() {
+
 			@Override
 			public Long get(CustomSocialActivitySet customSocialActivitySet) {
 				return customSocialActivitySet.getId();
@@ -53,5 +56,7 @@ public interface CustomSocialActivitySet extends CustomSocialActivitySetModel,
 			public Class<CustomSocialActivitySet> getTypeClass() {
 				return CustomSocialActivitySet.class;
 			}
+
 		};
+
 }

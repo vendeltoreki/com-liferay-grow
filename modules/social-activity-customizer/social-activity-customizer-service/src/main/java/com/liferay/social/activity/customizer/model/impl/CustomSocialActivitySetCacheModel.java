@@ -14,12 +14,9 @@
 
 package com.liferay.social.activity.customizer.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-
 import com.liferay.social.activity.customizer.model.CustomSocialActivitySet;
 
 import java.io.Externalizable;
@@ -31,12 +28,11 @@ import java.io.ObjectOutput;
  * The cache model class for representing CustomSocialActivitySet in entity cache.
  *
  * @author Brian Wing Shun Chan
- * @see CustomSocialActivitySet
  * @generated
  */
-@ProviderType
-public class CustomSocialActivitySetCacheModel implements CacheModel<CustomSocialActivitySet>,
-	Externalizable {
+public class CustomSocialActivitySetCacheModel
+	implements CacheModel<CustomSocialActivitySet>, Externalizable {
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -47,7 +43,8 @@ public class CustomSocialActivitySetCacheModel implements CacheModel<CustomSocia
 			return false;
 		}
 
-		CustomSocialActivitySetCacheModel customSocialActivitySetCacheModel = (CustomSocialActivitySetCacheModel)obj;
+		CustomSocialActivitySetCacheModel customSocialActivitySetCacheModel =
+			(CustomSocialActivitySetCacheModel)obj;
 
 		if (id == customSocialActivitySetCacheModel.id) {
 			return true;
@@ -73,7 +70,8 @@ public class CustomSocialActivitySetCacheModel implements CacheModel<CustomSocia
 
 	@Override
 	public CustomSocialActivitySet toEntityModel() {
-		CustomSocialActivitySetImpl customSocialActivitySetImpl = new CustomSocialActivitySetImpl();
+		CustomSocialActivitySetImpl customSocialActivitySetImpl =
+			new CustomSocialActivitySetImpl();
 
 		customSocialActivitySetImpl.setId(id);
 
@@ -88,10 +86,10 @@ public class CustomSocialActivitySetCacheModel implements CacheModel<CustomSocia
 	}
 
 	@Override
-	public void writeExternal(ObjectOutput objectOutput)
-		throws IOException {
+	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		objectOutput.writeLong(id);
 	}
 
 	public long id;
+
 }

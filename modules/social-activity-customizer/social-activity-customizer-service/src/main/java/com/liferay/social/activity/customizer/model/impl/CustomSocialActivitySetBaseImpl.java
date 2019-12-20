@@ -14,8 +14,6 @@
 
 package com.liferay.social.activity.customizer.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.social.activity.customizer.model.CustomSocialActivitySet;
 import com.liferay.social.activity.customizer.service.CustomSocialActivitySetLocalServiceUtil;
 
@@ -31,21 +29,25 @@ import com.liferay.social.activity.customizer.service.CustomSocialActivitySetLoc
  * @see CustomSocialActivitySet
  * @generated
  */
-@ProviderType
 public abstract class CustomSocialActivitySetBaseImpl
-	extends CustomSocialActivitySetModelImpl implements CustomSocialActivitySet {
-	/*
+	extends CustomSocialActivitySetModelImpl
+	implements CustomSocialActivitySet {
+
+	/**
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. All methods that expect a custom social activity set model instance should use the {@link CustomSocialActivitySet} interface instead.
+	 * Never modify or reference this class directly. All methods that expect a custom social activity set model instance should use the <code>CustomSocialActivitySet</code> interface instead.
 	 */
 	@Override
 	public void persist() {
 		if (this.isNew()) {
-			CustomSocialActivitySetLocalServiceUtil.addCustomSocialActivitySet(this);
+			CustomSocialActivitySetLocalServiceUtil.addCustomSocialActivitySet(
+				this);
 		}
 		else {
-			CustomSocialActivitySetLocalServiceUtil.updateCustomSocialActivitySet(this);
+			CustomSocialActivitySetLocalServiceUtil.
+				updateCustomSocialActivitySet(this);
 		}
 	}
+
 }

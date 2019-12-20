@@ -15,22 +15,36 @@
 package com.liferay.social.activity.customizer.service.persistence.impl;
 
 import com.liferay.portal.kernel.bean.BeanReference;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-
 import com.liferay.social.activity.customizer.model.CustomSocialActivitySet;
 import com.liferay.social.activity.customizer.service.persistence.CustomSocialActivitySetPersistence;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * @author Brian Wing Shun Chan
  * @generated
  */
-public class CustomSocialActivitySetFinderBaseImpl extends BasePersistenceImpl<CustomSocialActivitySet> {
+public class CustomSocialActivitySetFinderBaseImpl
+	extends BasePersistenceImpl<CustomSocialActivitySet> {
+
+	public CustomSocialActivitySetFinderBaseImpl() {
+		setModelClass(CustomSocialActivitySet.class);
+
+		Map<String, String> dbColumnNames = new HashMap<String, String>();
+
+		dbColumnNames.put("id", "id_");
+
+		setDBColumnNames(dbColumnNames);
+	}
+
 	@Override
 	public Set<String> getBadColumnNames() {
-		return getCustomSocialActivitySetPersistence()
-				   .getBadColumnNames();
+		return getCustomSocialActivitySetPersistence().getBadColumnNames();
 	}
 
 	/**
@@ -38,7 +52,9 @@ public class CustomSocialActivitySetFinderBaseImpl extends BasePersistenceImpl<C
 	 *
 	 * @return the custom social activity set persistence
 	 */
-	public CustomSocialActivitySetPersistence getCustomSocialActivitySetPersistence() {
+	public CustomSocialActivitySetPersistence
+		getCustomSocialActivitySetPersistence() {
+
 		return customSocialActivitySetPersistence;
 	}
 
@@ -49,9 +65,16 @@ public class CustomSocialActivitySetFinderBaseImpl extends BasePersistenceImpl<C
 	 */
 	public void setCustomSocialActivitySetPersistence(
 		CustomSocialActivitySetPersistence customSocialActivitySetPersistence) {
-		this.customSocialActivitySetPersistence = customSocialActivitySetPersistence;
+
+		this.customSocialActivitySetPersistence =
+			customSocialActivitySetPersistence;
 	}
 
 	@BeanReference(type = CustomSocialActivitySetPersistence.class)
-	protected CustomSocialActivitySetPersistence customSocialActivitySetPersistence;
+	protected CustomSocialActivitySetPersistence
+		customSocialActivitySetPersistence;
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		CustomSocialActivitySetFinderBaseImpl.class);
+
 }

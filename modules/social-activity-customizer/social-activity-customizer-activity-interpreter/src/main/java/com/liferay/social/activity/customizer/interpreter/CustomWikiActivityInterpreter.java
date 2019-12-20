@@ -552,7 +552,7 @@ public class CustomWikiActivityInterpreter
 		policyOption = ReferencePolicyOption.GREEDY,
 		target = "(bundle.symbolic.name=com.liferay.wiki.web)"
 	)
-	private ResourceBundleLoader _resourceBundleLoader;
+	private volatile ResourceBundleLoader _resourceBundleLoader;
 
 	private UserLocalService _userLocalService;
 	private WikiPageLocalService _wikiPageLocalService;

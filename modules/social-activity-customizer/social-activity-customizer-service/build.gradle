@@ -1,12 +1,14 @@
 dependencies {
-	compile group: "com.liferay", name: "com.liferay.social.activities.web", version: "3.0.0"
-	compile group: "com.liferay", name: "com.liferay.wiki.api", version: "3.0.0"
+	compile group: "com.liferay", name: "com.liferay.social.activities.web", version: "4.0.12"
+	compile group: "com.liferay", name: "com.liferay.wiki.api", version: "4.3.1"
 
 	compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.1.0"
 	compileOnly group: "com.liferay", name: "com.liferay.osgi.util", version: "4.0.0"
+	compileOnly group: "com.liferay", name: "com.liferay.petra.string", version: "3.0.0"
+	compileOnly group: "com.liferay", name: "com.liferay.petra.lang", version: "3.0.0"
 	compileOnly group: "com.liferay", name: "com.liferay.portal.dao.orm.custom.sql.api", version: "1.0.0"
-	compileOnly group: "com.liferay", name: "com.liferay.portal.spring.extender.api", version: "3.0.0"
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "3.0.0"
+	compileOnly group: "com.liferay", name: "com.liferay.portal.spring.extender.api", version: "4.0.0"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "4.33.1"
 	compileOnly project(":modules:social-activity-customizer:social-activity-customizer-api")
 }
 

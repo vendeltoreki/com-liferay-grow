@@ -15,19 +15,17 @@
 package com.liferay.social.activity.customizer.service.persistence.impl;
 
 import com.liferay.portal.dao.orm.custom.sql.CustomSQL;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.dao.orm.SQLQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
-import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
-import com.liferay.social.activity.customizer.CustomFinderHelperUtil;
 import com.liferay.social.activity.customizer.service.persistence.CustomSocialActivitySetFinder;
 import com.liferay.social.kernel.model.SocialActivitySet;
+import com.liferay.social.kernel.service.SocialActivitySetLocalServiceUtil;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -53,45 +51,22 @@ public class CustomSocialActivitySetFinderImpl
 		Session session = null;
 
 		try {
-			session = CustomFinderHelperUtil.openPortalSession();
+			session = openSession();
 
-			String sql = _customSQL.get(
-				CustomSocialActivitySetFinderImpl.class,
-				COUNT_BY_USERID_CLASSNAMEID);
+			ClassLoader classLoader = getClass().getClassLoader();
 
-			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+			DynamicQuery activitySetQuery = DynamicQueryFactoryUtil.forClass(
+				SocialActivitySet.class, "classPKView", classLoader);
 
-			q.setCacheable(false);
-			q.addEntity(
-				"SocialActivitySet",
-				CustomFinderHelperUtil.getImplClass(
-					"com.liferay.portlet.social.model.impl." +
-						"SocialActivitySetImpl",
-					PortalClassLoaderUtil.getClassLoader()));
+			activitySetQuery.add(
+				RestrictionsFactoryUtil.and(
+					RestrictionsFactoryUtil.eq("userId", userId),
+					RestrictionsFactoryUtil.eq("classNameId", classNameId)));
 
-			QueryPos qPos = QueryPos.getInstance(q);
+			int count = SocialActivitySetLocalServiceUtil.dynamicQueryCount(
+				activitySetQuery);
 
-			qPos.add(userId);
-			qPos.add(classNameId);
-
-			Iterator<Long> itr = q.iterate();
-
-			// The SELECT COUNT(*) ... query doesn't work probably because of
-			// Hibernate mapping problems due to subquery. Querying the records
-			// instead to be able to determine the count.
-			/*if (itr.hasNext()) {
-				Long count = itr.next();
-
-				if (count != null) {
-					return count.intValue();
-				}
-			}*/
-
-			List<SocialActivitySet> list = 
-				(List<SocialActivitySet>)QueryUtil.list(
-					q, getDialect(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
-
-				return list.size();
+			return count;
 		}
 		catch (Exception e) {
 			try {
@@ -107,51 +82,87 @@ public class CustomSocialActivitySetFinderImpl
 
 		return 0;
 	}
+
+	// Switching to DynamicQuery temporarily. (See https://issues.liferay.com/browse/GROW-979)
+
+	/*	public int countByU_C(long userId, long classNameId) {
+			Session session = null;
+
+			try {
+				session = CustomFinderHelperUtil.openPortalSession();
+				String sql = _customSQL.get(
+					CustomSocialActivitySetFinderImpl.class,
+					COUNT_BY_USERID_CLASSNAMEID);
+
+				SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+				q.setCacheable(false);
+				q.addEntity(
+					"SocialActivitySet",
+					CustomFinderHelperUtil.getImplClass(
+						"com.liferay.portlet.social.model.impl." +
+							"SocialActivitySetImpl",
+						PortalClassLoaderUtil.getClassLoader()));
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(userId);
+				qPos.add(classNameId);
+				Iterator<Long> itr = q.iterate();
+
+				// The SELECT COUNT(*) ... query doesn't work probably because of
+				// Hibernate mapping problems due to subquery. Querying the records
+				// instead to be able to determine the count.
+
+				//if (itr.hasNext()) {
+				//	Long count = itr.next();
+				//	if (count != null) {
+				//		return count.intValue();
+				//	}
+				//}
+				List<SocialActivitySet> list =
+					(List<SocialActivitySet>)QueryUtil.list(
+						q, getDialect(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+					return list.size();
+			}
+			catch (Exception e) {
+				try {
+					throw new SystemException(e);
+				}
+				catch (SystemException se) {
+					se.printStackTrace();
+				}
+			}
+			finally {
+				closeSession(session);
+			}
+
+			return 0;
+		}*/
 
 	public int countByU_C_T(long userId, long classNameId, long[] types) {
 		Session session = null;
 
 		try {
-			session = CustomFinderHelperUtil.openPortalSession();
+			session = openSession();
 
-			String sql = _customSQL.get(
-				CustomSocialActivitySetFinderImpl.class,
-				COUNT_BY_USERID_CLASSNAMEID_TYPE);
+			ClassLoader classLoader = getClass().getClassLoader();
 
-			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+			DynamicQuery activitySetQuery = DynamicQueryFactoryUtil.forClass(
+				SocialActivitySet.class, "classPKView", classLoader);
 
-			q.setCacheable(false);
-			q.addEntity(
-				"SocialActivitySet",
-				CustomFinderHelperUtil.getImplClass(
-					"com.liferay.portlet.social.model.impl." +
-						"SocialActivitySetImpl",
-					PortalClassLoaderUtil.getClassLoader()));
+			activitySetQuery.add(
+				RestrictionsFactoryUtil.and(
+					RestrictionsFactoryUtil.and(
+						RestrictionsFactoryUtil.eq("userId", userId),
+						RestrictionsFactoryUtil.eq("classNameId", classNameId)),
+					RestrictionsFactoryUtil.in(
+						"type", ArrayUtil.toArray(types))));
 
-			QueryPos qPos = QueryPos.getInstance(q);
+			int count = SocialActivitySetLocalServiceUtil.dynamicQueryCount(
+				activitySetQuery);
 
-			qPos.add(userId);
-			qPos.add(classNameId);
-			qPos.add(StringUtil.merge(types));
-
-			Iterator<Long> itr = q.iterate();
-
-			// The SELECT COUNT(*) ... query doesn't work probably because of
-			// Hibernate mapping problems due to subquery. Querying the records
-			// instead to be able to determine the count.
-			/*if (itr.hasNext()) {
-				Long count = itr.next();
-
-				if (count != null) {
-					return count.intValue();
-				}
-			}*/
-
-			List<SocialActivitySet> list = 
-				(List<SocialActivitySet>)QueryUtil.list(
-					q, getDialect(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
-
-			return list.size();
+			return count;
 		}
 		catch (Exception e) {
 			try {
@@ -167,6 +178,64 @@ public class CustomSocialActivitySetFinderImpl
 
 		return 0;
 	}
+
+	// Switching to DynamicQuery temporarily. (See https://issues.liferay.com/browse/GROW-979)
+
+	/*	public int countByU_C_T(long userId, long classNameId, long[] types) {
+			Session session = null;
+
+			try {
+				session = CustomFinderHelperUtil.openPortalSession();
+				String sql = _customSQL.get(
+					CustomSocialActivitySetFinderImpl.class,
+					COUNT_BY_USERID_CLASSNAMEID_TYPE);
+
+				SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+				q.setCacheable(false);
+				q.addEntity(
+					"SocialActivitySet",
+					CustomFinderHelperUtil.getImplClass(
+						"com.liferay.portlet.social.model.impl." +
+							"SocialActivitySetImpl",
+						PortalClassLoaderUtil.getClassLoader()));
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(userId);
+				qPos.add(classNameId);
+				qPos.add(StringUtil.merge(types));
+				Iterator<Long> itr = q.iterate();
+
+				// The SELECT COUNT(*) ... query doesn't work probably because of
+				// Hibernate mapping problems due to subquery. Querying the records
+				// instead to be able to determine the count.
+
+				//if (itr.hasNext()) {
+				//	Long count = itr.next();
+				//	if (count != null) {
+				//		return count.intValue();
+				//	}
+				//}
+				List<SocialActivitySet> list =
+					(List<SocialActivitySet>)QueryUtil.list(
+						q, getDialect(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+				return list.size();
+			}
+			catch (Exception e) {
+				try {
+					throw new SystemException(e);
+				}
+				catch (SystemException se) {
+					se.printStackTrace();
+				}
+			}
+			finally {
+				closeSession(session);
+			}
+
+			return 0;
+		}*/
 
 	public List<SocialActivitySet> findByU_C(
 		long userId, long classNameId, int begin, int end) {
@@ -174,29 +243,40 @@ public class CustomSocialActivitySetFinderImpl
 		Session session = null;
 
 		try {
-			session = CustomFinderHelperUtil.openPortalSession();
+			session = openSession();
 
-			String sql = _customSQL.get(
-				CustomSocialActivitySetFinderImpl.class,
-				FIND_BY_USERID_CLASSNAMEID);
+			ClassLoader classLoader = getClass().getClassLoader();
 
-			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+			DynamicQuery activitySetQuery = DynamicQueryFactoryUtil.forClass(
+				SocialActivitySet.class, "classPKView", classLoader);
 
-			q.setCacheable(false);
-			q.addEntity(
-				"SocialActivitySet",
-				CustomFinderHelperUtil.getImplClass(
-					"com.liferay.portlet.social.model.impl." +
-						"SocialActivitySetImpl",
-					PortalClassLoaderUtil.getClassLoader()));
+			/*			ProjectionList projectionList = ProjectionFactoryUtil.projectionList();
 
-			QueryPos qPos = QueryPos.getInstance(q);
+						projectionList.add(PropertyFactoryUtil.forName("activitySetId"));
+						projectionList.add(PropertyFactoryUtil.forName("classPK"));
+						projectionList.add(PropertyFactoryUtil.forName("modifiedDate").max());
+						projectionList.add(ProjectionFactoryUtil.groupProperty("classPK"));*/
 
-			qPos.add(userId);
-			qPos.add(classNameId);
+			activitySetQuery.add(
+				RestrictionsFactoryUtil.and(
+					RestrictionsFactoryUtil.eq("userId", userId),
+					RestrictionsFactoryUtil.eq("classNameId", classNameId)));
+			//				.setProjection(projectionList);
 
-			return (List<SocialActivitySet>)QueryUtil.list(
-				q, getDialect(), begin, end);
+			/*classPKQuery.add(RestrictionsFactoryUtil.and(RestrictionsFactoryUtil.eq("userId", userId)
+			, RestrictionsFactoryUtil.eq("classNameId", classNameId))
+			.setProjection(ProjectionFactoryUtil.groupProperty("classPK"));*/
+			/*
+						DynamicQuery activitySetQuery =
+							DynamicQueryFactoryUtil.forClass(
+								SocialActivitySet.class, "socialActivitySet", classLoader);
+
+						activitySetQuery.add(RestrictionsFactoryUtil.and(RestrictionsFactoryUtil.eq("classPK", ), RestrictionsFactryUtil.eq("modifiedDate", ));
+			*/
+			List<SocialActivitySet> activitySets =
+				SocialActivitySetLocalServiceUtil.dynamicQuery(
+					activitySetQuery, begin, end);
+			return activitySets;
 		}
 		catch (Exception e) {
 			try {
@@ -212,6 +292,51 @@ public class CustomSocialActivitySetFinderImpl
 
 		return null;
 	}
+
+	// Switching to DynamicQuery temporarily. (See https://issues.liferay.com/browse/GROW-979)
+
+	/*	public List<SocialActivitySet> findByU_C(
+			long userId, long classNameId, int begin, int end) {
+
+			Session session = null;
+
+			try {
+				session = CustomFinderHelperUtil.openPortalSession();
+				String sql = _customSQL.get(
+					CustomSocialActivitySetFinderImpl.class,
+					FIND_BY_USERID_CLASSNAMEID);
+
+				SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+				q.setCacheable(false);
+				q.addEntity(
+					"SocialActivitySet",
+					CustomFinderHelperUtil.getImplClass(
+						"com.liferay.portlet.social.model.impl." +
+							"SocialActivitySetImpl",
+						PortalClassLoaderUtil.getClassLoader()));
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(userId);
+				qPos.add(classNameId);
+
+				return (List<SocialActivitySet>)QueryUtil.list(
+					q, getDialect(), begin, end);
+			}
+			catch (Exception e) {
+				try {
+					throw new SystemException(e);
+				}
+				catch (SystemException se) {
+					se.printStackTrace();
+				}
+			}
+			finally {
+				closeSession(session);
+			}
+
+			return null;
+		}*/
 
 	public List<SocialActivitySet> findByU_C_T(
 		long userId, long classNameId, long[] types, int begin, int end) {
@@ -219,30 +344,24 @@ public class CustomSocialActivitySetFinderImpl
 		Session session = null;
 
 		try {
-			session = CustomFinderHelperUtil.openPortalSession();
+			ClassLoader classLoader = getClass().getClassLoader();
 
-			String sql = _customSQL.get(
-				CustomSocialActivitySetFinderImpl.class,
-				FIND_BY_USERID_CLASSNAMEID_TYPE);
+			DynamicQuery activitySetQuery = DynamicQueryFactoryUtil.forClass(
+				SocialActivitySet.class, "classPKView", classLoader);
 
-			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+			activitySetQuery.add(
+				RestrictionsFactoryUtil.and(
+					RestrictionsFactoryUtil.and(
+						RestrictionsFactoryUtil.eq("userId", userId),
+						RestrictionsFactoryUtil.eq("classNameId", classNameId)),
+					RestrictionsFactoryUtil.in(
+						"type", ArrayUtil.toArray(types))));
 
-			q.setCacheable(false);
-			q.addEntity(
-				"SocialActivitySet",
-				CustomFinderHelperUtil.getImplClass(
-					"com.liferay.portlet.social.model.impl." +
-						"SocialActivitySetImpl",
-					PortalClassLoaderUtil.getClassLoader()));
+			List<SocialActivitySet> activitySets =
+				SocialActivitySetLocalServiceUtil.dynamicQuery(
+					activitySetQuery, begin, end);
 
-			QueryPos qPos = QueryPos.getInstance(q);
-
-			qPos.add(userId);
-			qPos.add(classNameId);
-			qPos.add(StringUtil.merge(types));
-
-			return (List<SocialActivitySet>)QueryUtil.list(
-				q, getDialect(), begin, end);
+			return activitySets;
 		}
 		catch (Exception e) {
 			try {
@@ -258,6 +377,52 @@ public class CustomSocialActivitySetFinderImpl
 
 		return null;
 	}
+
+	// Switching to DynamicQuery temporarily. (See https://issues.liferay.com/browse/GROW-979)
+
+	/*	public List<SocialActivitySet> findByU_C_T(
+			long userId, long classNameId, long[] types, int begin, int end) {
+
+			Session session = null;
+
+			try {
+				session = CustomFinderHelperUtil.openPortalSession();
+				String sql = _customSQL.get(
+					CustomSocialActivitySetFinderImpl.class,
+					FIND_BY_USERID_CLASSNAMEID_TYPE);
+
+				SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+				q.setCacheable(false);
+				q.addEntity(
+					"SocialActivitySet",
+					CustomFinderHelperUtil.getImplClass(
+						"com.liferay.portlet.social.model.impl." +
+							"SocialActivitySetImpl",
+						PortalClassLoaderUtil.getClassLoader()));
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(userId);
+				qPos.add(classNameId);
+				qPos.add(StringUtil.merge(types));
+
+				return (List<SocialActivitySet>)QueryUtil.list(
+					q, getDialect(), begin, end);
+			}
+			catch (Exception e) {
+				try {
+					throw new SystemException(e);
+				}
+				catch (SystemException se) {
+					se.printStackTrace();
+				}
+			}
+			finally {
+				closeSession(session);
+			}
+
+			return null;
+		}*/
 
 	@ServiceReference(type = CustomSQL.class)
 	private CustomSQL _customSQL;

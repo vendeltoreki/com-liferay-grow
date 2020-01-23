@@ -47,7 +47,7 @@ public class CustomSocialActivitySetLocalServiceImpl
 	 */
 	@Override
 	public List<SocialActivitySet> getUserViewableActivitySets(
-		long userId, long[] types, int start, int end) {
+		long userId, int[] types, int start, int end) {
 
 		long classNameId = _classNameLocalService.getClassNameId(
 			WikiPage.class);
@@ -57,7 +57,7 @@ public class CustomSocialActivitySetLocalServiceImpl
 	}
 
 	@Override
-	public int getUserViewableActivitySetsCount(long userId, long[] types) {
+	public int getUserViewableActivitySetsCount(long userId, int[] types) {
 		long classNameId = _classNameLocalService.getClassNameId(
 			WikiPage.class);
 

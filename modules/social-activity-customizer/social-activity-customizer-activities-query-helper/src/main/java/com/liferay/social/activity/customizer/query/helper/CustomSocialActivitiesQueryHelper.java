@@ -72,7 +72,7 @@ public class CustomSocialActivitiesQueryHelper
 		_classicPaginationStart = classicPaginationStart;
 	}
 
-	public void setTypes(long[] types) {
+	public void setTypes(int[] types) {
 		_types = types;
 	}
 
@@ -101,6 +101,6 @@ public class CustomSocialActivitiesQueryHelper
 	private int _classicPaginationStart;
 	private CustomSocialActivitySetLocalService
 		_customSocialActivitySetLocalService;
-	private long[] _types;
+	private int[] _types;
 
 }

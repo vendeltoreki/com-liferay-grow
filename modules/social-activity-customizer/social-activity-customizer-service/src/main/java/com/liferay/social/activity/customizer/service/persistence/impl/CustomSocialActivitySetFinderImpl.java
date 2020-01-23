@@ -140,7 +140,7 @@ public class CustomSocialActivitySetFinderImpl
 			return 0;
 		}*/
 
-	public int countByU_C_T(long userId, long classNameId, long[] types) {
+	public int countByU_C_T(long userId, long classNameId, int[] types) {
 		Session session = null;
 
 		try {
@@ -339,7 +339,7 @@ public class CustomSocialActivitySetFinderImpl
 		}*/
 
 	public List<SocialActivitySet> findByU_C_T(
-		long userId, long classNameId, long[] types, int begin, int end) {
+		long userId, long classNameId, int[] types, int begin, int end) {
 
 		Session session = null;
 

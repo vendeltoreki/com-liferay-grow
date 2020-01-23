@@ -42,24 +42,24 @@ if (scopeGroup.isUser()) {
 	socialActivitiesDisplayContext = new DefaultSocialActivitiesDisplayContext(socialActivitiesRequestHelper, customSocialActivitiesQueryHelper);
 
 	String activityType = ParamUtil.getString(request, "activityType");
-	long[] types = null;
+	int[] types = null;
 
 	int userActivitiesTotalCount;
 
 	if (!activityType.equals(StringPool.BLANK) && !activityType.equals("ALL")) {
 		switch (activityType) {
 			case "CREATED":
-				types = new long[] {
+				types = new int[] {
 					WikiActivityKeys.ADD_PAGE
 				};
 				break;
 			case "COMMENTED":
-				types = new long[] {
+				types = new int[] {
 					SocialActivityConstants.TYPE_ADD_COMMENT
 				};
 				break;
 			case "UPDATED":
-				types = new long[] {
+				types = new int[] {
 					WikiActivityKeys.UPDATE_PAGE,
 					SocialActivityConstants.TYPE_MOVE_TO_TRASH,
 					SocialActivityConstants.TYPE_RESTORE_FROM_TRASH,

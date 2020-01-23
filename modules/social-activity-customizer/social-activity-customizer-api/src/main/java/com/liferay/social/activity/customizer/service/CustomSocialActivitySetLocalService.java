@@ -237,10 +237,10 @@ public interface CustomSocialActivitySetLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<SocialActivitySet> getUserViewableActivitySets(
-		long userId, long[] types, int start, int end);
+		long userId, int[] types, int start, int end);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getUserViewableActivitySetsCount(long userId, long[] types);
+	public int getUserViewableActivitySetsCount(long userId, int[] types);
 
 	/**
 	 * Updates the custom social activity set in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

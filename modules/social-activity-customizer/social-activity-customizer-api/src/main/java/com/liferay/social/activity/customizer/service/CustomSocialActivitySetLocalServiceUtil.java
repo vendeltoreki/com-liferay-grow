@@ -279,14 +279,14 @@ public class CustomSocialActivitySetLocalServiceUtil {
 	public static java.util.List
 		<com.liferay.social.kernel.model.SocialActivitySet>
 			getUserViewableActivitySets(
-				long userId, long[] types, int start, int end) {
+				long userId, int[] types, int start, int end) {
 
 		return getService().getUserViewableActivitySets(
 			userId, types, start, end);
 	}
 
 	public static int getUserViewableActivitySetsCount(
-		long userId, long[] types) {
+		long userId, int[] types) {
 
 		return getService().getUserViewableActivitySetsCount(userId, types);
 	}

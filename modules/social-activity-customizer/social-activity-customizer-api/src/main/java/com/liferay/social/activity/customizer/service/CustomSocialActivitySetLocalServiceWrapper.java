@@ -298,14 +298,14 @@ public class CustomSocialActivitySetLocalServiceWrapper
 	@Override
 	public java.util.List<com.liferay.social.kernel.model.SocialActivitySet>
 		getUserViewableActivitySets(
-			long userId, long[] types, int start, int end) {
+			long userId, int[] types, int start, int end) {
 
 		return _customSocialActivitySetLocalService.getUserViewableActivitySets(
 			userId, types, start, end);
 	}
 
 	@Override
-	public int getUserViewableActivitySetsCount(long userId, long[] types) {
+	public int getUserViewableActivitySetsCount(long userId, int[] types) {
 		return _customSocialActivitySetLocalService.
 			getUserViewableActivitySetsCount(userId, types);
 	}

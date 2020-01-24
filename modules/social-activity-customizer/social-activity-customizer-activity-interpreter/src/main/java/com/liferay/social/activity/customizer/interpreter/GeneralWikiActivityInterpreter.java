@@ -177,25 +177,22 @@ public class GeneralWikiActivityInterpreter
 			if (Validator.isNull(groupName)) {
 				return "activity-wiki-page-add-comment";
 			}
-			else {
-				return "activity-wiki-page-add-comment-in";
-			}
+
+			return "activity-wiki-page-add-comment-in";
 		}
 		else if (activityType == WikiActivityKeys.ADD_PAGE) {
 			if (Validator.isNull(groupName)) {
 				return "activity-wiki-page-add-page";
 			}
-			else {
-				return "activity-wiki-page-add-page-in";
-			}
+
+			return "activity-wiki-page-add-page-in";
 		}
 		else if (activityType == SocialActivityConstants.TYPE_ADD_ATTACHMENT) {
 			if (Validator.isNull(groupName)) {
 				return "activity-wiki-page-add-attachment";
 			}
-			else {
-				return "activity-wiki-page-add-attachment-in";
-			}
+
+			return "activity-wiki-page-add-attachment-in";
 		}
 		else if (activityType ==
 					SocialActivityConstants.TYPE_MOVE_ATTACHMENT_TO_TRASH) {
@@ -203,9 +200,8 @@ public class GeneralWikiActivityInterpreter
 			if (Validator.isNull(groupName)) {
 				return "activity-wiki-page-remove-attachment";
 			}
-			else {
-				return "activity-wiki-page-remove-attachment-in";
-			}
+
+			return "activity-wiki-page-remove-attachment-in";
 		}
 		else if (activityType ==
 					SocialActivityConstants.
@@ -214,17 +210,15 @@ public class GeneralWikiActivityInterpreter
 			if (Validator.isNull(groupName)) {
 				return "activity-wiki-page-restore-attachment";
 			}
-			else {
-				return "activity-wiki-page-restore-attachment-in";
-			}
+
+			return "activity-wiki-page-restore-attachment-in";
 		}
 		else if (activityType == SocialActivityConstants.TYPE_MOVE_TO_TRASH) {
 			if (Validator.isNull(groupName)) {
 				return "activity-wiki-page-move-to-trash";
 			}
-			else {
-				return "activity-wiki-page-move-to-trash-in";
-			}
+
+			return "activity-wiki-page-move-to-trash-in";
 		}
 		else if (activityType ==
 					SocialActivityConstants.TYPE_RESTORE_FROM_TRASH) {
@@ -232,17 +226,15 @@ public class GeneralWikiActivityInterpreter
 			if (Validator.isNull(groupName)) {
 				return "activity-wiki-page-restore-from-trash";
 			}
-			else {
-				return "activity-wiki-page-restore-from-trash-in";
-			}
+
+			return "activity-wiki-page-restore-from-trash-in";
 		}
 		else if (activityType == WikiActivityKeys.UPDATE_PAGE) {
 			if (Validator.isNull(groupName)) {
 				return "activity-wiki-page-update-page";
 			}
-			else {
-				return "activity-wiki-page-update-page-in";
-			}
+
+			return "activity-wiki-page-update-page-in";
 		}
 
 		return null;

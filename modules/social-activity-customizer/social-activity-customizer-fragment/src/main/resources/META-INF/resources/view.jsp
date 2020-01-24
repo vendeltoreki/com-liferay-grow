@@ -52,11 +52,13 @@ if (scopeGroup.isUser()) {
 				types = new int[] {
 					WikiActivityKeys.ADD_PAGE
 				};
+
 				break;
 			case "COMMENTED":
 				types = new int[] {
 					SocialActivityConstants.TYPE_ADD_COMMENT
 				};
+
 				break;
 			case "UPDATED":
 				types = new int[] {
@@ -67,6 +69,7 @@ if (scopeGroup.isUser()) {
 					SocialActivityConstants.TYPE_RESTORE_ATTACHMENT_FROM_TRASH,
 					SocialActivityConstants.TYPE_ADD_ATTACHMENT
 				};
+
 				break;
 		}
 

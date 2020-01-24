@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <custom-sql>
 	<sql id="com.liferay.social.activity.customizer.service.persistence.CustomSocialActivitySetFinder.countByU_C">
 		<![CDATA[

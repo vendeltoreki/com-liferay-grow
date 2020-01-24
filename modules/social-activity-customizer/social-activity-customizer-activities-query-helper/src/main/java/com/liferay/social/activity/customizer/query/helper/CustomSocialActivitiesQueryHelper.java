@@ -44,11 +44,10 @@ public class CustomSocialActivitiesQueryHelper
 					group.getClassPK(), _types, _classicPaginationStart,
 					_classicPaginationEnd);
 		}
-		else {
-			return super.getSocialActivitySets(
-				group, layout, scope, _classicPaginationStart,
-				_classicPaginationEnd);
-		}
+
+		return super.getSocialActivitySets(
+			group, layout, scope, _classicPaginationStart,
+			_classicPaginationEnd);
 	}
 
 	@Override
@@ -59,9 +58,8 @@ public class CustomSocialActivitiesQueryHelper
 			return _customSocialActivitySetLocalService.
 				getUserViewableActivitySetsCount(group.getClassPK(), _types);
 		}
-		else {
-			return super.getSocialActivitySetsCount(group, layout, scope);
-		}
+
+		return super.getSocialActivitySetsCount(group, layout, scope);
 	}
 
 	public void setClassicPaginationEnd(int classicPaginationEnd) {

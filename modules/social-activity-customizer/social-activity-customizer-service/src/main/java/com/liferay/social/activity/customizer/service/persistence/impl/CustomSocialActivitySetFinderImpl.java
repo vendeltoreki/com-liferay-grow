@@ -63,10 +63,10 @@ public class CustomSocialActivitySetFinderImpl
 					RestrictionsFactoryUtil.eq("userId", userId),
 					RestrictionsFactoryUtil.eq("classNameId", classNameId)));
 
-			int count = SocialActivitySetLocalServiceUtil.dynamicQueryCount(
+			long count = SocialActivitySetLocalServiceUtil.dynamicQueryCount(
 				activitySetQuery);
 
-			return count;
+			return Math.toIntExact(count);
 		}
 		catch (Exception e) {
 			try {
@@ -159,10 +159,10 @@ public class CustomSocialActivitySetFinderImpl
 					RestrictionsFactoryUtil.in(
 						"type", ArrayUtil.toArray(types))));
 
-			int count = SocialActivitySetLocalServiceUtil.dynamicQueryCount(
+			long count = SocialActivitySetLocalServiceUtil.dynamicQueryCount(
 				activitySetQuery);
 
-			return count;
+			return Math.toIntExact(count);
 		}
 		catch (Exception e) {
 			try {

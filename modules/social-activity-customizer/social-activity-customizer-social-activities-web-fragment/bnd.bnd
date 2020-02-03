@@ -5,6 +5,7 @@ Export-Package:\
 	com.liferay.social.activities.web.internal.portlet.action,\
 	com.liferay.social.activities.web.internal.util
 Fragment-Host: com.liferay.social.activities.web;bundle-version="[4.0.0,5.0.0)"
-Import-Package: com.liferay.social.activity.customizer.query.helper
-com.liferay.social.activity.customizer.service
+Import-Package:\
+	com.liferay.social.activity.customizer.query.helper,\
+	com.liferay.social.activity.customizer.service
 Liferay-Releng-Module-Group-Title: Social

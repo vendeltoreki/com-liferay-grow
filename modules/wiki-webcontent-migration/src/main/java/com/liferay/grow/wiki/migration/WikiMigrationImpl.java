@@ -14,7 +14,6 @@
 
 package com.liferay.grow.wiki.migration;
 
-import com.liferay.asset.kernel.exception.NoSuchVocabularyException;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetLinkConstants;
@@ -39,11 +38,16 @@ import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
@@ -61,7 +65,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -162,6 +165,43 @@ public class WikiMigrationImpl implements WikiMigration {
 
 		dynamicContentElement.addAttribute("language-id", languageId);
 		dynamicContentElement.addCDATA(content);
+	}
+
+	private AssetVocabulary _createGrowVocabulary(String vocabularyName)
+		throws Exception {
+
+		ServiceContext serviceContext = new ServiceContext();
+
+		serviceContext.setScopeGroupId(_groupId);
+
+		AssetVocabulary vocabulary =
+			AssetVocabularyLocalServiceUtil.addVocabulary(
+				_defaultUserId, _groupId, vocabularyName, serviceContext);
+
+		long journalClassNameId = ClassNameLocalServiceUtil.getClassNameId(
+			JournalArticle.class);
+		long growStructureId = _growStruct.getStructureId();
+
+		UnicodeProperties settingsProperties =
+			vocabulary.getSettingsProperties();
+
+		settingsProperties.setProperty("multiValued", "false");
+		settingsProperties.setProperty(
+			"selectedClassNameIds", journalClassNameId + ":" + growStructureId);
+
+		vocabulary.setSettings(settingsProperties.toString());
+		
+		AssetVocabularyLocalServiceUtil.updateAssetVocabulary(vocabulary);
+
+		for (String categoryName :
+				new String[] {"Share", "People", "Excellence", "Learn"}) {
+
+			AssetCategoryLocalServiceUtil.addCategory(
+				_defaultUserId, _groupId, categoryName,
+				vocabulary.getVocabularyId(), serviceContext);
+		}
+
+		return vocabulary;
 	}
 
 	private void _executeMigrationByResourcePrimKey(long resourcePrimKey)
@@ -276,9 +316,7 @@ public class WikiMigrationImpl implements WikiMigration {
 		return null;
 	}
 
-	private AssetVocabulary _getVocabularyByName(String vocabularyName)
-		throws NoSuchVocabularyException {
-
+	private AssetVocabulary _getVocabularyByName(String vocabularyName) {
 		AssetVocabulary growVocabulary = null;
 
 		List<AssetVocabulary> vocs =
@@ -288,7 +326,7 @@ public class WikiMigrationImpl implements WikiMigration {
 		for (AssetVocabulary voc : vocs) {
 			String vocName = voc.getName();
 
-			if (vocName.contentEquals(vocabularyName)) {
+			if (vocName.equals(vocabularyName)) {
 				growVocabulary = voc;
 
 				System.out.println(
@@ -297,10 +335,6 @@ public class WikiMigrationImpl implements WikiMigration {
 
 				break;
 			}
-		}
-
-		if (growVocabulary == null) {
-			throw new NoSuchVocabularyException();
 		}
 
 		return growVocabulary;
@@ -456,7 +490,7 @@ public class WikiMigrationImpl implements WikiMigration {
 	private void _init() throws Exception {
 		System.out.println("Initializing.");
 
-		Collections.addAll(_resourcePrimKeys, 1499375L);
+		_initGroup();
 
 		List<DDMStructure> structs =
 			DDMStructureLocalServiceUtil.getStructures();
@@ -464,7 +498,7 @@ public class WikiMigrationImpl implements WikiMigration {
 		for (DDMStructure struct : structs) {
 			String structName = struct.getNameCurrentValue();
 
-			if (structName.contentEquals("GROW Article")) {
+			if (structName.equals("GROW Article")) {
 				_growStruct = struct;
 
 				System.out.println(
@@ -499,6 +533,10 @@ public class WikiMigrationImpl implements WikiMigration {
 
 		AssetVocabulary growVocabulary = _getVocabularyByName(vocabularyName);
 
+		if (growVocabulary == null) {
+			growVocabulary = _createGrowVocabulary(vocabularyName);
+		}
+
 		List<AssetCategory> cats =
 			AssetCategoryLocalServiceUtil.getVocabularyCategories(
 				growVocabulary.getVocabularyId(), QueryUtil.ALL_POS,
@@ -506,6 +544,36 @@ public class WikiMigrationImpl implements WikiMigration {
 
 		for (AssetCategory cat : cats) {
 			_categoriesMap.put(cat.getName(), cat.getCategoryId());
+		}
+	}
+
+	private void _initGroup() throws Exception {
+		List<Group> groups = GroupLocalServiceUtil.getGroups(
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+		for (Group group : groups) {
+			String groupName = group.getNameCurrentValue();
+
+			if (groupName.equals("Guest")) {
+				_groupId = group.getGroupId();
+
+				System.out.println("-- groupId=" + _groupId);
+
+				_companyId = group.getCompanyId();
+
+				System.out.println("-- companyId=" + _companyId);
+
+				_defaultUserId = UserLocalServiceUtil.getDefaultUserId(
+					_companyId);
+
+				if (_defaultUserId == 0) {
+					_defaultUserId = group.getCreatorUserId();
+				}
+
+				System.out.println("-- defaultUserId=" + _defaultUserId);
+
+				return;
+			}
 		}
 	}
 
@@ -607,11 +675,13 @@ public class WikiMigrationImpl implements WikiMigration {
 	}
 
 	private Map<String, Long> _categoriesMap = new HashMap<>();
+	private long _companyId;
+	private long _defaultUserId;
+	private long _groupId;
 	private DDMStructure _growStruct;
 	private DDMTemplate _growTemp;
 	private Map<Long, Long> _keysMap = new HashMap<>();
 	private Map<Long, Long> _parentsMap = new HashMap<>();
-	private Set<Long> _resourcePrimKeys = new HashSet<>();
 
 	@Reference
 	private SubscriptionLocalService _subscriptionLocalService;

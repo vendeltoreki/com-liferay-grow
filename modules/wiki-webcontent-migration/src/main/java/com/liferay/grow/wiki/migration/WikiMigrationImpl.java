@@ -44,6 +44,8 @@ import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.ratings.kernel.exception.NoSuchStatsException;
 import com.liferay.ratings.kernel.model.RatingsEntry;
 import com.liferay.ratings.kernel.service.RatingsEntryLocalServiceUtil;
+import com.liferay.subscription.model.Subscription;
+import com.liferay.subscription.service.SubscriptionLocalService;
 import com.liferay.wiki.model.WikiPage;
 import com.liferay.wiki.model.WikiPageDisplay;
 import com.liferay.wiki.service.WikiPageLocalServiceUtil;
@@ -62,6 +64,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Vendel Toreki
@@ -112,6 +115,8 @@ public class WikiMigrationImpl implements WikiMigration {
 
 		descriptionMap.put(locale, page.getSummary());
 
+		List<Subscription> subscriptions = _subscriptionLocalService.getSubscriptions(page.getCompanyId(), page.getModelClassName(), page.getResourcePrimKey());
+
 		try {
 			JournalArticle article = JournalArticleLocalServiceUtil.addArticle(
 				page.getUserId(), page.getGroupId(), 0, titleMap,
@@ -121,6 +126,11 @@ public class WikiMigrationImpl implements WikiMigration {
 
 			if (page.isHead()) {
 				_handleHeadVersion(page, article);
+			}
+
+			for (Subscription s: subscriptions
+			) {
+				_subscriptionLocalService.addSubscription(s.getUserId(),article.getGroupId(),article.getModelClassName(),article.getResourcePrimKey());
 			}
 
 			return article;
@@ -491,5 +501,8 @@ public class WikiMigrationImpl implements WikiMigration {
 	private Map<Long, Long> _keysMap = new HashMap<>();
 	private Map<Long, Long> _parentsMap = new HashMap<>();
 	private Set<Long> _resourcePrimKeys = new HashSet<>();
+
+	@Reference
+	private SubscriptionLocalService _subscriptionLocalService;
 
 }

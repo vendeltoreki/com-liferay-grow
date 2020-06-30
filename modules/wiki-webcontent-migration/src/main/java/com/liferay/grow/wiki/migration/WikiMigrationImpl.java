@@ -115,8 +115,6 @@ public class WikiMigrationImpl implements WikiMigration {
 
 		descriptionMap.put(locale, page.getSummary());
 
-		List<Subscription> subscriptions = _subscriptionLocalService.getSubscriptions(page.getCompanyId(), page.getModelClassName(), page.getResourcePrimKey());
-
 		try {
 			JournalArticle article = JournalArticleLocalServiceUtil.addArticle(
 				page.getUserId(), page.getGroupId(), 0, titleMap,
@@ -128,10 +126,7 @@ public class WikiMigrationImpl implements WikiMigration {
 				_handleHeadVersion(page, article);
 			}
 
-			for (Subscription s: subscriptions
-			) {
-				_subscriptionLocalService.addSubscription(s.getUserId(),article.getGroupId(),article.getModelClassName(),article.getResourcePrimKey());
-			}
+			_handleSubscriptions(page, article);
 
 			return article;
 		}
@@ -357,6 +352,21 @@ public class WikiMigrationImpl implements WikiMigration {
 		}
 		catch (NoSuchStatsException nsse) {
 			System.out.println("-- No likes for this page");
+		}
+	}
+
+	private void _handleSubscriptions(WikiPage page, JournalArticle article)
+		throws PortalException {
+
+		List<Subscription> subscriptions = 
+			_subscriptionLocalService.getSubscriptions(
+				page.getCompanyId(), page.getModelClassName(),
+				page.getResourcePrimKey());
+				
+		for (Subscription subscription: subscriptions) {
+			_subscriptionLocalService.addSubscription(
+				subscription.getUserId(), article.getGroupId(),
+				article.getModelClassName(), article.getResourcePrimKey());
 		}
 	}
 

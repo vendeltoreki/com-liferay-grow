@@ -9,6 +9,8 @@ public class BadgeTypeEditorPortletKeys {
 
 	public static final String AVAILABLE_TO = "availableTo";
 
+	public static final String BADGE_GROUPS = "badgeGroups";
+
 	public static final String BADGES = "Badges";
 
 	public static final String BADGE_GROUP_NAME = "badgeGroupName";

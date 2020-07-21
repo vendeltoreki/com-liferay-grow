@@ -20,26 +20,12 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-
-import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import javax.portlet.*;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author vili
@@ -107,13 +93,23 @@ public class UserBadgesDisplayPortlet extends MVCPortlet {
 		if (themeDisplay.getScopeGroup().isUser()) {
 			long userId = themeDisplay.getScopeGroup().getClassPK();
 
-			List<Badge> badges = _badgeLocalService.getBadgesOfUser(userId);
+			List<Badge> badges =  new ArrayList(_badgeLocalService.getBadgesOfUser(userId));
+
+			OrderByComparator badgeComparator =
+					(OrderByComparator)OrderByComparatorFactoryUtil.create("Badge", "badgeId", true);
+
+			Collections.sort(badges, badgeComparator.reversed());
 
 			List<BadgeAggregator> badgeAggregators = new ArrayList<>();
 
+			List<Long> badgeGroups = new ArrayList<>();
+
 			for (Iterator<Badge> it = badges.iterator(); it.hasNext();) {
-				badgeAggregators = _aggregate(
-					it.next(), badgeAggregators, themeDisplay);
+				Badge badge = it.next();
+				if (_addToAggregation(badge, badgeGroups)) {
+					badgeAggregators = _aggregate(
+							badge, badgeAggregators, themeDisplay);
+				}
 			}
 
 			OrderByComparator badgeTypeComparator =
@@ -145,6 +141,29 @@ public class UserBadgesDisplayPortlet extends MVCPortlet {
 		}
 
 		super.render(renderRequest, renderResponse);
+	}
+
+	private boolean _addToAggregation(Badge badge, List<Long> badgeGroups) {
+		try {
+			BadgeType badgeType = _badgeTypeLocalService.getBadgeType(badge.getBadgeTypeId());
+			if (badgeType.getBadgeGroupId() == 0) {
+				return true;
+			}
+
+			if (badgeGroups.contains(badgeType.getBadgeGroupId())) {
+				return false;
+			}
+
+			badgeGroups.add(badgeType.getBadgeGroupId());
+
+			return true;
+
+		}
+		catch (PortalException e) {
+			e.printStackTrace();
+		}
+
+		return true;
 	}
 
 	@Reference(unbind = "-")

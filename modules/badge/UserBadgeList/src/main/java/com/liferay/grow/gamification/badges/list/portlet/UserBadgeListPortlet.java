@@ -73,6 +73,7 @@ public class UserBadgeListPortlet extends MVCPortlet {
 		}
 
 		Collections.sort(users, userComparator);
+
 		OrderByComparator badgeTypeComparator =
 			(OrderByComparator)OrderByComparatorFactoryUtil.create("BadgeType", "type", true);
 

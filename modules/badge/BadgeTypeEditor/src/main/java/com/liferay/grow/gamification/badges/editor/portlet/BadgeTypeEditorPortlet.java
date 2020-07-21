@@ -8,7 +8,9 @@ import com.liferay.grow.gamification.badges.editor.constants.BadgeTypeEditorPort
 import com.liferay.grow.gamification.model.BadgeType;
 import com.liferay.grow.gamification.model.BadgeGroup;
 import com.liferay.grow.gamification.service.BadgeGroupLocalService;
+import com.liferay.grow.gamification.service.BadgeGroupLocalServiceUtil;
 import com.liferay.grow.gamification.service.BadgeTypeLocalService;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -27,12 +29,12 @@ import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.File;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.Portlet;
+import javax.portlet.*;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

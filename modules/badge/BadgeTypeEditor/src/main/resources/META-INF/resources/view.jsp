@@ -14,7 +14,11 @@ page import="java.util.List" %>
 <%@ page import="com.liferay.grow.gamification.model.BadgeGroup" %>
 <%@ page import="com.liferay.grow.gamification.service.BadgeGroupLocalServiceUtil" %>
 <%@ page import="com.liferay.grow.gamification.badges.editor.constants.BadgeTypeEditorPortletKeys" %>
-
+<%@ page import="com.liferay.grow.gamification.model.Badge" %>
+<%
+	List<BadgeGroup> badgeGroups = BadgeGroupLocalServiceUtil.getBadgeGroups(QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+	pageContext.setAttribute("badgeGroups", badgeGroups);
+%>
 <liferay-ui:error exception="<%= DuplicateFileEntryException.class %>" message="badge-image-file-already-exists" />
 
 <div class="container">
@@ -123,16 +127,10 @@ page import="java.util.List" %>
 							</div>
 							<div class="form-group">
 								<select  class="form-control" name="group">
-									<%
-										List<BadgeGroup> grs = BadgeGroupLocalServiceUtil.getBadgeGroups(QueryUtil.ALL_POS, QueryUtil.ALL_POS);
-									%>
-									<c:out value="<option value=''>Not Groupped</option>" escapeXml="false"/>
-									<%
-										for(BadgeGroup g : grs) {
-										out.println("<option value='" + g.getBadgeGroupId() + "'>"+g.getGroupName()+"</option>");
-										}
-									%>
-
+									<c:out value="<option value='0'>Not Groupped</option>" escapeXml="false"/>
+									<c:forEach items="${badgeGroups}" var="g">
+										<c:out value="<option value='${g.badgeGroupId}'>${g.groupName}</option>" escapeXml="false"/>
+									</c:forEach>
 
 								</select>
 							</div>

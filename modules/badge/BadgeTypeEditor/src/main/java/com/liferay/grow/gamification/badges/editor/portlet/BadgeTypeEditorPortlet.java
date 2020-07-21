@@ -6,6 +6,8 @@ import com.liferay.document.library.kernel.exception.NoSuchFolderException;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.grow.gamification.badges.editor.constants.BadgeTypeEditorPortletKeys;
 import com.liferay.grow.gamification.model.BadgeType;
+import com.liferay.grow.gamification.model.BadgeGroup;
+import com.liferay.grow.gamification.service.BadgeGroupLocalService;
 import com.liferay.grow.gamification.service.BadgeTypeLocalService;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -56,6 +58,37 @@ import org.osgi.service.component.annotations.Reference;
 	service = Portlet.class
 )
 public class BadgeTypeEditorPortlet extends MVCPortlet {
+	public void addBadgeGroup(
+			ActionRequest actionRequest, ActionResponse actionResponse) {
+
+		String group = actionRequest.getParameter(
+				BadgeTypeEditorPortletKeys.GROUP);
+		String badgeGroupName = actionRequest.getParameter(
+				BadgeTypeEditorPortletKeys.BADGE_GROUP_NAME);
+
+		try {
+			long badgeGroupId = _counterLocalService.increment(
+					BadgeGroup.class.getName());
+
+			User user = (User) actionRequest.getAttribute(WebKeys.USER);
+
+			BadgeGroup badgeGroup = _badgeGroupLocalService.createBadgeGroup(
+					badgeGroupId);
+			badgeGroup.setGroupName(badgeGroupName);
+
+			_badgeGroupLocalService.addBadgeGroup(badgeGroup);
+		}
+		catch (org.hibernate.exception.ConstraintViolationException cve) {
+			SessionErrors.add(
+					actionRequest,
+					org.hibernate.exception.ConstraintViolationException.class);
+		}
+		catch (Exception e) {
+			_log.error("+=+");
+			_log.error(e);
+			SessionErrors.add(actionRequest, e.getMessage());
+		}
+	}
 
 	public void addBadgeType(
 		ActionRequest actionRequest, ActionResponse actionResponse) {
@@ -158,6 +191,13 @@ public class BadgeTypeEditorPortlet extends MVCPortlet {
 	}
 
 	@Reference(unbind = "-")
+	protected void setBadgeGroupLocalService(
+			BadgeGroupLocalService badgeGroupLocalService) {
+
+		_badgeGroupLocalService = badgeGroupLocalService;
+	}
+
+	@Reference(unbind = "-")
 	protected void setBadgeTypeLocalService(
 		BadgeTypeLocalService badgeTypeLocalService) {
 
@@ -180,6 +220,7 @@ public class BadgeTypeEditorPortlet extends MVCPortlet {
 		return DateUtil.parseDate("yyyy-MM-dd", date, Locale.US);
 	}
 
+	private BadgeGroupLocalService _badgeGroupLocalService;
 	private BadgeTypeLocalService _badgeTypeLocalService;
 	private CounterLocalService _counterLocalService;
 	private DLAppLocalService _dlAppLocalService;

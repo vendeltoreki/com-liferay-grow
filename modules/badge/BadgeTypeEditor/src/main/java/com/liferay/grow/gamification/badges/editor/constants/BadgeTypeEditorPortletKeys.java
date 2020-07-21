@@ -11,9 +11,13 @@ public class BadgeTypeEditorPortletKeys {
 
 	public static final String BADGES = "Badges";
 
+	public static final String BADGE_GROUP_NAME = "badgeGroupName";
+
 	public static final String FILE_ENTRY = "fileEntry";
 
 	public static final String FOLDER_DESCRIPTION = "Folder for Badge icons";
+
+	public static final String GROUP = "group";
 
 	public static final String SYSTEM = "system";
 

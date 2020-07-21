@@ -4,3 +4,10 @@ function addBadgeType() {
 		modules : 'html5, file',
 	});
 }
+
+function addBadgeGroup() {
+	$.validate({
+		form : '#_badgetypeeditor_badgeGroupForm',
+		modules : 'html5',
+	});
+}

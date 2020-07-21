@@ -3,6 +3,7 @@
 
 <hibernate-mapping auto-import="false" default-lazy="false">
 	<import class="com.liferay.grow.gamification.model.Badge" />
+	<import class="com.liferay.grow.gamification.model.BadgeGroup" />
 	<import class="com.liferay.grow.gamification.model.BadgeType" />
 	<import class="com.liferay.grow.gamification.model.LDate" />
 	<import class="com.liferay.grow.gamification.model.Subscriber" />
@@ -21,6 +22,12 @@
 		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="assignedDateId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 	</class>
+	<class name="com.liferay.grow.gamification.model.impl.BadgeGroupImpl" table="gamification_BadgeGroup">
+		<id name="badgeGroupId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property name="groupName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+	</class>
 	<class name="com.liferay.grow.gamification.model.impl.BadgeTypeImpl" table="gamification_BadgeType">
 		<id name="badgeTypeId" type="long">
 			<generator class="assigned" />
@@ -35,6 +42,7 @@
 		<property name="assignableFrom" type="org.hibernate.type.TimestampType" />
 		<property name="assignableTo" type="org.hibernate.type.TimestampType" />
 		<property name="fileEntryId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="badgeGroupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="system" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 		<property name="templateHTML" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 	</class>

@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.grow.gamification.model.Subscriber;
 import com.liferay.grow.gamification.service.SubscriberLocalService;
+import com.liferay.grow.gamification.service.persistence.BadgeGroupPersistence;
 import com.liferay.grow.gamification.service.persistence.BadgePersistence;
 import com.liferay.grow.gamification.service.persistence.BadgeTypePersistence;
 import com.liferay.grow.gamification.service.persistence.LDatePersistence;
@@ -357,6 +358,44 @@ public abstract class SubscriberLocalServiceBaseImpl
 	}
 
 	/**
+	 * Returns the badge group local service.
+	 *
+	 * @return the badge group local service
+	 */
+	public com.liferay.grow.gamification.service.BadgeGroupLocalService getBadgeGroupLocalService() {
+		return badgeGroupLocalService;
+	}
+
+	/**
+	 * Sets the badge group local service.
+	 *
+	 * @param badgeGroupLocalService the badge group local service
+	 */
+	public void setBadgeGroupLocalService(
+		com.liferay.grow.gamification.service.BadgeGroupLocalService badgeGroupLocalService) {
+		this.badgeGroupLocalService = badgeGroupLocalService;
+	}
+
+	/**
+	 * Returns the badge group persistence.
+	 *
+	 * @return the badge group persistence
+	 */
+	public BadgeGroupPersistence getBadgeGroupPersistence() {
+		return badgeGroupPersistence;
+	}
+
+	/**
+	 * Sets the badge group persistence.
+	 *
+	 * @param badgeGroupPersistence the badge group persistence
+	 */
+	public void setBadgeGroupPersistence(
+		BadgeGroupPersistence badgeGroupPersistence) {
+		this.badgeGroupPersistence = badgeGroupPersistence;
+	}
+
+	/**
 	 * Returns the badge type local service.
 	 *
 	 * @return the badge type local service
@@ -638,6 +677,10 @@ public abstract class SubscriberLocalServiceBaseImpl
 	protected com.liferay.grow.gamification.service.BadgeLocalService badgeLocalService;
 	@BeanReference(type = BadgePersistence.class)
 	protected BadgePersistence badgePersistence;
+	@BeanReference(type = com.liferay.grow.gamification.service.BadgeGroupLocalService.class)
+	protected com.liferay.grow.gamification.service.BadgeGroupLocalService badgeGroupLocalService;
+	@BeanReference(type = BadgeGroupPersistence.class)
+	protected BadgeGroupPersistence badgeGroupPersistence;
 	@BeanReference(type = com.liferay.grow.gamification.service.BadgeTypeLocalService.class)
 	protected com.liferay.grow.gamification.service.BadgeTypeLocalService badgeTypeLocalService;
 	@BeanReference(type = BadgeTypePersistence.class)

@@ -16,6 +16,7 @@ package com.liferay.grow.gamification.service.base;
 
 import com.liferay.grow.gamification.model.Subscriber;
 import com.liferay.grow.gamification.service.SubscriberService;
+import com.liferay.grow.gamification.service.persistence.BadgeGroupPersistence;
 import com.liferay.grow.gamification.service.persistence.BadgePersistence;
 import com.liferay.grow.gamification.service.persistence.BadgeTypePersistence;
 import com.liferay.grow.gamification.service.persistence.LDatePersistence;
@@ -110,6 +111,63 @@ public abstract class SubscriberServiceBaseImpl extends BaseServiceImpl
 	 */
 	public void setBadgePersistence(BadgePersistence badgePersistence) {
 		this.badgePersistence = badgePersistence;
+	}
+
+	/**
+	 * Returns the badge group local service.
+	 *
+	 * @return the badge group local service
+	 */
+	public com.liferay.grow.gamification.service.BadgeGroupLocalService getBadgeGroupLocalService() {
+		return badgeGroupLocalService;
+	}
+
+	/**
+	 * Sets the badge group local service.
+	 *
+	 * @param badgeGroupLocalService the badge group local service
+	 */
+	public void setBadgeGroupLocalService(
+		com.liferay.grow.gamification.service.BadgeGroupLocalService badgeGroupLocalService) {
+		this.badgeGroupLocalService = badgeGroupLocalService;
+	}
+
+	/**
+	 * Returns the badge group remote service.
+	 *
+	 * @return the badge group remote service
+	 */
+	public com.liferay.grow.gamification.service.BadgeGroupService getBadgeGroupService() {
+		return badgeGroupService;
+	}
+
+	/**
+	 * Sets the badge group remote service.
+	 *
+	 * @param badgeGroupService the badge group remote service
+	 */
+	public void setBadgeGroupService(
+		com.liferay.grow.gamification.service.BadgeGroupService badgeGroupService) {
+		this.badgeGroupService = badgeGroupService;
+	}
+
+	/**
+	 * Returns the badge group persistence.
+	 *
+	 * @return the badge group persistence
+	 */
+	public BadgeGroupPersistence getBadgeGroupPersistence() {
+		return badgeGroupPersistence;
+	}
+
+	/**
+	 * Sets the badge group persistence.
+	 *
+	 * @param badgeGroupPersistence the badge group persistence
+	 */
+	public void setBadgeGroupPersistence(
+		BadgeGroupPersistence badgeGroupPersistence) {
+		this.badgeGroupPersistence = badgeGroupPersistence;
 	}
 
 	/**
@@ -486,6 +544,12 @@ public abstract class SubscriberServiceBaseImpl extends BaseServiceImpl
 	protected com.liferay.grow.gamification.service.BadgeService badgeService;
 	@BeanReference(type = BadgePersistence.class)
 	protected BadgePersistence badgePersistence;
+	@BeanReference(type = com.liferay.grow.gamification.service.BadgeGroupLocalService.class)
+	protected com.liferay.grow.gamification.service.BadgeGroupLocalService badgeGroupLocalService;
+	@BeanReference(type = com.liferay.grow.gamification.service.BadgeGroupService.class)
+	protected com.liferay.grow.gamification.service.BadgeGroupService badgeGroupService;
+	@BeanReference(type = BadgeGroupPersistence.class)
+	protected BadgeGroupPersistence badgeGroupPersistence;
 	@BeanReference(type = com.liferay.grow.gamification.service.BadgeTypeLocalService.class)
 	protected com.liferay.grow.gamification.service.BadgeTypeLocalService badgeTypeLocalService;
 	@BeanReference(type = com.liferay.grow.gamification.service.BadgeTypeService.class)

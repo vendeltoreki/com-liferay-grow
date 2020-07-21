@@ -16,6 +16,10 @@
 		</field>
 		<field name="assignedDateId" type="long" />
 	</model>
+	<model name="com.liferay.grow.gamification.model.BadgeGroup">
+		<field name="badgeGroupId" type="long" />
+		<field name="groupName" type="String" />
+	</model>
 	<model name="com.liferay.grow.gamification.model.BadgeType">
 		<field name="badgeTypeId" type="long" />
 		<field name="groupId" type="long" />
@@ -28,6 +32,7 @@
 		<field name="assignableFrom" type="Date" />
 		<field name="assignableTo" type="Date" />
 		<field name="fileEntryId" type="long" />
+		<field name="badgeGroupId" type="long" />
 		<field name="system" type="boolean" />
 		<field name="templateHTML" type="String">
 			<hint name="max-length">4000</hint>

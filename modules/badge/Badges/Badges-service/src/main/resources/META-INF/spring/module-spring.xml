@@ -10,6 +10,9 @@
 	<bean class="com.liferay.grow.gamification.service.impl.BadgeLocalServiceImpl" id="com.liferay.grow.gamification.service.BadgeLocalService" />
 	<bean class="com.liferay.grow.gamification.service.impl.BadgeServiceImpl" id="com.liferay.grow.gamification.service.BadgeService" />
 	<bean class="com.liferay.grow.gamification.service.persistence.impl.BadgePersistenceImpl" id="com.liferay.grow.gamification.service.persistence.BadgePersistence" parent="basePersistence" />
+	<bean class="com.liferay.grow.gamification.service.impl.BadgeGroupLocalServiceImpl" id="com.liferay.grow.gamification.service.BadgeGroupLocalService" />
+	<bean class="com.liferay.grow.gamification.service.impl.BadgeGroupServiceImpl" id="com.liferay.grow.gamification.service.BadgeGroupService" />
+	<bean class="com.liferay.grow.gamification.service.persistence.impl.BadgeGroupPersistenceImpl" id="com.liferay.grow.gamification.service.persistence.BadgeGroupPersistence" parent="basePersistence" />
 	<bean class="com.liferay.grow.gamification.service.impl.BadgeTypeLocalServiceImpl" id="com.liferay.grow.gamification.service.BadgeTypeLocalService" />
 	<bean class="com.liferay.grow.gamification.service.impl.BadgeTypeServiceImpl" id="com.liferay.grow.gamification.service.BadgeTypeService" />
 	<bean class="com.liferay.grow.gamification.service.persistence.impl.BadgeTypePersistenceImpl" id="com.liferay.grow.gamification.service.persistence.BadgeTypePersistence" parent="basePersistence" />

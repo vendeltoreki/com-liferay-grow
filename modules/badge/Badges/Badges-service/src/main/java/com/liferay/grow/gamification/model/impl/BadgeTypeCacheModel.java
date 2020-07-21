@@ -65,7 +65,7 @@ public class BadgeTypeCacheModel implements CacheModel<BadgeType>,
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(27);
+		StringBundler sb = new StringBundler(29);
 
 		sb.append("{badgeTypeId=");
 		sb.append(badgeTypeId);
@@ -89,6 +89,8 @@ public class BadgeTypeCacheModel implements CacheModel<BadgeType>,
 		sb.append(assignableTo);
 		sb.append(", fileEntryId=");
 		sb.append(fileEntryId);
+		sb.append(", badgeGroupId=");
+		sb.append(badgeGroupId);
 		sb.append(", system=");
 		sb.append(system);
 		sb.append(", templateHTML=");
@@ -150,6 +152,7 @@ public class BadgeTypeCacheModel implements CacheModel<BadgeType>,
 		}
 
 		badgeTypeImpl.setFileEntryId(fileEntryId);
+		badgeTypeImpl.setBadgeGroupId(badgeGroupId);
 		badgeTypeImpl.setSystem(system);
 
 		if (templateHTML == null) {
@@ -181,6 +184,8 @@ public class BadgeTypeCacheModel implements CacheModel<BadgeType>,
 		assignableTo = objectInput.readLong();
 
 		fileEntryId = objectInput.readLong();
+
+		badgeGroupId = objectInput.readLong();
 
 		system = objectInput.readBoolean();
 		templateHTML = objectInput.readUTF();
@@ -219,6 +224,8 @@ public class BadgeTypeCacheModel implements CacheModel<BadgeType>,
 
 		objectOutput.writeLong(fileEntryId);
 
+		objectOutput.writeLong(badgeGroupId);
+
 		objectOutput.writeBoolean(system);
 
 		if (templateHTML == null) {
@@ -240,6 +247,7 @@ public class BadgeTypeCacheModel implements CacheModel<BadgeType>,
 	public long assignableFrom;
 	public long assignableTo;
 	public long fileEntryId;
+	public long badgeGroupId;
 	public boolean system;
 	public String templateHTML;
 }

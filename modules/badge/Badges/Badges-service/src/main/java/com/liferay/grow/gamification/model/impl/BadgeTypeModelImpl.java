@@ -85,6 +85,7 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 			{ "assignableFrom", Types.TIMESTAMP },
 			{ "assignableTo", Types.TIMESTAMP },
 			{ "fileEntryId", Types.BIGINT },
+			{ "badgeGroupId", Types.BIGINT },
 			{ "system", Types.BOOLEAN },
 			{ "templateHTML", Types.VARCHAR }
 		};
@@ -102,11 +103,12 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		TABLE_COLUMNS_MAP.put("assignableFrom", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("assignableTo", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("fileEntryId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("badgeGroupId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("system", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("templateHTML", Types.VARCHAR);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table gamification_BadgeType (badgeTypeId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,type_ VARCHAR(75) null,assignableFrom DATE null,assignableTo DATE null,fileEntryId LONG,system BOOLEAN,templateHTML STRING null)";
+	public static final String TABLE_SQL_CREATE = "create table gamification_BadgeType (badgeTypeId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,type_ VARCHAR(75) null,assignableFrom DATE null,assignableTo DATE null,fileEntryId LONG,badgeGroupId LONG,system BOOLEAN,templateHTML STRING null)";
 	public static final String TABLE_SQL_DROP = "drop table gamification_BadgeType";
 	public static final String ORDER_BY_JPQL = " ORDER BY badgeType.badgeTypeId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY gamification_BadgeType.badgeTypeId ASC";
@@ -150,6 +152,7 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		model.setAssignableFrom(soapModel.getAssignableFrom());
 		model.setAssignableTo(soapModel.getAssignableTo());
 		model.setFileEntryId(soapModel.getFileEntryId());
+		model.setBadgeGroupId(soapModel.getBadgeGroupId());
 		model.setSystem(soapModel.isSystem());
 		model.setTemplateHTML(soapModel.getTemplateHTML());
 
@@ -485,6 +488,26 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 
 			});
 		attributeGetterFunctions.put(
+			"badgeGroupId",
+			new Function<BadgeType, Object>() {
+
+				@Override
+				public Object apply(BadgeType badgeType) {
+					return badgeType.getBadgeGroupId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"badgeGroupId",
+			new BiConsumer<BadgeType, Object>() {
+
+				@Override
+				public void accept(BadgeType badgeType, Object badgeGroupId) {
+					badgeType.setBadgeGroupId((Long)badgeGroupId);
+				}
+
+			});
+		attributeGetterFunctions.put(
 			"system",
 			new Function<BadgeType, Object>() {
 
@@ -717,6 +740,17 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 
 	@JSON
 	@Override
+	public long getBadgeGroupId() {
+		return _badgeGroupId;
+	}
+
+	@Override
+	public void setBadgeGroupId(long badgeGroupId) {
+		_badgeGroupId = badgeGroupId;
+	}
+
+	@JSON
+	@Override
 	public boolean getSystem() {
 		return _system;
 	}
@@ -790,6 +824,7 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 		badgeTypeImpl.setAssignableFrom(getAssignableFrom());
 		badgeTypeImpl.setAssignableTo(getAssignableTo());
 		badgeTypeImpl.setFileEntryId(getFileEntryId());
+		badgeTypeImpl.setBadgeGroupId(getBadgeGroupId());
 		badgeTypeImpl.setSystem(isSystem());
 		badgeTypeImpl.setTemplateHTML(getTemplateHTML());
 
@@ -933,6 +968,8 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 
 		badgeTypeCacheModel.fileEntryId = getFileEntryId();
 
+		badgeTypeCacheModel.badgeGroupId = getBadgeGroupId();
+
 		badgeTypeCacheModel.system = isSystem();
 
 		badgeTypeCacheModel.templateHTML = getTemplateHTML();
@@ -1021,6 +1058,7 @@ public class BadgeTypeModelImpl extends BaseModelImpl<BadgeType>
 	private Date _assignableTo;
 	private Date _originalAssignableTo;
 	private long _fileEntryId;
+	private long _badgeGroupId;
 	private boolean _system;
 	private String _templateHTML;
 	private long _columnBitmask;

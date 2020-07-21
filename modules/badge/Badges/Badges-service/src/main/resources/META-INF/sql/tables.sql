@@ -12,6 +12,16 @@ create table gamification_Badge (
 	assignedDateId LONG
 );
 
+create table gamification_BadgeGroup (
+	badgeGroupId LONG not null primary key,
+	groupName VARCHAR(75) null
+);
+
+create table gamification_BadgeGroupId (
+	badgeGroupId LONG not null primary key,
+	groupName VARCHAR(75) null
+);
+
 create table gamification_BadgeType (
 	badgeTypeId LONG not null primary key,
 	groupId LONG,
@@ -24,6 +34,7 @@ create table gamification_BadgeType (
 	assignableFrom DATE null,
 	assignableTo DATE null,
 	fileEntryId LONG,
+	badgeGroupId LONG,
 	system BOOLEAN,
 	templateHTML STRING null
 );

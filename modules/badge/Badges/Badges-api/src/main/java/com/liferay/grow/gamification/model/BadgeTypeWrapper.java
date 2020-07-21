@@ -68,6 +68,7 @@ public class BadgeTypeWrapper implements BadgeType, ModelWrapper<BadgeType> {
 		attributes.put("assignableFrom", getAssignableFrom());
 		attributes.put("assignableTo", getAssignableTo());
 		attributes.put("fileEntryId", getFileEntryId());
+		attributes.put("badgeGroupId", getBadgeGroupId());
 		attributes.put("system", isSystem());
 		attributes.put("templateHTML", getTemplateHTML());
 
@@ -142,6 +143,12 @@ public class BadgeTypeWrapper implements BadgeType, ModelWrapper<BadgeType> {
 			setFileEntryId(fileEntryId);
 		}
 
+		Long badgeGroupId = (Long)attributes.get("badgeGroupId");
+
+		if (badgeGroupId != null) {
+			setBadgeGroupId(badgeGroupId);
+		}
+
 		Boolean system = (Boolean)attributes.get("system");
 
 		if (system != null) {
@@ -183,6 +190,16 @@ public class BadgeTypeWrapper implements BadgeType, ModelWrapper<BadgeType> {
 	@Override
 	public Date getAssignableTo() {
 		return _badgeType.getAssignableTo();
+	}
+
+	/**
+	* Returns the badge group ID of this badge type.
+	*
+	* @return the badge group ID of this badge type
+	*/
+	@Override
+	public long getBadgeGroupId() {
+		return _badgeType.getBadgeGroupId();
 	}
 
 	/**
@@ -378,6 +395,16 @@ public class BadgeTypeWrapper implements BadgeType, ModelWrapper<BadgeType> {
 	@Override
 	public void setAssignableTo(Date assignableTo) {
 		_badgeType.setAssignableTo(assignableTo);
+	}
+
+	/**
+	* Sets the badge group ID of this badge type.
+	*
+	* @param badgeGroupId the badge group ID of this badge type
+	*/
+	@Override
+	public void setBadgeGroupId(long badgeGroupId) {
+		_badgeType.setBadgeGroupId(badgeGroupId);
 	}
 
 	/**

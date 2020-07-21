@@ -250,6 +250,20 @@ public interface BadgeTypeModel extends BaseModel<BadgeType>, GroupedModel,
 	public void setFileEntryId(long fileEntryId);
 
 	/**
+	 * Returns the badge group ID of this badge type.
+	 *
+	 * @return the badge group ID of this badge type
+	 */
+	public long getBadgeGroupId();
+
+	/**
+	 * Sets the badge group ID of this badge type.
+	 *
+	 * @param badgeGroupId the badge group ID of this badge type
+	 */
+	public void setBadgeGroupId(long badgeGroupId);
+
+	/**
 	 * Returns the system of this badge type.
 	 *
 	 * @return the system of this badge type

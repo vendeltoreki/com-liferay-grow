@@ -1,3 +1,17 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 package com.liferay.grow.gamification.badges.editor.portlet;
 
 import com.liferay.counter.kernel.service.CounterLocalService;
@@ -5,12 +19,10 @@ import com.liferay.document.library.kernel.exception.DuplicateFileEntryException
 import com.liferay.document.library.kernel.exception.NoSuchFolderException;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.grow.gamification.badges.editor.constants.BadgeTypeEditorPortletKeys;
-import com.liferay.grow.gamification.model.BadgeType;
 import com.liferay.grow.gamification.model.BadgeGroup;
+import com.liferay.grow.gamification.model.BadgeType;
 import com.liferay.grow.gamification.service.BadgeGroupLocalService;
-import com.liferay.grow.gamification.service.BadgeGroupLocalServiceUtil;
 import com.liferay.grow.gamification.service.BadgeTypeLocalService;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -29,18 +41,20 @@ import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.File;
 
-import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-import javax.portlet.*;
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.Portlet;
+
+import org.hibernate.exception.ConstraintViolationException;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author vili
+ * @author Vilmos Papp
  */
 @Component(
 	immediate = true,
@@ -53,37 +67,34 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.display-name=Badge Type Editor",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/view.jsp",
-		"javax.portlet.name=" + BadgeTypeEditorPortletKeys.BadgeTypeEditor,
+		"javax.portlet.name=" + BadgeTypeEditorPortletKeys.BADGE_TYPE_EDITOR,
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=power-user,user"
 	},
 	service = Portlet.class
 )
 public class BadgeTypeEditorPortlet extends MVCPortlet {
-	public void addBadgeGroup(
-			ActionRequest actionRequest, ActionResponse actionResponse) {
 
-		String group = actionRequest.getParameter(
-				BadgeTypeEditorPortletKeys.GROUP);
+	public void addBadgeGroup(
+		ActionRequest actionRequest, ActionResponse actionResponse) {
+
 		String badgeGroupName = actionRequest.getParameter(
-				BadgeTypeEditorPortletKeys.BADGE_GROUP_NAME);
+			BadgeTypeEditorPortletKeys.BADGE_GROUP_NAME);
 
 		try {
 			long badgeGroupId = _counterLocalService.increment(
-					BadgeGroup.class.getName());
-
-			User user = (User) actionRequest.getAttribute(WebKeys.USER);
+				BadgeGroup.class.getName());
 
 			BadgeGroup badgeGroup = _badgeGroupLocalService.createBadgeGroup(
-					badgeGroupId);
+				badgeGroupId);
+
 			badgeGroup.setGroupName(badgeGroupName);
 
 			_badgeGroupLocalService.addBadgeGroup(badgeGroup);
 		}
-		catch (org.hibernate.exception.ConstraintViolationException cve) {
+		catch (ConstraintViolationException cve) {
 			SessionErrors.add(
-					actionRequest,
-					org.hibernate.exception.ConstraintViolationException.class);
+				actionRequest, ConstraintViolationException.class);
 		}
 		catch (Exception e) {
 			_log.error("+=+");
@@ -107,6 +118,7 @@ public class BadgeTypeEditorPortlet extends MVCPortlet {
 			BadgeTypeEditorPortletKeys.TEMPLATE_HTML);
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
+
 		String fileName = "";
 
 		try {
@@ -168,6 +180,7 @@ public class BadgeTypeEditorPortlet extends MVCPortlet {
 				FileUtil.getBytes(uploadedFile), new ServiceContext());
 
 			badgeType.setFileEntryId(fileEntry.getFileEntryId());
+
 			badgeType.setGroupId(user.getGroupId());
 			badgeType.setModifiedDate(new Date());
 			badgeType.setType(type);
@@ -181,10 +194,9 @@ public class BadgeTypeEditorPortlet extends MVCPortlet {
 			_log.error(dfee);
 			SessionErrors.add(actionRequest, DuplicateFileEntryException.class);
 		}
-		catch (org.hibernate.exception.ConstraintViolationException cve) {
+		catch (ConstraintViolationException cve) {
 			SessionErrors.add(
-				actionRequest,
-				org.hibernate.exception.ConstraintViolationException.class);
+				actionRequest, ConstraintViolationException.class);
 		}
 		catch (Exception e) {
 			_log.error(e);
@@ -194,7 +206,7 @@ public class BadgeTypeEditorPortlet extends MVCPortlet {
 
 	@Reference(unbind = "-")
 	protected void setBadgeGroupLocalService(
-			BadgeGroupLocalService badgeGroupLocalService) {
+		BadgeGroupLocalService badgeGroupLocalService) {
 
 		_badgeGroupLocalService = badgeGroupLocalService;
 	}

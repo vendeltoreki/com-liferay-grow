@@ -1,4 +1,18 @@
-package com.liferay.grow.gamification.badges.simple.portlet;
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.liferay.grow.gamification.badges.portlet.simple;
 
 import com.liferay.counter.kernel.service.CounterLocalService;
 import com.liferay.grow.gamification.badges.portlet.constants.SimpleBadgePortletKeys;
@@ -12,6 +26,7 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -36,7 +51,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author vili
+ * @author Vilmos Papp
  */
 @Component(
 	immediate = true,
@@ -51,7 +66,7 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.display-name=Simple Badge",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/view.jsp",
-		"javax.portlet.name=" + SimpleBadgePortletKeys.SimpleBadge,
+		"javax.portlet.name=" + SimpleBadgePortletKeys.SIMPLE_BADGE,
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=power-user,user"
 	},
@@ -62,8 +77,8 @@ public class SimpleBadgePortlet extends MVCPortlet {
 	public void addBadge(
 		ActionRequest actionRequest, ActionResponse actionResponse) {
 
-		long userId = Long.parseLong(actionRequest.getParameter("userId"));
-		long badgeTypeId = Long.parseLong(
+		long userId = GetterUtil.getLong(actionRequest.getParameter("userId"));
+		long badgeTypeId = GetterUtil.getLong(
 			actionRequest.getParameter("badgeTypeId"));
 		long badgeId = _counterLocalService.increment(Badge.class.getName());
 		String description = actionRequest.getParameter("description");
@@ -82,14 +97,14 @@ public class SimpleBadgePortlet extends MVCPortlet {
 			badge.setGroupId(user.getGroupId());
 			badge.setToUserId(userId);
 			badge.setUserName(fromUser.getFullName());
-			badge.setUuid(UUID.randomUUID().toString());
+
+			UUID uuid = UUID.randomUUID();
+
+			badge.setUuid(uuid.toString());
 
 			_badgeLocalService.addBadge(badge);
-
-		} catch (Exception e) {
-
-			// TODO Auto-generated catch block
-
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -103,7 +118,8 @@ public class SimpleBadgePortlet extends MVCPortlet {
 			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		OrderByComparator userComparator =
-			(OrderByComparator)OrderByComparatorFactoryUtil.create("User", "fullName", true);
+			(OrderByComparator)OrderByComparatorFactoryUtil.create(
+				"User", "fullName", true);
 
 		List<User> users = new ArrayList<>();
 
@@ -118,7 +134,8 @@ public class SimpleBadgePortlet extends MVCPortlet {
 		renderRequest.setAttribute(SimpleBadgePortletKeys.USER_LIST, users);
 
 		OrderByComparator badgeTypeComparator =
-			(OrderByComparator)OrderByComparatorFactoryUtil.create("BadgeType", "type", true);
+			(OrderByComparator)OrderByComparatorFactoryUtil.create(
+				"BadgeType", "type", true);
 
 		List<BadgeType> badgeTypes = new ArrayList(
 			_badgeTypeLocalService.getAvailableBadgeTypes());

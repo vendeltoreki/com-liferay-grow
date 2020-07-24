@@ -1,9 +1,24 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 package com.liferay.grow.gamification.badges.list.portlet;
 
 import com.liferay.grow.gamification.badges.list.constants.UserBadgeListPortletKeys;
 import com.liferay.grow.gamification.model.BadgeType;
 import com.liferay.grow.gamification.service.BadgeTypeLocalService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -30,7 +45,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author vili
+ * @author Vilmos Papp
  */
 @Component(
 	immediate = true,
@@ -42,7 +57,7 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.display-name=Badge List",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/view.jsp",
-		"javax.portlet.name=" + UserBadgeListPortletKeys.UserBadgeList,
+		"javax.portlet.name=" + UserBadgeListPortletKeys.USER_BADGE_LIST,
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=power-user,user"
 	},
@@ -62,7 +77,8 @@ public class UserBadgeListPortlet extends MVCPortlet {
 			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		OrderByComparator userComparator =
-			(OrderByComparator)OrderByComparatorFactoryUtil.create("User", "fullName", true);
+			(OrderByComparator)OrderByComparatorFactoryUtil.create(
+				"User", "fullName", true);
 
 		List<User> users = new ArrayList<>();
 
@@ -75,19 +91,24 @@ public class UserBadgeListPortlet extends MVCPortlet {
 		Collections.sort(users, userComparator);
 
 		OrderByComparator badgeTypeComparator =
-			(OrderByComparator)OrderByComparatorFactoryUtil.create("BadgeType", "type", true);
+			(OrderByComparator)OrderByComparatorFactoryUtil.create(
+				"BadgeType", "type", true);
 
 		List<BadgeType> badgeTypes = new ArrayList(
-				_badgeTypeLocalService.getBadgeTypes(QueryUtil.ALL_POS, QueryUtil.ALL_POS));
+			_badgeTypeLocalService.getBadgeTypes(
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS));
 
 		Collections.sort(badgeTypes, badgeTypeComparator);
 
 		renderRequest.setAttribute(
 			UserBadgeListPortletKeys.BADGE_TYPES, badgeTypes);
+
 		renderRequest.setAttribute(UserBadgeListPortletKeys.USER_LIST, users);
 
-		if (themeDisplay.getScopeGroup().isUser()) {
-			long userId = themeDisplay.getScopeGroup().getClassPK();
+		Group scopeGroup = themeDisplay.getScopeGroup();
+
+		if (scopeGroup.isUser()) {
+			long userId = scopeGroup.getClassPK();
 
 			renderRequest.setAttribute(
 				UserBadgeListPortletKeys.BADGE_USER_ID, userId);

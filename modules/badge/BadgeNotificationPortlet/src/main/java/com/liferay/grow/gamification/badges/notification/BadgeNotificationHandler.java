@@ -1,3 +1,17 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 package com.liferay.grow.gamification.badges.notification;
 
 import com.liferay.grow.gamification.badges.notification.constants.BadgeNotificationPortletKeys;
@@ -18,20 +32,25 @@ import com.liferay.portal.kernel.util.Validator;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+/**
+ * @author Vilmos Papp
+ */
 @Component(
-		immediate = true,
-		property = "javax.portlet.name=" + BadgeNotificationPortletKeys.BadgeNotification,
-		service = UserNotificationHandler.class
+	immediate = true,
+	property = "javax.portlet.name=" + BadgeNotificationPortletKeys.BADGE_NOTIFICATION,
+	service = UserNotificationHandler.class
 )
 public class BadgeNotificationHandler extends BaseUserNotificationHandler {
 
 	public BadgeNotificationHandler() {
-		super.setPortletId(BadgeNotificationPortletKeys.BadgeNotification);
+		super.setPortletId(BadgeNotificationPortletKeys.BADGE_NOTIFICATION);
 	}
 
 	@Override
-	public UserNotificationFeedEntry interpret(UserNotificationEvent userNotificationEvent,
-			ServiceContext serviceContext) throws PortalException {
+	public UserNotificationFeedEntry interpret(
+			UserNotificationEvent userNotificationEvent,
+			ServiceContext serviceContext)
+		throws PortalException {
 
 		try {
 			UserNotificationFeedEntry userNotificationFeedEntry = doInterpret(
@@ -100,9 +119,8 @@ public class BadgeNotificationHandler extends BaseUserNotificationHandler {
 		{"[$BADGE_TPYE$]", "[$USER$]", "[$REASON$]"};
 
 	private static final String _BODY_TEMPLATE =
-		"<div class=\"title\">Badge received!</div><div class=\"body\">You just received a [$BADGE_TPYE$] from [$USER$][$REASON$].</div>";
-
-	private static final String _UKNOWN_USER = "Anonymous";
+		"<div class=\"title\">Badge received!</div><div class=\"body\">" +
+			"You just received a [$BADGE_TPYE$] from [$USER$][$REASON$].</div>";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		BadgeNotificationHandler.class);

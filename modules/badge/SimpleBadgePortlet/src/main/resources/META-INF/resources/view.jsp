@@ -1,69 +1,104 @@
+<%--
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+--%>
+
 <%@ include file="/init.jsp" %>
-<%@ page import="com.liferay.grow.gamification.model.BadgeType" %>
-<%@ page import="com.liferay.portal.kernel.theme.ThemeDisplay" %>
-<%@ page import="com.liferay.portal.kernel.model.User" %>
-<%@ page import="java.util.Iterator" %>
+<%@ page import="com.liferay.grow.gamification.model.BadgeType" %><%@
+page import="com.liferay.portal.kernel.model.User" %>
+
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.Set" %>
+
 <%
 List<BadgeType> badgeTypes = (List<BadgeType>)request.getAttribute("BADGE_TYPES");
 List<User> users = (List<User>)request.getAttribute("USER_LIST");
 %>
-<% if (themeDisplay.isSignedIn())  { %>
-<portlet:actionURL name="addBadge" var="addBadgeURL" >
+
+<%
+if (themeDisplay.isSignedIn()) {
+%>
+
+<portlet:actionURL name="addBadge" var="addBadgeURL">
 	<portlet:param name="redirect" value="<%= themeDisplay.getURLCurrent() %>" />
 </portlet:actionURL>
 
 <div class="container">
-	<div class="row custom">
+	<div class="custom row">
 		<div class="col-sm-8">
-			<select class="flexselect" id="nameSelect" name="nameSelect" palceholder="this is a placeholder">
+			<select class="flexselect" id="nameSelect" name="nameSelect" palceholder="a is placeholder this">
 			<option value="select-a-user"></option>
-					<% for (User userItem : users) { 	%>
-						<%--  a class="dropdown-item" href="#" onclick="selectUser(<%= userItem.getUserId() %>, '<%= (userItem.getFullName().trim().equals("")) ? "Select user" : userItem.getFullName()  %>')"><%= (userItem.getFullName().trim().equals("")) ? "Select user" :  userItem.getFullName()  %></a --%>
-						<option value="<%= userItem.getUserId() %>"><%= ((userItem.getFullName().trim().equals("")) ? "" : userItem.getFullName())  %></option>
-					<% 
-					} 
+
+					<%
+					for (User userItem : users) {
 					%>
+
+						<option value="<%= userItem.getUserId() %>"><%= userItem.getFullName().trim().equals("") ? "" : userItem.getFullName() %></option>
+
+					<%
+					}
+					%>
+
 			</select>
 		</div>
+
 		<div class="col-sm-2">
 			<div class="btn-group">
 				<button type="button" class="btn btn-info dropdown-toggle" id="simpleDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
 					Add a Badge
 				</button>
+
 				<div class="dropdown-menu">
-					<%for (BadgeType badgeType : badgeTypes) { 	%>
-						<a class="dropdown-item" href="#" data-toggle="modal" data-target="#simpleBadgeModal" onclick="showSimpleBadgeDialog(<%= badgeType.getBadgeTypeId() %>, '<%= badgeType.getType() %>');"><%= badgeType.getType() %></a>
-					<% } %>
+					<%for (BadgeType badgeType : badgeTypes) { %>
+
+						<a class="dropdown-item" data-target="#simpleBadgeModal" data-toggle="modal" href="#" onclick="showSimpleBadgeDialog(<%= badgeType.getBadgeTypeId() %>, '<%= badgeType.getType() %>');"><%= badgeType.getType() %></a>
+
+					<%
+					}
+					%>
+
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-<div class="modal" id="simpleBadgeModal" tabindex="-1" role="dialog" aria-hidden="true" style="display:none; z-index">
+
+<div aria-hidden="true" class="modal" id="simpleBadgeModal" role="dialog" style="display:none; z-index" tabindex="-1">
 	<div class="flex">
 		<div class="modal-dialog modal-dialog-centered" role="document">
-			<aui:form name="simpleBadgeForm" id="simpleBadgeForm" method="post" action="<%= addBadgeURL %>">
-				<aui:input type="hidden" id="userId" name="userId" />
-				<aui:input type="hidden" id="userName" name="userId" />
-				<aui:input type="hidden" id="badgeTypeId" name="badgeTypeId" />
-	
+			<aui:form action="<%= addBadgeURL %>" id="simpleBadgeForm" method="post" name="simpleBadgeForm">
+				<aui:input id="userId" name="userId" type="hidden" />
+				<aui:input id="userName" name="userId" type="hidden" />
+				<aui:input id="badgeTypeId" name="badgeTypeId" type="hidden" />
+
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title">Add Badge To title</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+
+						<button aria-label="Close" class="close" data-dismiss="modal" type="button">
 							<span aria-hidden="true">&times;</span>
 						</button>
 					</div>
+
 					<div class="modal-body">
 						<div class="form-group">
-							<aui:input name="description" type="textarea" value="" class="form-control"/>
+							<aui:input class="form-control" name="description" type="textarea" value="" />
 						</div>
 					</div>
+
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-						<button type="submit" onclick="addSimpleBadge()" class="btn btn-primary">Add Badge</button>
+						<button class="btn btn-secondary" data-dismiss="modal" type="button">Cancel</button>
+						<button class="btn btn-primary" onclick="addSimpleBadge()" type="submit">Add Badge</button>
 					</div>
 				</div>
 			</aui:form>

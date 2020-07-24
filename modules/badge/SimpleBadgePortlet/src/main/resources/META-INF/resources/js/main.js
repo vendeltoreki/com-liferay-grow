@@ -23,8 +23,8 @@ $(document).ready(function() {
 		});
 		$('#nameSelect_flexselect').keyup(function(e) {
 			if (e.keyCode == 13) {
-				selectName(this.value);	
-			}			
+				selectName(this.value);
+			}
 		});
 	});
 })

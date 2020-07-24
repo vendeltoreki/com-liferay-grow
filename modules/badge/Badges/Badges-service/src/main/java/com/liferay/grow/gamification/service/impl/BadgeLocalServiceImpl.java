@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserNotificationEventLocalServiceUtil;
 import com.liferay.portal.kernel.settings.LocalizedValuesMap;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -122,12 +123,12 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		String downloadUrl = DLUtil.getPreviewURL(
 			fileEntry, fileEntry.getFileVersion(), null, "", false, true);
 
-		StringBundler imageLink = new StringBundler(2);
+		StringBundler imageLinkSB = new StringBundler(2);
 
-		imageLink.append("https://grow.liferay.com");
-		imageLink.append(downloadUrl);
+		imageLinkSB.append("https://grow.liferay.com");
+		imageLinkSB.append(downloadUrl);
 
-		return imageLink.toString();
+		return imageLinkSB.toString();
 	}
 
 	private MailMessage _getMailMessage(Badge badge) throws PortalException {
@@ -144,7 +145,8 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		String downloadUrl = _getImageLink(badge);
 
 		if (downloadUrl.indexOf("t=") > 0) {
-			downloadUrl = downloadUrl.substring(0, downloadUrl.indexOf("t=")-1);
+			downloadUrl = downloadUrl.substring(
+				0, downloadUrl.indexOf("t=") - 1);
 		}
 
 		content = StringUtil.replace(
@@ -160,6 +162,7 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 			content, "${fromScreenName}", fromUser.getScreenName());
 		content = StringUtil.replace(
 			content, "${user}", fromUser.getFullName());
+
 		mailMessage.setBody(content);
 
 		return mailMessage;
@@ -169,30 +172,66 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		URI endpointURI = null;
 
 		try {
-			String protocol =
-				(Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL)) ? "ws" : PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL));
+			String protocol;
+
+			if (Validator.isNull(
+					PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL))) {
+
+				protocol = "ws";
+			}
+			else {
+				protocol = PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL);
+			}
 
 			if (!protocol.startsWith("ws")) {
 				protocol = "wss";
 			}
 
-			String httpPort =
-				((Integer.parseInt(PropsUtil.get(PropsKeys.WEB_SERVER_HTTP_PORT)) == -1) ? "8080" : PropsUtil.get(PropsKeys.WEB_SERVER_HTTP_PORT));
-			String httpsPort =
-				((Integer.parseInt(PropsUtil.get(PropsKeys.WEB_SERVER_HTTPS_PORT)) == -1) ? "8443" : PropsUtil.get(PropsKeys.WEB_SERVER_HTTPS_PORT));
-			String host =
-				(Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_HOST)) ? "localhost" : PropsUtil.get(PropsKeys.WEB_SERVER_HOST));
+			String httpPort;
 
-			StringBundler endpoint = new StringBundler(6);
+			if (GetterUtil.getInteger(
+					PropsUtil.get(PropsKeys.WEB_SERVER_HTTP_PORT)) == -1) {
 
-			endpoint.append(protocol);
-			endpoint.append("://");
-			endpoint.append(host);
-			endpoint.append(":");
-			endpoint.append(protocol.equals("ws") ? httpPort : httpsPort);
-			endpoint.append("/o/gamification");
-			_log.info("endpoint:" + endpoint.toString());
-			endpointURI = new URI(endpoint.toString());
+				httpPort = "8080";
+			}
+			else {
+				httpPort = PropsUtil.get(PropsKeys.WEB_SERVER_HTTP_PORT);
+			}
+
+			String httpsPort;
+
+			if (GetterUtil.getInteger(
+					PropsUtil.get(PropsKeys.WEB_SERVER_HTTPS_PORT)) == -1) {
+
+				httpsPort = "8443";
+			}
+			else {
+				httpsPort = PropsUtil.get(PropsKeys.WEB_SERVER_HTTPS_PORT);
+			}
+
+			String host;
+
+			if (Validator.isNull(PropsUtil.get(PropsKeys.WEB_SERVER_HOST))) {
+				host = "localhost";
+			}
+			else {
+				host = PropsUtil.get(PropsKeys.WEB_SERVER_HOST);
+			}
+
+			StringBundler endpointSB = new StringBundler(6);
+
+			endpointSB.append(protocol);
+			endpointSB.append("://");
+			endpointSB.append(host);
+			endpointSB.append(":");
+			endpointSB.append(protocol.equals("ws") ? httpPort : httpsPort);
+			endpointSB.append("/o/gamification");
+
+			if (_log.isInfoEnabled()) {
+				_log.info("endpoint:" + endpointSB.toString());
+			}
+
+			endpointURI = new URI(endpointSB.toString());
 		}
 		catch (URISyntaxException urise) {
 			_log.error(urise);
@@ -212,15 +251,19 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 			_log.error(ioe);
 		}
 
-		// so all of this stuff should normally come from some kind of configuration.
-		// As this is just an example, we're using a lot of hard coded values and portal-ext.properties values.
+		// so all of this stuff should normally come from some kind of
+		// configuration.
+		// As this is just an example, we're using a lot of hard coded
+		// values and portal-ext.properties values.
 
 		User fromUser = userLocalService.fetchUser(badge.getUserId());
 
-		String badgeType = badgeTypeLocalService.fetchBadgeType(
-			badge.getBadgeTypeId()).getType();
+		BadgeType badgeType = badgeTypeLocalService.fetchBadgeType(
+			badge.getBadgeTypeId());
 
-		String entryTitle = badgeType + " Badge Received";
+		String badgeTypeName = badgeType.getType();
+
+		String entryTitle = badgeTypeName + " Badge Received";
 
 		LocalizedValuesMap subjectLocalizedValuesMap = new LocalizedValuesMap();
 		LocalizedValuesMap bodyLocalizedValuesMap = new LocalizedValuesMap();
@@ -228,13 +271,14 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		subjectLocalizedValuesMap.put(
 			Locale.ENGLISH, "A badge has been received");
 		bodyLocalizedValuesMap.put(
-			Locale.ENGLISH, "A " + badgeType + " badge has been received from " + fromUser.getFullName() +
-			".");
+			Locale.ENGLISH,
+			"A " + badgeTypeName + " badge has been received from " +
+				fromUser.getFullName() + ".");
 
 		BadgeReceivedSubscritpionSender subscriptionSender =
 			new BadgeReceivedSubscritpionSender();
 
-		subscriptionSender.setBadgeType(badgeType);
+		subscriptionSender.setBadgeType(badgeTypeName);
 
 		subscriptionSender.setClassPK(0);
 		subscriptionSender.setClassName(
@@ -252,10 +296,13 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		int notificationType = 100;
 
 		subscriptionSender.setNotificationType(notificationType);
+
 		subscriptionSender.setCreatorUserId(badge.getUserId());
+
 		subscriptionSender.setNotificationType(
 			UserNotificationDefinition.NOTIFICATION_TYPE_ADD_ENTRY);
-		String portletId = BadgeNotificationPortletKeys.BadgeNotification;
+
+		String portletId = BadgeNotificationPortletKeys.BADGE_NOTIFICATION;
 
 		subscriptionSender.setPortletId(portletId);
 
@@ -267,13 +314,14 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 
 		subscriptionSender.flushNotificationsAsync();
 
-		JSONObject payloadJSON = JSONFactoryUtil.createJSONObject();
+		_payloadJSONObject = JSONFactoryUtil.createJSONObject();
 
-		payloadJSON.put(BadgeNotificationPortletKeys.BADGE_TYPE, badgeType);
-		payloadJSON.put(
+		_payloadJSONObject.put(
+			BadgeNotificationPortletKeys.BADGE_TYPE, badgeTypeName);
+		_payloadJSONObject.put(
 			BadgeNotificationPortletKeys.BADGE_COMMENT, badge.getDescription());
-		payloadJSON.put(
-				BadgeNotificationPortletKeys.BADGE_SENDER, badge.getUserName());
+		_payloadJSONObject.put(
+			BadgeNotificationPortletKeys.BADGE_SENDER, badge.getUserName());
 
 		UserNotificationEvent userNotificationEvent =
 			UserNotificationEventLocalServiceUtil.createUserNotificationEvent(
@@ -285,9 +333,9 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 		userNotificationEvent.setDeliveryType(
 			UserNotificationDeliveryConstants.TYPE_WEBSITE);
 		userNotificationEvent.setTimestamp(System.currentTimeMillis());
-		userNotificationEvent.setPayload(payloadJSON.toString());
+		userNotificationEvent.setPayload(_payloadJSONObject.toString());
 		userNotificationEvent.setType(
-			BadgeNotificationPortletKeys.BadgeNotification);
+			BadgeNotificationPortletKeys.BADGE_NOTIFICATION);
 		userNotificationEvent.setUserId(badge.getToUserId());
 
 		UserNotificationEventLocalServiceUtil.addUserNotificationEvent(
@@ -329,12 +377,14 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 				user = userLocalService.getUserById(badge.getToUserId());
 			}
 
-			message.setBadgeType(badgeType);
+			message.setBadgeType(badgeTypeName);
 			message.setMessageType(Message.BADGE_MESSAGE);
 			message.setDescription(badge.getDescription());
 			message.setUserName(fromUser.getFullName());
 			message.setImageURL(_getImageLink(badge));
+
 			message.setReceiverName(user.getFullName());
+
 			endpoint.sendMessage(message.toString());
 		}
 		catch (IOException ioe) {
@@ -355,5 +405,7 @@ public class BadgeLocalServiceImpl extends BadgeLocalServiceBaseImpl {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		BadgeLocalServiceImpl.class);
+
+	private JSONObject _payloadJSONObject;
 
 }

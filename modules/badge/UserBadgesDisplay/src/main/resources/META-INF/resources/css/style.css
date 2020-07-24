@@ -37,8 +37,8 @@ width: 0;
 }
 
 .modal-dialog {
-	position: unset;
 	max-width: 50% !important;
+	position: unset;
 }
 
 div.flex {

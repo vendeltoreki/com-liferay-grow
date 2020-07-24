@@ -27,11 +27,13 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public class BadgeGroupImpl extends BadgeGroupBaseImpl {
-	/*
+
+	/**
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never reference this class directly. All methods that expect a badge group model instance should use the {@link com.liferay.grow.gamification.model.BadgeGroup} interface instead.
 	 */
 	public BadgeGroupImpl() {
 	}
+
 }

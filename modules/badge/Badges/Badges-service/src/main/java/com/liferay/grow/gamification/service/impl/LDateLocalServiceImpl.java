@@ -15,6 +15,7 @@
 package com.liferay.grow.gamification.service.impl;
 
 import com.liferay.grow.gamification.exception.NoSuchLDateException;
+import com.liferay.grow.gamification.model.LDate;
 import com.liferay.grow.gamification.service.base.LDateLocalServiceBaseImpl;
 
 /**
@@ -41,7 +42,9 @@ public class LDateLocalServiceImpl extends LDateLocalServiceBaseImpl {
 	public long getDateId(int year, int month, int day)
 		throws NoSuchLDateException {
 
-		return lDatePersistence.findByY_M_D(year, month, day).getDateId();
+		LDate date = lDatePersistence.findByY_M_D(year, month, day);
+
+		return date.getDateId();
 	}
 
 }

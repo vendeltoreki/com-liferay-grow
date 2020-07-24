@@ -31,9 +31,11 @@ import com.liferay.grow.gamification.service.base.BadgeGroupLocalServiceBaseImpl
  * @see com.liferay.grow.gamification.service.BadgeGroupLocalServiceUtil
  */
 public class BadgeGroupLocalServiceImpl extends BadgeGroupLocalServiceBaseImpl {
-	/*
+
+	/**
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never reference this class directly. Always use {@link com.liferay.grow.gamification.service.BadgeGroupLocalServiceUtil} to access the badge group local service.
 	 */
+
 }

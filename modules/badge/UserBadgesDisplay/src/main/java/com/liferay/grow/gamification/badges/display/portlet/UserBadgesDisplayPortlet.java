@@ -1,10 +1,24 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 package com.liferay.grow.gamification.badges.display.portlet;
 
 import com.liferay.counter.kernel.service.CounterLocalService;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.grow.gamification.badges.display.constants.UserBadgesDisplayPortletKeys;
-import com.liferay.grow.gamification.badges.model.BadgeAggregator;
+import com.liferay.grow.gamification.badges.display.model.BadgeAggregator;
 import com.liferay.grow.gamification.exception.NoSuchLDateException;
 import com.liferay.grow.gamification.model.Badge;
 import com.liferay.grow.gamification.model.BadgeType;
@@ -12,23 +26,39 @@ import com.liferay.grow.gamification.service.BadgeLocalService;
 import com.liferay.grow.gamification.service.BadgeTypeLocalService;
 import com.liferay.grow.gamification.service.LDateLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+
+import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.PortletException;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.*;
-import java.io.IOException;
-import java.util.*;
-
 /**
- * @author vili
+ * @author Vilmos Papp
  */
 @Component(
 	immediate = true,
@@ -40,7 +70,7 @@ import java.util.*;
 		"javax.portlet.display-name=User Badges Display",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/view.jsp",
-		"javax.portlet.name=" + UserBadgesDisplayPortletKeys.UserBadgesDisplay,
+		"javax.portlet.name=userbadgesdisplay",
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=power-user,user"
 	},
@@ -51,8 +81,8 @@ public class UserBadgesDisplayPortlet extends MVCPortlet {
 	public void addBadge(
 		ActionRequest actionRequest, ActionResponse actionResponse) {
 
-		long userId = Long.parseLong(actionRequest.getParameter("userId"));
-		long badgeTypeId = Long.parseLong(
+		long userId = GetterUtil.getLong(actionRequest.getParameter("userId"));
+		long badgeTypeId = GetterUtil.getLong(
 			actionRequest.getParameter("badgeTypeId"));
 		long badgeId = _counterLocalService.increment(Badge.class.getName());
 		String description = actionRequest.getParameter("description");
@@ -71,10 +101,14 @@ public class UserBadgesDisplayPortlet extends MVCPortlet {
 			badge.setGroupId(user.getGroupId());
 			badge.setToUserId(userId);
 			badge.setUserName(fromUser.getFullName());
-			badge.setUuid(UUID.randomUUID().toString());
+
+			UUID uuid = UUID.randomUUID();
+
+			badge.setUuid(uuid.toString());
 
 			_badgeLocalService.addBadge(badge);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 
 			// TODO Auto-generated catch block
 
@@ -90,13 +124,17 @@ public class UserBadgesDisplayPortlet extends MVCPortlet {
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		if (themeDisplay.getScopeGroup().isUser()) {
-			long userId = themeDisplay.getScopeGroup().getClassPK();
+		Group scopeGroup = themeDisplay.getScopeGroup();
 
-			List<Badge> badges =  new ArrayList(_badgeLocalService.getBadgesOfUser(userId));
+		if (scopeGroup.isUser()) {
+			long userId = scopeGroup.getClassPK();
+
+			List<Badge> badges = new ArrayList(
+				_badgeLocalService.getBadgesOfUser(userId));
 
 			OrderByComparator badgeComparator =
-					(OrderByComparator)OrderByComparatorFactoryUtil.create("Badge", "badgeId", true);
+				(OrderByComparator)OrderByComparatorFactoryUtil.create(
+					"Badge", "badgeId", true);
 
 			Collections.sort(badges, badgeComparator.reversed());
 
@@ -106,14 +144,16 @@ public class UserBadgesDisplayPortlet extends MVCPortlet {
 
 			for (Iterator<Badge> it = badges.iterator(); it.hasNext();) {
 				Badge badge = it.next();
+
 				if (_addToAggregation(badge, badgeGroups)) {
 					badgeAggregators = _aggregate(
-							badge, badgeAggregators, themeDisplay);
+						badge, badgeAggregators, themeDisplay);
 				}
 			}
 
 			OrderByComparator badgeTypeComparator =
-				(OrderByComparator)OrderByComparatorFactoryUtil.create("BadgeType", "type", true);
+				(OrderByComparator)OrderByComparatorFactoryUtil.create(
+					"BadgeType", "type", true);
 
 			List<BadgeType> badgeTypes = new ArrayList(
 				_badgeTypeLocalService.getAvailableBadgeTypes());
@@ -141,29 +181,6 @@ public class UserBadgesDisplayPortlet extends MVCPortlet {
 		}
 
 		super.render(renderRequest, renderResponse);
-	}
-
-	private boolean _addToAggregation(Badge badge, List<Long> badgeGroups) {
-		try {
-			BadgeType badgeType = _badgeTypeLocalService.getBadgeType(badge.getBadgeTypeId());
-			if (badgeType.getBadgeGroupId() == 0) {
-				return true;
-			}
-
-			if (badgeGroups.contains(badgeType.getBadgeGroupId())) {
-				return false;
-			}
-
-			badgeGroups.add(badgeType.getBadgeGroupId());
-
-			return true;
-
-		}
-		catch (PortalException e) {
-			e.printStackTrace();
-		}
-
-		return true;
 	}
 
 	@Reference(unbind = "-")
@@ -200,6 +217,30 @@ public class UserBadgesDisplayPortlet extends MVCPortlet {
 		_userLocalService = userLocalService;
 	}
 
+	private boolean _addToAggregation(Badge badge, List<Long> badgeGroups) {
+		try {
+			BadgeType badgeType = _badgeTypeLocalService.getBadgeType(
+				badge.getBadgeTypeId());
+
+			if (badgeType.getBadgeGroupId() == 0) {
+				return true;
+			}
+
+			if (badgeGroups.contains(badgeType.getBadgeGroupId())) {
+				return false;
+			}
+
+			badgeGroups.add(badgeType.getBadgeGroupId());
+
+			return true;
+		}
+		catch (PortalException pe) {
+			pe.printStackTrace();
+		}
+
+		return true;
+	}
+
 	private synchronized List<BadgeAggregator> _aggregate(
 		Badge badge, List<BadgeAggregator> badgeAggregators,
 		ThemeDisplay themeDisplay) {
@@ -210,6 +251,7 @@ public class UserBadgesDisplayPortlet extends MVCPortlet {
 		for (BadgeAggregator badgeAggregator : badgeAggregators) {
 			if (badgeAggregator.getBadgeTypeId() == badge.getBadgeTypeId()) {
 				badgeAggregator.increaseCount();
+
 				aggregator = badgeAggregator;
 			}
 
@@ -220,6 +262,7 @@ public class UserBadgesDisplayPortlet extends MVCPortlet {
 			BadgeType badgeType = _badgeTypeLocalService.fetchBadgeType(
 				badge.getBadgeTypeId());
 			aggregator = new BadgeAggregator();
+
 			aggregator.setName(badgeType.getType());
 			aggregator.setBadgeTypeId(badgeType.getBadgeTypeId());
 			aggregator.setCount(1);

@@ -306,9 +306,19 @@ public class WikiMigrationImpl implements WikiMigration {
 			else {
 				format = "html";
 
+				String originalContent = page.getContent();
+
+				if (originalContent.contains("<<TableOfContents>>")) {
+					originalContent = originalContent.replaceAll(
+						"<<TableOfContents>>", "[TOC]");
+				}
+
+				page.setContent(originalContent);
+
 				WikiPageDisplay display =
 					WikiPageLocalServiceUtil.getPageDisplay(
-						page, null, null, "");
+						page, null, null,
+						"/documents/"+_groupId+"/"+_attachmentFolderId+"/");
 
 				content = display.getFormattedContent();
 			}
@@ -436,6 +446,8 @@ public class WikiMigrationImpl implements WikiMigration {
 
 		for (FileEntry attachment : attachments) {
 			StringBundler sb = new StringBundler();
+
+			_attachmentFolderId = attachment.getFolderId();
 
 			sb.append("{\"classPK\":");
 			sb.append(attachment.getFileEntryId());
@@ -750,6 +762,7 @@ public class WikiMigrationImpl implements WikiMigration {
 	private static final Log _log = LogFactoryUtil.getLog(
 		WikiMigrationImpl.class);
 
+	private long _attachmentFolderId;
 	private Map<String, Long> _categoriesMap = new HashMap<>();
 	private long _companyId;
 	private long _defaultUserId;

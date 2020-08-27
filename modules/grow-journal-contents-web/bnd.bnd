@@ -1,0 +1,4 @@
+Bundle-Name: grow-journal-contents-web
+Bundle-SymbolicName: com.liferay.grow.journal.contents.web
+Bundle-Version: 1.0.0
+Export-Package: com.liferay.grow.journal.contents.web.constants

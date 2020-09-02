@@ -14,6 +14,8 @@
 
 package com.liferay.grow.journal.markdown.engine.api;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.vladsch.flexmark.ext.anchorlink.AnchorLinkExtension;
 import com.vladsch.flexmark.ext.autolink.AutolinkExtension;
 import com.vladsch.flexmark.ext.definition.DefinitionExtension;
@@ -42,14 +44,8 @@ import java.util.Arrays;
 @Component(immediate = true)
 public class MarkdownEngine {
 
-    private ThreadLocal<Parser> _parserThreadLocal = null;
-    private ThreadLocal<HtmlRenderer> _rendererThreadLocal = null;
-
-    @Deactivate
-    protected void deactivate() {
-        _parserThreadLocal = null;
-        _rendererThreadLocal = null;
-    }
+    private static Parser _parser = null;
+    private static HtmlRenderer _renderer = null;
 
     private MutableDataSet _getOptions() {
         MutableDataSet options = new MutableDataSet();
@@ -80,47 +76,36 @@ public class MarkdownEngine {
 
     public String convert(String content) {
 
-        Parser parser = _parserThreadLocal.get();
-        HtmlRenderer renderer = _rendererThreadLocal.get();
+        Node document = _parser.parse(content);
 
-        Node document = parser.parse(content);
-
-        String temp = renderer.render(document);
-
-        System.out.println(temp);
+        String temp = _renderer.render(document);
 
         return temp;
     }
 
     @Activate
     protected void activate() {
-        _parserThreadLocal = new ThreadLocal<Parser>() {
 
-            @Override
-            protected Parser initialValue() {
+        MutableDataSet options = _getOptions();
 
-                MutableDataSet options = _getOptions();
+        Parser.Builder parserBuilder = Parser.builder(options);
 
-                Parser.Builder builder = Parser.builder(options);
+        HtmlRenderer.Builder htmlRendererBuilder = HtmlRenderer.builder(options);
 
-                return builder.build();
-            }
-
-        };
-
-        _rendererThreadLocal = new ThreadLocal<HtmlRenderer>() {
-
-            @Override
-            protected HtmlRenderer initialValue() {
-                MutableDataSet options = _getOptions();
-
-                HtmlRenderer.Builder builder = HtmlRenderer.builder(options);
-
-                HtmlRenderer renderer = builder.build();
-
-                return renderer;
-            }
-
-        };
+        _renderer = htmlRendererBuilder.build();
+         _parser =  parserBuilder.build();
     }
+
+    @Deactivate
+    protected void deactive() {
+        _renderer = null;
+        _parser =  null;
+    }
+
+
+    private static final Log _log = LogFactoryUtil.getLog(MarkdownEngine.class);
+
+
+
+
 }

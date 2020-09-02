@@ -1,5 +1,6 @@
 dependencies {
-	compile group: "com.vladsch.flexmark", name: "flexmark-all", version: "0.62.2"
+	compileInclude group: 'com.vladsch.flexmark', name: 'flexmark-osgi', version: '0.62.2'
+
 
 	compileOnly group: "com.liferay", name: "com.liferay.petra.lang", version: "3.0.0"
 	compileOnly group: "com.liferay", name: "com.liferay.petra.string", version: "3.0.0"

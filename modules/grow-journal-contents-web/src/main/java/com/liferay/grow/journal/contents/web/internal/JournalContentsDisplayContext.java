@@ -77,50 +77,55 @@ public class JournalContentsDisplayContext{
     }
 
 
-    public String getContent() throws PortalException {
+    public String getContent() {
         if (Validator.isNull(_ddmFormValues)) return "";
 
-        String content = "";
+        String rawContent = "";
         Value selectValue = null;
-        for (DDMFormFieldValue value : _ddmFormValues.getDDMFormFieldValues()) {
-            String valueName = value.getName();
 
+        for (DDMFormFieldValue ddmFormFieldValue : _ddmFormValues.getDDMFormFieldValues()) {
+
+            String valueName = ddmFormFieldValue.getName();
 
             if(valueName.equals("select")){
-                selectValue = value.getValue();
+
+                selectValue = ddmFormFieldValue.getValue();
             }
 
             if (valueName.equals("content")) {
-                Value contentValue = value.getValue();
-               ;
-                Map<Locale, String> valuesMap = contentValue.getValues();
 
-                if (valuesMap.get(_themeDisplay.getLocale()) != null) {
-                    content = valuesMap.get(_themeDisplay.getLocale());
+                Value contentValue = ddmFormFieldValue.getValue();
+                Map<Locale, String> localizedValues = contentValue.getValues();
+
+                if (localizedValues.get(_themeDisplay.getLocale()) != null) {
+
+                    rawContent = localizedValues.get(_themeDisplay.getLocale());
+
                 } else {
-                    content = valuesMap.get(
-                            contentValue.getDefaultLocale());
+                    rawContent = localizedValues.get(contentValue.getDefaultLocale());
                 }
             }
         }
+
+        assert selectValue != null;
         Map<Locale, String> contentValue =  selectValue.getValues();
 
         Map.Entry<Locale, String> entry = contentValue.entrySet().iterator().next();
-        String value = entry.getValue();
+        String selectedValue = entry.getValue();
 
 
-        if("[\"html\"]".equals(value)){
-            return content;
+        if("[\"html\"]".equals(selectedValue)){
+            return rawContent;
         }else {
             MarkdownEngine markdownEngine = new MarkdownEngine();
-            return markdownEngine.convert(content);
+            return markdownEngine.convert(rawContent);
         }
 
     }
-    
+
     private DDMFormValues _ddmFormValues = null;
-    private HttpServletRequest _httpServletRequest = null;
+    private final HttpServletRequest _httpServletRequest;
     private JournalArticle _journalArticle = null;
-    private ThemeDisplay _themeDisplay = null;
+    private final ThemeDisplay _themeDisplay;
 
 }

@@ -1,11 +1,11 @@
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- *
+ * <p>
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -44,9 +44,6 @@ import java.util.Arrays;
 @Component(immediate = true)
 public class MarkdownEngine {
 
-    private static Parser _parser = null;
-    private static HtmlRenderer _renderer = null;
-
     private MutableDataSet _getOptions() {
         MutableDataSet options = new MutableDataSet();
 
@@ -62,7 +59,7 @@ public class MarkdownEngine {
                         TablesExtension.create(), TaskListExtension.create(),
                         TocExtension.create()));
 
-
+        // custom emojis are missing toDo
         // Use 2 dashes to be compatible with StackEdit
 
         options.set(TablesExtension.MIN_SEPARATOR_DASHES, 1);
@@ -74,38 +71,35 @@ public class MarkdownEngine {
         return options;
     }
 
+    /**
+     * Convert a markdown String to html format
+     * @param content : String in markdwon format
+     * @return  htmlContent : String in html format
+     */
     public String convert(String content) {
-
         Node document = _parser.parse(content);
+        String htmlContent = _renderer.render(document);
 
-        String temp = _renderer.render(document);
-
-        return temp;
+        return htmlContent;
     }
 
     @Activate
     protected void activate() {
-
         MutableDataSet options = _getOptions();
-
         Parser.Builder parserBuilder = Parser.builder(options);
-
         HtmlRenderer.Builder htmlRendererBuilder = HtmlRenderer.builder(options);
 
         _renderer = htmlRendererBuilder.build();
-         _parser =  parserBuilder.build();
+        _parser = parserBuilder.build();
     }
 
     @Deactivate
     protected void deactive() {
         _renderer = null;
-        _parser =  null;
+        _parser = null;
     }
 
-
     private static final Log _log = LogFactoryUtil.getLog(MarkdownEngine.class);
-
-
-
-
+    private static Parser _parser = null;
+    private static HtmlRenderer _renderer = null;
 }

@@ -14,6 +14,10 @@
 
 package com.liferay.grow.wiki.migration;
 
+import com.grow.favourites.model.Favourite;
+import com.grow.favourites.service.FavouriteLocalServiceUtil;
+import com.grow.favourites.service.persistence.FavouriteUtil;
+
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.asset.kernel.model.AssetTag;
@@ -303,6 +307,18 @@ public class WikiMigrationImpl implements WikiMigration {
 			_addElement(
 				rootElement, "attachments", "document_library", "keyword",
 				StringUtil.randomId(), "en_US", sb.toString());
+		}
+	}
+
+	private void _handleFavourites(
+		AssetEntry wikiAsset, AssetEntry journalAsset) throws PortalException {
+
+		List<Favourite> favourites = FavouriteUtil.findByA(
+			wikiAsset.getEntryId());
+
+		for(Favourite favourite: favourites) {
+			FavouriteLocalServiceUtil.addFavourite(journalAsset.getEntryId(),
+				journalAsset.getGroupId(), favourite.getUserId());
 		}
 	}
 

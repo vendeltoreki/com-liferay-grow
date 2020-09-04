@@ -21,20 +21,22 @@
 		Header header = journalContentHeaderDisplayContext.getFilledHeader();
 	%>
 	<div class="journal-title">
-					<span class="">
-						<i class="icon-check"></i>
-						<span class="taglib-text hide-accessible"></span>
-					</span>
-		<h1><%= header.getTitle()%></h1>
+
+
+
+
+		<h1>
+			<i class="icon-check"></i>
+			<%= header.getTitle()%>
+		</h1>
 	</div>
 	<div class="journal-author-details">
-		<ul class="list-unstyled">
-			<li><a href=""><%= header.getCreator()%></a>,</li>
-			<li><%= header.getCreateDate()%></li>
-			<li><%= header.getViewCount()%> Views</li>
-		</ul>
+		<a href=""><%= header.getCreator()%></a>,
+		<%= header.getCreateDate()%> -
+		<%= header.getViewCount()%> Views
+
 	</div>
 	<div class="journal-parent-article">
-	<p>◄ <strong>Parent</strong>: <a href=""><%= header.getParentPage()%></a> </p>
+	<p><strong>Parent</strong>: <a href=""><%= header.getParentPage()%></a> </p>
 	</div>
 </c:if>

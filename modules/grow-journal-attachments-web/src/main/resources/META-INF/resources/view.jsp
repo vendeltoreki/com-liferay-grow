@@ -23,22 +23,18 @@
 
 	<div class="a-content sbox">
 		<ul class="list-unstyled">
-			<c:if test="<%= Validator.isNotNull(journalAttachmentsDisplayContext.getAttachments()) %>">
-
 				<%
-				for (String title : journalAttachmentsDisplayContext.getTitle()) {
+				for (Attachment attachment : journalAttachmentsDisplayContext.getAttachments()) {
 				%>
 
 					<li>
 						<span class="glyphicon glyphicon-paperclip"></span>
-						<a href=""><%= title %></a>
+						<a href="<%= attachment.getUrl() %>"><%= attachment.getTitle() %></a> <%=attachment.getSize()%>
 					</li>
 
 				<%
 				}
 				%>
-
-			</c:if>
 		</ul>
 	</div>
 </nav>

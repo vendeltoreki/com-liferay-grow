@@ -7,12 +7,12 @@ import java.util.Date;
  * @author Marcell Gyöpös
  */
 public class Header {
+
     public Header() {
         this._creator = "Creator Place Holder";
         this._title = "Title Place Holder";
         this._createDate = new Date().toString();
         this._viewCount = 0;
-        this._parentPage = "Parent Page Placeholder";
     }
 
     public String getCreator() {
@@ -31,10 +31,6 @@ public class Header {
         return _viewCount;
     }
 
-    public String getParentPage() {
-        return _parentPage;
-    }
-
     public void setCreator(String _creator) {
         this._creator = _creator;
     }
@@ -51,14 +47,8 @@ public class Header {
         this._viewCount = _viewCount;
     }
 
-    public void setParentPage(String parentPage) {
-        this._parentPage = parentPage;
-    }
-
     private String _creator;
     private String _title;
     private String _createDate;
     private int _viewCount;
-    private String _parentPage;
-
 }

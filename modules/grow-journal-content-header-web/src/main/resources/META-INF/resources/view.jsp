@@ -21,10 +21,6 @@
 		Header header = journalContentHeaderDisplayContext.getFilledHeader();
 	%>
 	<div class="journal-title">
-
-
-
-
 		<h1>
 			<i class="icon-check"></i>
 			<%= header.getTitle()%>
@@ -34,9 +30,4 @@
 		<a href=""><%= header.getCreator()%></a>,
 		<%= header.getCreateDate()%> -
 		<%= header.getViewCount()%> Views
-
-	</div>
-	<div class="journal-parent-article">
-	<p><strong>Parent</strong>: <a href=""><%= header.getParentPage()%></a> </p>
-	</div>
 </c:if>

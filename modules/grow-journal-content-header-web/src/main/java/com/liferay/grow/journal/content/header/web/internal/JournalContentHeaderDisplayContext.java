@@ -18,7 +18,6 @@ import java.text.SimpleDateFormat;
  */
 public class JournalContentHeaderDisplayContext {
 
-
     public JournalContentHeaderDisplayContext(HttpServletRequest request) {
         _httpServletRequest = request;
 
@@ -39,7 +38,6 @@ public class JournalContentHeaderDisplayContext {
                 WebKeys.THEME_DISPLAY);
 
         _initContentHeader();
-
     }
 
     private void _initContentHeader() {
@@ -48,20 +46,14 @@ public class JournalContentHeaderDisplayContext {
         if (_journalArticle != null) {
             header.setCreator(_journalArticle.getUserName());
             header.setCreateDate(dateFormat.format(_journalArticle.getCreateDate()));
-            header.setParentPage("Parent page toDo");
             header.setTitle(_journalArticle.getTitle(_themeDisplay.getLocale(),true));
             header.setViewCount(_assetEntry.getViewCount());
         }
     }
 
-    public void setParentPage(){
-        //toDo
-    }
-
     public Header getFilledHeader(){
         return header;
     }
-
 
     private HttpServletRequest _httpServletRequest;
     private JournalArticle _journalArticle = null;
@@ -69,5 +61,4 @@ public class JournalContentHeaderDisplayContext {
     private AssetEntry _assetEntry;
     private static final DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");
     private Header header = null;
-
 }

@@ -22,6 +22,7 @@ import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Fields;
+import com.liferay.grow.journal.attachments.web.dto.Attachment;
 import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.util.JournalConverter;
@@ -43,7 +44,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class JournalAttachmentsDisplayContext {
 
-	public JournalAttachmentsDisplayContext(HttpServletRequest request) {
+	public JournalAttachmentsDisplayContext(HttpServletRequest request) throws PortalException {
 		_httpServletRequest = request;
 
 		InfoDisplayObjectProvider infoDisplayObjectProvider =
@@ -56,9 +57,11 @@ public class JournalAttachmentsDisplayContext {
 
 		_themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
+
+		_initContentHeader();
 	}
 
-	public DDMFormValues getAttachments() throws PortalException {
+	private DDMFormValues _getDDMFormValues() throws PortalException {
 		if (_ddmFormValues != null) {
 			return _ddmFormValues;
 		}
@@ -96,10 +99,20 @@ public class JournalAttachmentsDisplayContext {
 		return _ddmFormValues;
 	}
 
-	public List<String> getTitle() throws PortalException {
-		if (Validator.isNull(_ddmFormValues)) return Collections.emptyList();
+	private void _initContentHeader() throws PortalException {
+		if(_journalArticle == null){
+			Attachment attachment = new Attachment();
+			_attachments.add(attachment);
 
-		List<String> titles = new ArrayList<>();
+		} else {
+			_getDDMFormValues();
+			_fillAttachments();
+		}
+	}
+
+	private void _fillAttachments() throws PortalException {
+		if (Validator.isNull(_ddmFormValues))
+			_attachments = Collections.emptyList();
 
 		for (DDMFormFieldValue value : _ddmFormValues.getDDMFormFieldValues()) {
 			String valueType = value.getType();
@@ -120,41 +133,46 @@ public class JournalAttachmentsDisplayContext {
 				JSONObject jsonObject = null;
 
 				jsonObject = JSONFactoryUtil.createJSONObject(unprocessedJSON);
-
 				long classPK = jsonObject.getLong("classPK");
 
-				DLFileEntry dlFileEntry;
-				dlFileEntry = DLFileEntryLocalServiceUtil.getDLFileEntry(
-					classPK);
+				if(classPK  != 0 ){
+					Attachment attachment = new Attachment();
+					DLFileEntry dlFileEntry;
 
-				String title = dlFileEntry.getTitle();
-				String size = _getSize(dlFileEntry.getSize());
+					dlFileEntry = DLFileEntryLocalServiceUtil.getDLFileEntry(
+						classPK);
 
-				if (title.length() < 28) {
-					titles.add(title + size);
-				}
-				else {
-					StringBuilder sb = new StringBuilder();
+					String title = dlFileEntry.getTitle();
 
-					sb.append(title, 0, 23);
-					sb.append("(...)");
-					sb.append(".");
-					sb.append(dlFileEntry.getExtension());
-					sb.append(size);
-
-					titles.add(sb.toString());
+					attachment.setTitle(_reduceTitle(title,dlFileEntry));
+					attachment.setSize(_getSize(dlFileEntry.getSize()));
+					//toDo url
+					_attachments.add(attachment);
 				}
 			}
 		}
+	}
 
-		return titles;
+	private String _reduceTitle(String title, DLFileEntry dlFileEntry){
+		if (title.length() < 28) {
+			return  title;
+		}
+		else {
+			StringBuilder sb = new StringBuilder();
+
+			sb.append(title, 0, 23);
+			sb.append("(...)");
+			sb.append(".");
+			sb.append(dlFileEntry.getExtension());
+
+			return sb.toString();
+		}
 	}
 
 	private String _getSize(double size) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(" ( ");
-
 		String assignUnit = "B";
 
 		if (size > 1000) {
@@ -175,9 +193,14 @@ public class JournalAttachmentsDisplayContext {
 		return sb.toString();
 	}
 
+	public List<Attachment> getAttachments(){
+		return _attachments;
+	}
+
 	private DDMFormValues _ddmFormValues = null;
 	private HttpServletRequest _httpServletRequest = null;
 	private JournalArticle _journalArticle = null;
 	private ThemeDisplay _themeDisplay = null;
+	private List<Attachment> _attachments = new ArrayList<>();
 
 }

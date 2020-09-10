@@ -44,7 +44,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class JournalAttachmentsDisplayContext {
 
-	public JournalAttachmentsDisplayContext(HttpServletRequest request) throws PortalException {
+	public JournalAttachmentsDisplayContext(HttpServletRequest request)
+		throws PortalException {
+
 		_httpServletRequest = request;
 
 		InfoDisplayObjectProvider infoDisplayObjectProvider =
@@ -59,6 +61,53 @@ public class JournalAttachmentsDisplayContext {
 			WebKeys.THEME_DISPLAY);
 
 		_initContentHeader();
+	}
+
+	public List<Attachment> getAttachments() {
+		return _attachments;
+	}
+
+	private void _fillAttachments() throws PortalException {
+		if (Validator.isNull(_ddmFormValues))
+			_attachments = Collections.emptyList();
+
+		for (DDMFormFieldValue value : _ddmFormValues.getDDMFormFieldValues()) {
+			String valueType = value.getType();
+
+			if (valueType.equals("ddm-documentlibrary")) {
+				Value valueTemp = value.getValue();
+				String unprocessedJSON = null;
+				Map<Locale, String> valuesMap = valueTemp.getValues();
+
+				if (valuesMap.get(_themeDisplay.getLocale()) != null) {
+					unprocessedJSON = valuesMap.get(_themeDisplay.getLocale());
+				}
+				else {
+					unprocessedJSON = valuesMap.get(
+						valueTemp.getDefaultLocale());
+				}
+
+				JSONObject jsonObject = null;
+
+				jsonObject = JSONFactoryUtil.createJSONObject(unprocessedJSON);
+				long classPK = jsonObject.getLong("classPK");
+
+				if (classPK != 0) {
+					Attachment attachment = new Attachment();
+					DLFileEntry dlFileEntry;
+
+					dlFileEntry = DLFileEntryLocalServiceUtil.getDLFileEntry(
+						classPK);
+
+					String title = dlFileEntry.getTitle();
+
+					attachment.setTitle(_reduceTitle(title, dlFileEntry));
+					attachment.setSize(_getSize(dlFileEntry.getSize()));
+					//toDo url
+					_attachments.add(attachment);
+				}
+			}
+		}
 	}
 
 	private DDMFormValues _getDDMFormValues() throws PortalException {
@@ -99,76 +148,6 @@ public class JournalAttachmentsDisplayContext {
 		return _ddmFormValues;
 	}
 
-	private void _initContentHeader() throws PortalException {
-		if(_journalArticle == null){
-			Attachment attachment = new Attachment();
-			_attachments.add(attachment);
-
-		} else {
-			_getDDMFormValues();
-			_fillAttachments();
-		}
-	}
-
-	private void _fillAttachments() throws PortalException {
-		if (Validator.isNull(_ddmFormValues))
-			_attachments = Collections.emptyList();
-
-		for (DDMFormFieldValue value : _ddmFormValues.getDDMFormFieldValues()) {
-			String valueType = value.getType();
-
-			if (valueType.equals("ddm-documentlibrary")) {
-				Value valueTemp = value.getValue();
-				String unprocessedJSON = null;
-				Map<Locale, String> valuesMap = valueTemp.getValues();
-
-				if (valuesMap.get(_themeDisplay.getLocale()) != null) {
-					unprocessedJSON = valuesMap.get(_themeDisplay.getLocale());
-				}
-				else {
-					unprocessedJSON = valuesMap.get(
-						valueTemp.getDefaultLocale());
-				}
-
-				JSONObject jsonObject = null;
-
-				jsonObject = JSONFactoryUtil.createJSONObject(unprocessedJSON);
-				long classPK = jsonObject.getLong("classPK");
-
-				if(classPK  != 0 ){
-					Attachment attachment = new Attachment();
-					DLFileEntry dlFileEntry;
-
-					dlFileEntry = DLFileEntryLocalServiceUtil.getDLFileEntry(
-						classPK);
-
-					String title = dlFileEntry.getTitle();
-
-					attachment.setTitle(_reduceTitle(title,dlFileEntry));
-					attachment.setSize(_getSize(dlFileEntry.getSize()));
-					//toDo url
-					_attachments.add(attachment);
-				}
-			}
-		}
-	}
-
-	private String _reduceTitle(String title, DLFileEntry dlFileEntry){
-		if (title.length() < 28) {
-			return  title;
-		}
-		else {
-			StringBuilder sb = new StringBuilder();
-
-			sb.append(title, 0, 23);
-			sb.append("(...)");
-			sb.append(".");
-			sb.append(dlFileEntry.getExtension());
-
-			return sb.toString();
-		}
-	}
-
 	private String _getSize(double size) {
 		StringBuilder sb = new StringBuilder();
 
@@ -193,14 +172,37 @@ public class JournalAttachmentsDisplayContext {
 		return sb.toString();
 	}
 
-	public List<Attachment> getAttachments(){
-		return _attachments;
+	private void _initContentHeader() throws PortalException {
+		if (_journalArticle == null) {
+			Attachment attachment = new Attachment();
+
+			_attachments.add(attachment);
+		}
+		else {
+			_getDDMFormValues();
+			_fillAttachments();
+		}
 	}
 
+	private String _reduceTitle(String title, DLFileEntry dlFileEntry) {
+		if (title.length() < 28) {
+			return title;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(title, 0, 23);
+		sb.append("(...)");
+		sb.append(".");
+		sb.append(dlFileEntry.getExtension());
+
+		return sb.toString();
+	}
+
+	private List<Attachment> _attachments = new ArrayList<>();
 	private DDMFormValues _ddmFormValues = null;
 	private HttpServletRequest _httpServletRequest = null;
 	private JournalArticle _journalArticle = null;
 	private ThemeDisplay _themeDisplay = null;
-	private List<Attachment> _attachments = new ArrayList<>();
 
 }

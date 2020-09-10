@@ -1,0 +1,134 @@
+.lexicon-icon-star-o,
+.lexicon-icon-star {
+	fill: #FDCC4A !important;
+}
+
+.thumbs-up {
+	fill: #B3CDFF !important;
+}
+
+.thumbs-up-liked {
+	fill: #0B5FFF !important;
+}
+
+.grow-card {
+	border-bottom: 0.6rem solid #fff;
+
+	.grow-card-content {
+		font-size: 14px;
+		min-height: 5.75rem;
+	}
+
+	.btn {
+		padding: 0.4375rem 0.4375rem;
+	}
+
+	a {
+		color: #09101D;
+	}
+}
+
+.grow-card .card-body {
+	padding: 1rem 1rem 0.65rem 1rem;
+
+	.grow-author {
+		font-style: normal;
+		font-weight: bold;
+		font-size: 14px;
+	}
+
+	.grow-create-date {
+		font-size: 14px;
+	}
+
+	.grow-card-article {
+		min-height: 8.25rem;
+	}
+
+	.grow-title {
+		font-weight: 600;
+			line-height: 1.6875rem;
+
+			@media only screen and (max-width: 768px) {
+				font-size: 0.875rem;
+				line-height: 1.3125rem;
+ 			}
+	}
+
+	.autofit-padded>.autofit-col {
+		padding-bottom: 0px;
+	}
+
+	.label {
+		line-height: 13px;
+	}
+
+	.label-remaining-tags {
+		border-style: none;
+	}
+
+}
+
+.grow-card {
+	box-shadow: 0 0 0 0;
+
+	@media only screen and (max-width: 756px) {
+		box-shadow: 0 1px 10px -4px rgba(0, 0, 0, 0.6);
+	}
+
+	.grow-tag-wrapper {
+		min-height: 30px;
+	}
+}
+
+.grow-card:hover {
+	box-shadow: 0 1px 10px -4px rgba(0, 0, 0, 0.6);
+}
+
+.card-excellence:hover {
+	border-color: #E55E75;
+}
+
+.card-excellence:hover * .excellence-footer-active {
+	color: #E55E75;
+}
+
+.card-learn:hover {
+	border-color: #503690;
+}
+
+.card-learn:hover * .learn-footer-active {
+	color: #503690;
+}
+
+.card-people:hover {
+	border-color: #47C6F5;
+}
+
+.card-people:hover * .people-footer-active {
+	color: #47C6F5;
+}
+
+.card-share:hover {
+	border-color: #42BFC2;
+}
+
+.card-share:hover * .share-footer-active {
+	color: #42BFC2;
+}
+
+.excellence-footer-inactive {
+	color: #ef9eac;
+}
+
+.learn-footer-inactive {
+	color: #9686bc;
+}
+
+.people-footer-inactive {
+	color: #90dcf9;
+}
+
+.share-footer-inactive {
+	color: #8dd8da;
+}

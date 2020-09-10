@@ -1,0 +1,27 @@
+.grow-recommendations-portlet {
+	margin-top: 1rem;
+
+	.loading-indicator {
+		background-color: transparent;
+		transform: translate(-50%, -50%);
+		position: absolute;
+		left: 50%;
+		top: 40%;
+		z-index: 5;
+	}
+
+	.grow-recommendedby-title {
+		font-size: 15px;
+   		font-weight: 500;
+	}
+	.grow-recommendedby-subtitle {
+		font-size: 14px;
+		padding-right: 1rem;
+		color: #6B6C7E;
+	}
+	.grow-card {
+		.grow-card-content {
+			min-height:5.75rem !important;
+		}
+	}
+}

@@ -1,0 +1,5 @@
+Bundle-Name: GrowRecommendationsPortlet
+Bundle-SymbolicName: com.liferay.grow.recommendations.portlet
+Bundle-Version: 1.0.0
+Web-ContextPath: /GrowRecommendationsPortlet
+-metatype: *

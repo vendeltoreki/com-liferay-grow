@@ -16,6 +16,7 @@ package com.liferay.grow.journal.markdown.engine.api;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+
 import com.vladsch.flexmark.ext.anchorlink.AnchorLinkExtension;
 import com.vladsch.flexmark.ext.autolink.AutolinkExtension;
 import com.vladsch.flexmark.ext.definition.DefinitionExtension;
@@ -31,75 +32,80 @@ import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
+
+import java.util.Arrays;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 
-import java.util.Arrays;
-
 /**
  * @author Marcell Gyöpös
  */
-
 @Component(immediate = true)
 public class MarkdownEngine {
 
-    private MutableDataSet _getOptions() {
-        MutableDataSet options = new MutableDataSet();
+	/**
+	 * Convert a markdown String to html format
+	 * @param content : String in markdwon format
+	 * @return  htmlContent : String in html format
+	 */
+	public String convert(String content) {
+		Node document = _parser.parse(content);
 
-        // uncomment to set optional extensions
+		String htmlContent = _renderer.render(document);
 
-        options.set(
-                Parser.EXTENSIONS,
-                Arrays.asList(
-                        AnchorLinkExtension.create(), AutolinkExtension.create(),
-                        DefinitionExtension.create(), EmojiExtension.create(),
-                        FootnoteExtension.create(), GitLabExtension.create(),
-                        StrikethroughExtension.create(), SuperscriptExtension.create(),
-                        TablesExtension.create(), TaskListExtension.create(),
-                        TocExtension.create()));
+		return htmlContent;
+	}
 
-        // custom emojis are missing toDo
-        // Use 2 dashes to be compatible with StackEdit
+	@Activate
+	protected void activate() {
+		MutableDataSet options = _getOptions();
 
-        options.set(TablesExtension.MIN_SEPARATOR_DASHES, 1);
+		Parser.Builder parserBuilder = Parser.builder(options);
+		HtmlRenderer.Builder htmlRendererBuilder = HtmlRenderer.builder(
+			options);
 
-        // uncomment to convert soft-breaks to hard breaks
+		_renderer = htmlRendererBuilder.build();
+		_parser = parserBuilder.build();
+	}
 
-        options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
+	@Deactivate
+	protected void deactive() {
+		_renderer = null;
+		_parser = null;
+	}
 
-        return options;
-    }
+	private MutableDataSet _getOptions() {
+		MutableDataSet options = new MutableDataSet();
 
-    /**
-     * Convert a markdown String to html format
-     * @param content : String in markdwon format
-     * @return  htmlContent : String in html format
-     */
-    public String convert(String content) {
-        Node document = _parser.parse(content);
-        String htmlContent = _renderer.render(document);
+		// uncomment to set optional extensions
 
-        return htmlContent;
-    }
+		options.set(
+			Parser.EXTENSIONS,
+			Arrays.asList(
+				AnchorLinkExtension.create(), AutolinkExtension.create(),
+				DefinitionExtension.create(), EmojiExtension.create(),
+				FootnoteExtension.create(), GitLabExtension.create(),
+				StrikethroughExtension.create(), SuperscriptExtension.create(),
+				TablesExtension.create(), TaskListExtension.create(),
+				TocExtension.create()));
 
-    @Activate
-    protected void activate() {
-        MutableDataSet options = _getOptions();
-        Parser.Builder parserBuilder = Parser.builder(options);
-        HtmlRenderer.Builder htmlRendererBuilder = HtmlRenderer.builder(options);
+		// custom emojis are missing toDo
+		// Use 2 dashes to be compatible with StackEdit
 
-        _renderer = htmlRendererBuilder.build();
-        _parser = parserBuilder.build();
-    }
+		options.set(TablesExtension.MIN_SEPARATOR_DASHES, 1);
 
-    @Deactivate
-    protected void deactive() {
-        _renderer = null;
-        _parser = null;
-    }
+		// uncomment to convert soft-breaks to hard breaks
 
-    private static final Log _log = LogFactoryUtil.getLog(MarkdownEngine.class);
-    private static Parser _parser = null;
-    private static HtmlRenderer _renderer = null;
+		options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
+
+		return options;
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(MarkdownEngine.class);
+
+	private static Parser _parser = null;
+	private static HtmlRenderer _renderer = null;
+
 }

@@ -17,17 +17,20 @@
 <%@ include file="/init.jsp" %>
 
 <c:if test="<%= Validator.isNotNull(journalContentHeaderDisplayContext) %>">
+
 	<%
 		Header header = journalContentHeaderDisplayContext.getFilledHeader();
 	%>
+
 	<div class="journal-title">
 		<h1>
 			<i class="icon-check"></i>
-			<%= header.getTitle()%>
+			<%= header.getTitle() %>
 		</h1>
 	</div>
+
 	<div class="journal-author-details">
-		<a href=""><%= header.getCreator()%></a>,
-		<%= header.getCreateDate()%> -
-		<%= header.getViewCount()%> Views
+		<a href=""><%= header.getCreator() %></a>,
+		<%= header.getCreateDate() %> -
+		<%= header.getViewCount() %> Views
 </c:if>

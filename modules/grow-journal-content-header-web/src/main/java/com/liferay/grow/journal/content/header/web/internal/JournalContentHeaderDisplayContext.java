@@ -9,56 +9,62 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 
-import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Marcell Gyöpös
  */
 public class JournalContentHeaderDisplayContext {
 
-    public JournalContentHeaderDisplayContext(HttpServletRequest request) {
-        _httpServletRequest = request;
+	public JournalContentHeaderDisplayContext(HttpServletRequest request) {
+		_httpServletRequest = request;
 
-        InfoDisplayObjectProvider infoDisplayObjectProvider =
-                (InfoDisplayObjectProvider)request.getAttribute(
-                        AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER);
+		InfoDisplayObjectProvider infoDisplayObjectProvider =
+			(InfoDisplayObjectProvider)request.getAttribute(
+				AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER);
 
-        if (infoDisplayObjectProvider != null){
-            _journalArticle =
-                    (JournalArticle)infoDisplayObjectProvider.getDisplayObject();
+		if (infoDisplayObjectProvider != null) {
+			_journalArticle =
+				(JournalArticle)infoDisplayObjectProvider.getDisplayObject();
 
-            _assetEntry = AssetEntryLocalServiceUtil.fetchEntry(
-                    JournalArticle.class.getName(),
-                    _journalArticle.getResourcePrimKey());
-        }
+			_assetEntry = AssetEntryLocalServiceUtil.fetchEntry(
+				JournalArticle.class.getName(),
+				_journalArticle.getResourcePrimKey());
+		}
 
-        _themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
-                WebKeys.THEME_DISPLAY);
+		_themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
 
-        _initContentHeader();
-    }
+		_initContentHeader();
+	}
 
-    private void _initContentHeader() {
-        header = new Header();
+	public Header getFilledHeader() {
+		return header;
+	}
 
-        if (_journalArticle != null) {
-            header.setCreator(_journalArticle.getUserName());
-            header.setCreateDate(dateFormat.format(_journalArticle.getCreateDate()));
-            header.setTitle(_journalArticle.getTitle(_themeDisplay.getLocale(),true));
-            header.setViewCount(_assetEntry.getViewCount());
-        }
-    }
+	private void _initContentHeader() {
+		header = new Header();
 
-    public Header getFilledHeader(){
-        return header;
-    }
+		if (_journalArticle != null) {
+			header.setCreator(_journalArticle.getUserName());
+			header.setCreateDate(
+				dateFormat.format(_journalArticle.getCreateDate()));
+			header.setTitle(
+				_journalArticle.getTitle(_themeDisplay.getLocale(), true));
+			header.setViewCount(_assetEntry.getViewCount());
+		}
+	}
 
-    private HttpServletRequest _httpServletRequest;
-    private JournalArticle _journalArticle = null;
-    private ThemeDisplay _themeDisplay;
-    private AssetEntry _assetEntry;
-    private static final DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");
-    private Header header = null;
+	private static final DateFormat dateFormat = new SimpleDateFormat(
+		"MMM d, yyyy");
+
+	private AssetEntry _assetEntry;
+	private HttpServletRequest _httpServletRequest;
+	private JournalArticle _journalArticle = null;
+	private ThemeDisplay _themeDisplay;
+	private Header header = null;
+
 }

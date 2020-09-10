@@ -18,6 +18,6 @@
 
 <c:if test="<%= Validator.isNotNull(journalContentsDisplayContext.getDDMFormValues()) %>">
 	<div>
-		<p><%= journalContentsDisplayContext.getContent()%></p>
+		<p><%= journalContentsDisplayContext.getContent() %></p>
 	<div>
 </c:if>

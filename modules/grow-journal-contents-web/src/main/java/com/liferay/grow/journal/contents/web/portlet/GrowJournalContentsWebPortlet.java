@@ -1,7 +1,6 @@
 package com.liferay.grow.journal.contents.web.portlet;
 
 import com.liferay.grow.journal.contents.web.constants.GrowJournalContentsWebPortletKeys;
-
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 
 import javax.portlet.Portlet;

@@ -1,6 +1,5 @@
 package com.liferay.grow.journal.contents.web.internal;
 
-
 import com.liferay.asset.display.page.constants.AssetDisplayPageWebKeys;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.Value;
@@ -18,114 +17,117 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-public class JournalContentsDisplayContext{
+import javax.servlet.http.HttpServletRequest;
 
-    public JournalContentsDisplayContext(HttpServletRequest request) {
-        _httpServletRequest = request;
+public class JournalContentsDisplayContext {
 
-        InfoDisplayObjectProvider infoDisplayObjectProvider =
-                (InfoDisplayObjectProvider)request.getAttribute(
-                        AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER);
+	public JournalContentsDisplayContext(HttpServletRequest request) {
+		_httpServletRequest = request;
 
-        if (infoDisplayObjectProvider != null)
-            _journalArticle =
-                    (JournalArticle)infoDisplayObjectProvider.getDisplayObject();
+		InfoDisplayObjectProvider infoDisplayObjectProvider =
+			(InfoDisplayObjectProvider)request.getAttribute(
+				AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER);
 
-        _themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
-                WebKeys.THEME_DISPLAY);
-    }
+		if (infoDisplayObjectProvider != null)
+			_journalArticle =
+				(JournalArticle)infoDisplayObjectProvider.getDisplayObject();
 
-    public DDMFormValues getDDMFormValues() throws PortalException {
-        if (_ddmFormValues != null) {
-            return _ddmFormValues;
-        }
+		_themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+	}
 
-        if (_journalArticle == null) {
-            return null;
-        }
+	public String getContent() {
+		if (Validator.isNull(_ddmFormValues))
 
-        DDMStructure ddmStructure = _journalArticle.getDDMStructure();
+			return "";
 
-        if (Validator.isNull(ddmStructure)) {
-            return _ddmFormValues;
-        }
+		String rawContent = "";
+		Value selectValue = null;
 
-        String content = _journalArticle.getContent();
+		for (DDMFormFieldValue ddmFormFieldValue :
+				_ddmFormValues.getDDMFormFieldValues()) {
 
-        if (Validator.isNull(content)) {
-            return _ddmFormValues;
-        }
+			String valueName = ddmFormFieldValue.getName();
 
-        Registry registry = RegistryUtil.getRegistry();
+			if (valueName.equals("select")) {
+				selectValue = ddmFormFieldValue.getValue();
+			}
 
-        JournalConverter journalConverter = registry.getService(
-                registry.getServiceReference(JournalConverter.class));
+			if (valueName.equals("content")) {
+				Value contentValue = ddmFormFieldValue.getValue();
 
-        Fields fields = journalConverter.getDDMFields(ddmStructure, content);
+				Map<Locale, String> localizedValues = contentValue.getValues();
 
-        if (fields == null) {
-            return _ddmFormValues;
-        }
-
-        _ddmFormValues = journalConverter.getDDMFormValues(
-                ddmStructure, fields);
-
-        return _ddmFormValues;
-    }
-
-
-    public String getContent() {
-        if (Validator.isNull(_ddmFormValues)) return "";
-
-        String rawContent = "";
-        Value selectValue = null;
-
-        for (DDMFormFieldValue ddmFormFieldValue : _ddmFormValues.getDDMFormFieldValues()) {
-
-            String valueName = ddmFormFieldValue.getName();
-
-            if(valueName.equals("select")){
-
-                selectValue = ddmFormFieldValue.getValue();
-            }
-
-            if (valueName.equals("content")) {
-
-                Value contentValue = ddmFormFieldValue.getValue();
-                Map<Locale, String> localizedValues = contentValue.getValues();
-
-                if (localizedValues.get(_themeDisplay.getLocale()) != null) {
-
-                    rawContent = localizedValues.get(_themeDisplay.getLocale());
-
-                } else {
-                    rawContent = localizedValues.get(contentValue.getDefaultLocale());
-                }
-            }
-        }
+				if (localizedValues.get(_themeDisplay.getLocale()) != null) {
+					rawContent = localizedValues.get(_themeDisplay.getLocale());
+				}
+				else {
+					rawContent = localizedValues.get(
+						contentValue.getDefaultLocale());
+				}
+			}
+		}
 
         assert selectValue != null;
-        Map<Locale, String> contentValue =  selectValue.getValues();
+		Map<Locale, String> contentValue = selectValue.getValues();
 
-        Map.Entry<Locale, String> entry = contentValue.entrySet().iterator().next();
-        String selectedValue = entry.getValue();
+		Map.Entry<Locale, String> entry = contentValue.entrySet(
+		).iterator(
+		).next();
+		String selectedValue = entry.getValue();
 
+		if ("[\"html\"]".equals(selectedValue)) {
+			return rawContent;
+		}
 
-        if("[\"html\"]".equals(selectedValue)){
-            return rawContent;
-        }else {
-            MarkdownEngine markdownEngine = new MarkdownEngine();
-            return markdownEngine.convert(rawContent);
-        }
+		MarkdownEngine markdownEngine = new MarkdownEngine();
 
-    }
+		return markdownEngine.convert(rawContent);
+	}
 
-    private DDMFormValues _ddmFormValues = null;
-    private final HttpServletRequest _httpServletRequest;
-    private JournalArticle _journalArticle = null;
-    private final ThemeDisplay _themeDisplay;
+	public DDMFormValues getDDMFormValues() throws PortalException {
+		if (_ddmFormValues != null) {
+			return _ddmFormValues;
+		}
+
+		if (_journalArticle == null) {
+			return null;
+		}
+
+		DDMStructure ddmStructure = _journalArticle.getDDMStructure();
+
+		if (Validator.isNull(ddmStructure)) {
+			return _ddmFormValues;
+		}
+
+		String content = _journalArticle.getContent();
+
+		if (Validator.isNull(content)) {
+			return _ddmFormValues;
+		}
+
+		Registry registry = RegistryUtil.getRegistry();
+
+		JournalConverter journalConverter = registry.getService(
+			registry.getServiceReference(JournalConverter.class));
+
+		Fields fields = journalConverter.getDDMFields(ddmStructure, content);
+
+		if (fields == null) {
+			return _ddmFormValues;
+		}
+
+		_ddmFormValues = journalConverter.getDDMFormValues(
+			ddmStructure, fields);
+
+		return _ddmFormValues;
+	}
+
+	private DDMFormValues _ddmFormValues = null;
+	private final HttpServletRequest _httpServletRequest;
+	private JournalArticle _journalArticle = null;
+	private final ThemeDisplay _themeDisplay;
 
 }

@@ -20,18 +20,19 @@
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
+taglib uri="http://liferay.com/tld/react" prefix="react" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.asset.kernel.model.AssetEntry" %><%@
-page import="com.liferay.grow.journal.related.pages.web.internal.JournalRelatedPagesDisplayContext" %>
+page import="com.liferay.grow.journal.related.pages.web.internal.JournalRelatedPagesDisplayContext" %><%@
+page import="com.liferay.portal.kernel.theme.ThemeDisplay" %><%@
+page import="com.liferay.portal.kernel.util.WebKeys" %><%@
+page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%@
+page import="java.util.HashMap" %><%@
+page import="java.util.Map" %>
 
 <%
 JournalRelatedPagesDisplayContext journalRelatedPagesDisplayContext = new JournalRelatedPagesDisplayContext(request);
-
-String baseURL = journalRelatedPagesDisplayContext.getFriendlyURLBase();
+ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
 %>
-
-<liferay-theme:defineObjects />
-
-<portlet:defineObjects />

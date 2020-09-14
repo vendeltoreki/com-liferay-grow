@@ -16,43 +16,17 @@
 
 <%@ include file="/init.jsp" %>
 
-<nav class="a-items">
-	<input class="activate hidden" id="contributors" name="contributors" type="checkbox" />
+<%
+Map<String, Object> map = new HashMap<>();
 
-	<label class="accordion-label" for="contributors">Contributors</label>
+map.put("items", modifierContributor.getName());
 
-	<div class="a-content sbox">
-		<ul class="list-unstyled">
+%>
 
-			<li>
-				<table class="contributors-table">
-					<c:if test="<%= modifierContributor != null %>">
-						<tr>
-							<td>
-								<span class="glyphicon glyphicon-user"></span>
-								Updated by <%= modifierContributor.getName() %>
-							</td>
-							<td class="last-td">
-								<span class="glyphicon glyphicon-calendar"></span>
-								<%= journalContributorsDisplayContext.getModifiedDate() %>
-							</td>
-						</tr>
-					</c:if>
+<div class="react-component">
+	<react:component
+		data="<%= map %>"
+		module="js/Index.es"
+	/>
+</div>
 
-					<c:if test="<%= creatorContributor != null %>">
-						<tr>
-							<td>
-								<span class="glyphicon glyphicon-user"></span>
-								Creator: <%= creatorContributor.getName() %>
-							</td>
-							<td class="last-td">
-								<span class="glyphicon glyphicon-calendar"> </span>
-								<%= journalContributorsDisplayContext.getCreateDate() %>
-							</td>
-						</tr>
-					</c:if>
-				</table>
-			</li>
-		</ul>
-	</div>
-</nav>

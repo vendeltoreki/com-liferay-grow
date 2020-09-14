@@ -15,31 +15,16 @@
 --%>
 
 <%@ include file="/init.jsp" %>
+<%
+Map<String, Object> map = new HashMap<>();
 
-<nav class="a-items">
-	<input class="activate hidden" id="related-pages" name="tags" type="checkbox" />
+map.put("items", journalRelatedPagesDisplayContext.getRelatedPages());
 
-	<label class="accordion-label" for="related-pages">Related Pages</label>
+%>
 
-	<div class="a-content sbox">
-		<ul class="list-unstyled">
-			<c:if test="<%= !(journalRelatedPagesDisplayContext.getRelatedPages().isEmpty()) %>">
-
-				<%
-				for (AssetEntry ae : journalRelatedPagesDisplayContext.getRelatedPages()) {
-				%>
-
-					<li>
-						<span class="glyphicon glyphicon-tags"></span>
-
-						<a href="<%= baseURL + ae.getTitle(themeDisplay.getLocale()) %>"> <%= ae.getTitle(themeDisplay.getLocale()) %></a>
-					</li>
-
-				<%
-				}
-				%>
-
-			</c:if>
-		</ul>
-	</div>
-</nav>
+<div class="react-component">
+	<react:component
+		data="<%= map %>"
+		module="js/Index.es"
+	/>
+</div>

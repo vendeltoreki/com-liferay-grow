@@ -16,28 +16,15 @@
 
 <%@ include file="/init.jsp" %>
 
-<nav class="a-items">
-	<input class="activate hidden" id="tags" name="tags" type="checkbox" />
+<%
+Map<String, Object> map = new HashMap<>();
 
-	<label class="accordion-label" for="tags">Attachments</label>
+map.put("items", journalAttachmentsDisplayContext.getAttachments());
+%>
 
-	<div class="a-content sbox">
-		<ul class="list-unstyled">
-
-			<%
-			for (Attachment attachment : journalAttachmentsDisplayContext.getAttachments()) {
-			%>
-
-				<li>
-					<span class="glyphicon glyphicon-paperclip"></span>
-
-					<a href="<%= attachment.getUrl() %>"><%= attachment.getTitle() %></a> <%= attachment.getSize() %>
-				</li>
-
-			<%
-			}
-			%>
-
-		</ul>
-	</div>
-</nav>
+<div class="react-component">
+	<react:component
+		data="<%= map %>"
+		module="js/Index.es"
+	/>
+</div>

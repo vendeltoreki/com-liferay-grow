@@ -19,7 +19,10 @@
 <%
 Map<String, Object> map = new HashMap<>();
 
-map.put("items", modifierContributor.getName());
+map.put("modifier", modifierContributor.getName());
+map.put("modifierDate", journalContributorsDisplayContext.getModifiedDate());
+map.put("creator", creatorContributor.getName());
+map.put("creatorDate", journalContributorsDisplayContext.getCreateDate());
 
 %>
 

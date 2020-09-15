@@ -2,13 +2,14 @@ import {ClayVerticalNav} from '@clayui/nav';
 import React from 'react';
 
 const Component = (props) => {
-    console.log(props)
+    const items = [{label: props.data.creator + " " + props.data.creatorDate}, {label: props.data.modifier + " " + props.data.modifierDate}];
+
     return (
       <ClayVerticalNav
         items={[
           {
             initialExpanded: true,
-            items: null,
+            items: items,
             label: "Contributors"
           }
         ]}

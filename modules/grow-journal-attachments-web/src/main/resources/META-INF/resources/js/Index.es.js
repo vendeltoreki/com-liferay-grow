@@ -2,7 +2,11 @@ import {ClayVerticalNav} from '@clayui/nav';
 import React from 'react';
 
 const Component = (props) => {
-    console.log(props)
+    props.data.items.map(item => {
+      item.label = item.title + " " + item.size
+      item.href = item.url
+    })
+
     return (
       <ClayVerticalNav
         items={[

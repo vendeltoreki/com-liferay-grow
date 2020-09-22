@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"@clayui/nav": "^3.3.2"
+		"grow-clay": "^0.1.9"
 	},
 	"description": "Related Pages Fragment for GROW",
 	"main": "js/Index.es.js",

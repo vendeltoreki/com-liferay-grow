@@ -1,26 +1,22 @@
-import {ClayVerticalNav} from '@clayui/nav';
+import {GrowVerticalNav} from "grow-clay";
 import React from 'react';
 
 const Component = (props) => {
-    props.data.items.map(item => {
-      item.label = item.title + " " + item.size
-      item.href = item.url
-    })
+  const spritemap = Liferay.ThemeDisplay.getPathThemeImages() + '/lexicon/icons.svg';
 
-    return (
-      <ClayVerticalNav
-        items={[
-          {
-            initialExpanded: true,
-            items: props.data.items,
-            label: "Attachments"
-          }
-        ]}
-        large={false}
-        spritemap={Liferay.ThemeDisplay.getPathThemeImages() + '/lexicon/icons.svg'}
-      />
-    );
-  };
+  props.data.items.map(item => {
+    item.label = item.title + " " + item.size
+  })
+
+  return (
+    <GrowVerticalNav
+      spritemap={spritemap}
+      label="Attachments"
+      labelIcon="document"
+      items={props.data.items}
+    />
+  );
+};
 
   export default function(props) {
 	return (

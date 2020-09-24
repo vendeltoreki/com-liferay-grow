@@ -1,5 +1,5 @@
 import {GrowVerticalNav} from "grow-clay";
-import React, { useState } from 'react';
+import React from 'react';
 
 const Component = (props) => {
   const spritemap = Liferay.ThemeDisplay.getPathThemeImages() + '/lexicon/icons.svg';
@@ -11,10 +11,10 @@ const Component = (props) => {
 
   return (
     <GrowVerticalNav
-      spritemap={spritemap}
+	  items={props.data.items}
       label="Related Pages"
       labelIcon="pages-tree"
-      items={props.data.items}
+      spritemap={spritemap}
     />
   );
 };

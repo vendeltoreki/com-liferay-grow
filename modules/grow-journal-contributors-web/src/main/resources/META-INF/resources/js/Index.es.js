@@ -10,10 +10,10 @@ const Component = (props) => {
 
   return (
     <GrowVerticalNav
-      spritemap={spritemap}
+	  items={items}
       label="Contributors"
       labelIcon="users"
-      items={items}
+	  spritemap={spritemap}
     />
   );
 };

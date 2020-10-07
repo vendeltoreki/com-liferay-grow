@@ -1,13 +1,13 @@
 {
 	"dependencies": {
-		"@clayui/icon": "^3.0.2",
-		"axios": "^0.19.0",
-		"grow-clay": "^0.1.6",
+		"@clayui/icon": "^3.1.0",
+		"axios": "^0.19.2",
+		"grow-clay": "^0.1.9",
 		"prop-types": "15.7.2",
-		"pure-react-carousel": "^1.20.0",
+		"pure-react-carousel": "^1.27.4",
 		"react": "16.8.6",
 		"react-dom": "16.8.6",
-		"react-resize-detector": "^4.1.4",
+		"react-resize-detector": "^4.2.3",
 		"react-text-truncate": "^0.14.1"
 	},
 	"devDependencies": {

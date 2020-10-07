@@ -18,7 +18,7 @@
 		"liferay-npm-bundler": "^2.19.3"
 	},
 	"main": "lib/index.es.js",
-	"name": "GrowRecommendationsPortlet",
+	"name": "growrecommendationsportlet",
 	"scripts": {
 		"build": "babel --source-maps -d build/resources/main/META-INF/resources src/main/resources/META-INF/resources && liferay-npm-bundler"
 	},

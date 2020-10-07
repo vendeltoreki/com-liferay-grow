@@ -13,9 +13,9 @@
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
 		"babel-polyfill": "^6.0.16",
-		"babel-preset-es2015": "^6.0.15",
-		"babel-preset-react": "6.24.1",
-		"liferay-npm-bundler": "^2.0.0"
+		"babel-preset-es2015": "^6.24.1",
+		"babel-preset-react": "^6.24.1",
+		"liferay-npm-bundler": "^2.19.3"
 	},
 	"main": "lib/index.es.js",
 	"name": "GrowRecommendationsPortlet",

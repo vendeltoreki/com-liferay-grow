@@ -10,8 +10,6 @@ buildscript {
 	}
 }
 
-apply plugin: "com.liferay.plugin"
-
 dependencies {
 	compileOnly group: "com.liferay", name: "com.liferay.frontend.js.loader.modules.extender.api", version: "3.0.0"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "4.4.0"

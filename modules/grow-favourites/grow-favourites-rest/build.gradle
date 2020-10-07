@@ -12,5 +12,5 @@ dependencies {
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "4.4.0"
 	compileOnly group: "com.liferay", name: "com.liferay.wiki.api", version: "4.0.0"
 	compileOnly group: "com.liferay", name: "com.liferay.wiki.service", version: "3.0.25"
-	compileOnly project(":grow-favourites-api")
+	compileOnly project(":modules:grow-favourites:grow-favourites-api")
 }

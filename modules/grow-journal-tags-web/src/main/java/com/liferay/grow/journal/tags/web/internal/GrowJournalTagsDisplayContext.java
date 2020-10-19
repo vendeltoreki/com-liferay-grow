@@ -32,79 +32,79 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class GrowJournalTagsDisplayContext {
 
-    public GrowJournalTagsDisplayContext(HttpServletRequest request) {
-        InfoDisplayObjectProvider infoDisplayObjectProvider =
-                (InfoDisplayObjectProvider)request.getAttribute(
-                        AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER);
+	public GrowJournalTagsDisplayContext(HttpServletRequest request) {
+		InfoDisplayObjectProvider infoDisplayObjectProvider =
+			(InfoDisplayObjectProvider)request.getAttribute(
+				AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER);
 
-        if (infoDisplayObjectProvider != null) {
-            JournalArticle journalArticle =
-                    (JournalArticle)infoDisplayObjectProvider.getDisplayObject();
+		if (infoDisplayObjectProvider != null) {
+			JournalArticle journalArticle =
+				(JournalArticle)infoDisplayObjectProvider.getDisplayObject();
 
-            _assetEntry = AssetEntryLocalServiceUtil.fetchEntry(
-                    JournalArticle.class.getName(),
-                    journalArticle.getResourcePrimKey());
-        }
-    }
+			_assetEntry = AssetEntryLocalServiceUtil.fetchEntry(
+				JournalArticle.class.getName(),
+				journalArticle.getResourcePrimKey());
+		}
+	}
 
-    public List<AssetTag> getUnofficialTags() {
-        if (_unofficialTags != null) {
-            return _unofficialTags;
-        }
+	public List<AssetTag> getUnofficialTags() {
+		if (_unofficialTags != null) {
+			return _unofficialTags;
+		}
 
-        _unofficialTags = AssetTagLocalServiceUtil.getAssetEntryAssetTags(
-                _assetEntry.getEntryId());
+		_unofficialTags = AssetTagLocalServiceUtil.getAssetEntryAssetTags(
+			_assetEntry.getEntryId());
 
-        Iterator<AssetTag> i = _unofficialTags.iterator();
+		Iterator<AssetTag> i = _unofficialTags.iterator();
 
-        while (i.hasNext()) {
-            AssetTag tag = i.next();
+		while (i.hasNext()) {
+			AssetTag tag = i.next();
 
-            String tagName = tag.getName();
+			String tagName = tag.getName();
 
-            tagName = tagName.toLowerCase();
+			tagName = tagName.toLowerCase();
 
-            if (tagName.equals("official")) {
-                _official = true;
-                i.remove();
-            }
-        }
+			if (tagName.equals("official")) {
+				_official = true;
+				i.remove();
+			}
+		}
 
-        return _unofficialTags;
-    }
+		return _unofficialTags;
+	}
 
-    public boolean hasOfficial() {
-        if (_official != null) {
-            return _official;
-        }
+	public boolean hasOfficial() {
+		if (_official != null) {
+			return _official;
+		}
 
-        _official = false;
+		_official = false;
 
-        getUnofficialTags();
+		getUnofficialTags();
 
-        return _official;
-    }
+		return _official;
+	}
 
-    public boolean hasTags() {
-        if (_hasTags != null) {
-            return _hasTags;
-        }
+	public boolean hasTags() {
+		if (_hasTags != null) {
+			return _hasTags;
+		}
 
-        _hasTags = false;
+		_hasTags = false;
 
-        if ((_assetEntry != null) &&
-                (AssetTagLocalServiceUtil.getAssetEntryAssetTagsCount(
-                        _assetEntry.getEntryId()) > 0)) {
+		if ((_assetEntry != null) &&
+			(AssetTagLocalServiceUtil.getAssetEntryAssetTagsCount(
+				_assetEntry.getEntryId()) > 0)) {
 
-            _hasTags = true;
-        }
+			_hasTags = true;
+		}
 
-        return _hasTags;
-    }
+		return _hasTags;
+	}
 
-    private AssetEntry _assetEntry;
-    private Boolean _hasTags;
-    private Boolean _official;
-    private List<AssetTag> _unofficialTags;
+	private AssetEntry _assetEntry;
+	private Boolean _hasTags;
+	private Boolean _official;
+	private List<AssetTag> _unofficialTags;
 
 }

@@ -31,5 +31,5 @@ page import="com.liferay.grow.journal.tags.web.internal.GrowJournalTagsDisplayCo
 <portlet:defineObjects />
 
 <%
-    GrowJournalTagsDisplayContext journalTagsDisplayContext = new GrowJournalTagsDisplayContext(request);
+	GrowJournalTagsDisplayContext journalTagsDisplayContext = new GrowJournalTagsDisplayContext(request);
 %>

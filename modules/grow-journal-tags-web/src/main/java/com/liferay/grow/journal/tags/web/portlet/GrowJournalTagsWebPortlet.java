@@ -15,7 +15,6 @@
 package com.liferay.grow.journal.tags.web.portlet;
 
 import com.liferay.grow.journal.tags.web.constants.GrowJournalTagsWebPortletKeys;
-
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 
 import javax.portlet.Portlet;

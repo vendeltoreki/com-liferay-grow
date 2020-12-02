@@ -2,3 +2,4 @@ Bundle-Name: grow-journal-tags-web
 Bundle-SymbolicName: com.liferay.grow.journal.tags.web
 Bundle-Version: 1.0.0
 Export-Package: com.liferay.grow.journal.tags.web.constants
+Web-ContextPath: /grow-journal-tags 

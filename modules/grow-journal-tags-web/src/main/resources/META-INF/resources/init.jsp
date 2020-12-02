@@ -25,6 +25,8 @@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.asset.kernel.model.AssetTag" %><%@
+page import="java.util.HashMap" %><%@
+page import="java.util.Map" %><%@
 page import="com.liferay.grow.journal.tags.web.internal.GrowJournalTagsDisplayContext" %>
 
 <liferay-theme:defineObjects />

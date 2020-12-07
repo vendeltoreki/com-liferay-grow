@@ -1,5 +1,5 @@
 import {GrowVerticalTagsNav} from "grow-clay";
-import React, { useMemo }from 'react';
+import React, { useMemo } from 'react';
 
 const Component = (props) => {
   const spritemap = Liferay.ThemeDisplay.getPathThemeImages() + '/lexicon/icons.svg';
@@ -12,22 +12,22 @@ const Component = (props) => {
     });
 
     return tags;
-  },[props.data.items]);
+  }, [props.data.items]);
 
   return (
     <GrowVerticalTagsNav
-	    items={tags}
+	  items={tags}
       label="Tags"
       labelIcon="tag"
       spritemap={spritemap}
+	  tagCount={9}
       tagLength={20}
-      tagCount={9}
     />
   );
 };
 
-  export default function(props) {
-	return (
-		<Component data={props} />
-	);
+export default function(props) {
+  return (
+    <Component data={props} />
+  );
 }

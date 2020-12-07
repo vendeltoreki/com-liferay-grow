@@ -18,8 +18,8 @@ const Component = (props) => {
   );
 };
 
-  export default function(props) {
-	return (
-		<Component data={props} />
-	);
+export default function(props) {
+  return (
+    <Component data={props} />
+  );
 }
